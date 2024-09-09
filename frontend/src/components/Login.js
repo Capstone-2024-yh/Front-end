@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Alert } from '@mui/material';
 import axios from '../axiosConfig';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginSuccess } from '../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -8,6 +10,11 @@ function Login() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Redux 상태를 불러와서 콘솔에 출력해보는 방법
+  const authState = useSelector((state) => state.auth);
+  console.log('Redux Auth State:', authState);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,7 +26,7 @@ function Login() {
       });
 
       if (response.status === 200) {
-        alert('Login successful');
+        dispatch(loginSuccess({ email }));
         navigate('/status');
       }
     } catch (error) {

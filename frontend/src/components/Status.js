@@ -1,22 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from '../axiosConfig';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Typography, Box, Alert } from '@mui/material';
 
 function Status() {
-  const [status, setStatus] = useState('');
-
-  useEffect(() => {
-    const checkStatus = async () => {
-      try {
-        const response = await axios.get('/auth/status');
-        setStatus(response.data);
-      } catch (error) {
-        setStatus('User is not logged in');
-      }
-    };
-
-    checkStatus();
-  }, []);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
     <Box
@@ -33,10 +20,10 @@ function Status() {
       <Typography variant="h5" component="h2" gutterBottom>
         Login Status
       </Typography>
-      {status.includes('logged in') ? (
-        <Alert severity="success">{status}</Alert>
+      {isAuthenticated ? (
+        <Alert severity="success">Logged in as {user.email}</Alert>
       ) : (
-        <Alert severity="error">{status}</Alert>
+        <Alert severity="error">User is not logged in</Alert>
       )}
     </Box>
   );
