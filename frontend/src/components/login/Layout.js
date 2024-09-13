@@ -19,9 +19,11 @@ function Layout({ children }) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My App
           </Typography>
-          <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>Login</Link>
-          <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>Register</Link>
-          <Link to="/status" style={{ margin: '0 10px', color: '#fff' }}>Status</Link>
+            { !isAuthenticated &&(<div>
+              <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>Login</Link>
+              <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>Register</Link>
+          </div>)}
+            <Link to="/status" style={{ margin: '0 10px', color: '#fff' }}>Status</Link>
           {isAuthenticated && (
             <Button color="inherit" onClick={handleLogout}>
               Logout
