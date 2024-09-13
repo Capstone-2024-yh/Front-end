@@ -26,7 +26,8 @@ const KakaoMap = () => {
           level: 3, // 지도 확대 수준
         };
 
-        const map = new kakao.maps.Map(container, options); // 지도 생성
+        // const map = new kakao.maps.Map(container, options); // 지도 생성
+        new kakao.maps.Map(container, options);
       });
     };
   }, [kakaoMapKey]);
