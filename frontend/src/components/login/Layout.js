@@ -2,7 +2,7 @@ import React from 'react';
 import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutSuccess } from '../store/authSlice';
+import { logoutSuccess } from '../../store/authSlice';
 
 function Layout({ children }) {
   const { isAuthenticated } = useSelector((state) => state.auth); // 로그인 상태 가져오기

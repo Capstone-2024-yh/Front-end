@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Alert } from '@mui/material';
-import axios from '../axiosConfig';
+import axios from '../../axiosConfig';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginSuccess } from '../store/authSlice';
+import { loginSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
@@ -27,7 +27,8 @@ function Login() {
 
       if (response.status === 200) {
         dispatch(loginSuccess({ email }));
-        navigate('/status');
+        // 로그인 성공 시 KakaoMap 페이지로 이동
+        navigate('/map'); // '/map' 경로로 리디렉션
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
