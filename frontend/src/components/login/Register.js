@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Alert } from '@mui/material';
-import axios from '../axiosConfig';
+import axios from '../../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
