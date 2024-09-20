@@ -28,7 +28,7 @@ function Login() {
       if (response.status === 200) {
         dispatch(loginSuccess({ email }));
         // 로그인 성공 시 KakaoMap 페이지로 이동
-        navigate('/map'); // '/map' 경로로 리디렉션
+        navigate('/main'); // '/map' 경로로 리디렉션
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -37,6 +37,10 @@ function Login() {
         setErrorMessage('An error occurred');
       }
     }
+  };
+
+  const handleRegisterRedirect = () => {
+    navigate('/register'); // Register 페이지로 이동
   };
 
   return (
@@ -74,6 +78,15 @@ function Login() {
       <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
         Login
       </Button>
+      <Typography
+        variant="body2"
+        align="center"
+        sx={{ mt: 2, cursor: 'pointer', textDecoration: 'underline' }}
+        onClick={handleRegisterRedirect}
+        color="primary"
+      >
+        Don't have an account? Register here.
+      </Typography>
     </Box>
   );
 }

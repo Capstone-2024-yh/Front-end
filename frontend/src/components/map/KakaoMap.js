@@ -34,12 +34,27 @@ const KakaoMap = () => {
 
   return (
     <div
-      ref={mapContainer}
       style={{
-        width: '500px',
-        height: '400px',
+        display: 'flex',
+        justifyContent: 'center', // 가로 중앙 정렬
+        alignItems: 'center', // 세로 중앙 정렬
+        width: '100vw',  // 화면 전체 너비
+        height: '100vh', // 화면 전체 높이
+        boxSizing: 'border-box',
+        padding: '20px', // 화면 가장자리 공백
       }}
-    />
+    >
+      <div
+        ref={mapContainer}
+        style={{
+          width: 'calc(100vw - 40px)',  // 화면 너비에서 패딩을 제외한 전체 너비
+          height: 'calc(100vh - 40px)', // 화면 높이에서 패딩을 제외한 전체 높이
+          maxWidth: '1000px', // 지도의 최대 너비 제한
+          maxHeight: '700px', // 지도의 최대 높이 제한
+          backgroundColor: '#f0f0f0', // 지도 로딩 중 확인할 수 있도록 배경색 추가
+        }}
+      />
+    </div>
   );
 };
 

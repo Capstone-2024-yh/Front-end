@@ -6,6 +6,7 @@ import Register from './components/login/Register';
 import Status from './components/login/Status';
 import Layout from './components/login/Layout';
 import KakaoMap from './components/map/KakaoMap';
+import MainPage from './components/main/MainPage'; // 메인 페이지 컴포넌트
 import store from './store'; // Redux store
 
 function App() {
@@ -14,9 +15,11 @@ function App() {
       <Router>
         <Layout>
           <Routes>
+            <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/status" element={<Status />} />
+            <Route path="/main" element={<MainPage />} />
             <Route path="/map" element={<KakaoMap />} />
           </Routes>
         </Layout>

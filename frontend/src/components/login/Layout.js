@@ -17,13 +17,15 @@ function Layout({ children }) {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            My App
+            Capstone
           </Typography>
-            { !isAuthenticated &&(<div>
+            {!isAuthenticated &&(<div>
               <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>Login</Link>
               <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>Register</Link>
-          </div>)}
+            </div>)}
+            {/*
             <Link to="/status" style={{ margin: '0 10px', color: '#fff' }}>Status</Link>
+            */}
           {isAuthenticated && (
             <Button color="inherit" onClick={handleLogout}>
               Logout
