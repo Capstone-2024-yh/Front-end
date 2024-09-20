@@ -1,5 +1,4 @@
 import React from 'react';
-import KakaoMap from '../map/KakaoMap';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
