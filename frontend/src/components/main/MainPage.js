@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import StyledButton from '../../styles/StyledButton';
+import KakaoMap from '../map/KakaoMap';
 
 const MainPage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -68,6 +69,7 @@ const MainPage = () => {
       </table>
 
       {/* 다른 콘텐츠 */}
+      <KakaoMap/>
       <p>{isAuthenticated ? '' : 'Log in to book or save your favorite places.'}</p>
     </div>
   );
