@@ -57,17 +57,17 @@ function Login() {
       }}
     >
       <Typography variant="h5" component="h1" align="center" gutterBottom>
-        Login
+        로그인
       </Typography>
       <TextField
-        label="Email"
+        label="이메일"
         fullWidth
         margin="normal"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <TextField
-        label="Password"
+        label="비밀번호"
         type="password"
         fullWidth
         margin="normal"
@@ -76,7 +76,7 @@ function Login() {
       />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-        Login
+        로그인
       </Button>
       <Typography
         variant="body2"
@@ -85,7 +85,7 @@ function Login() {
         onClick={handleRegisterRedirect}
         color="primary"
       >
-        Don't have an account? Register here.
+        계정 만들기
       </Typography>
     </Box>
   );
