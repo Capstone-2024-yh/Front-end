@@ -4,9 +4,7 @@ import { logoutSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
-{/*
-import Prompt from './Prompt';
-*/}
+/* import Prompt from './Prompt'; */
 
 const MainPage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
