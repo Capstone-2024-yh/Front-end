@@ -4,6 +4,7 @@ import { logoutSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
+import Prompt from './Prompt';
 
 const MainPage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -33,36 +34,39 @@ const MainPage = () => {
     <div>
       {isAuthenticated ? (
         <>
-          <h1>Welcome, {user && user.username}!</h1>
+          <h1>어서오세요, {user && user.username}!</h1>
           <StyledButton onClick={handleLogout}>Logout</StyledButton>
         </>
       ) : (
         <>
-          <h1>Welcome, Guest!</h1>
+          <h1>어서오세요, 게스트님!</h1>
           <p>
-            Please log in to use all features.  
+            모든 기능을 사용하기 위해 로그인이 필요합니다.
+            {/*
             <StyledButton onClick={() => navigate('/login')}>Go to Login</StyledButton>
+            */}
           </p>
         </>
       )}
+      {/* <Prompt/> */}
 
       {/* 버튼들을 테이블 형식으로 배치 */}
       <table style={{ width: '100%', marginTop: '20px' }}>
         <tbody>
           <tr>
             <td>
-              <StyledButton onClick={handleBookVenue}>Book a Venue</StyledButton>
+              <StyledButton onClick={handleBookVenue}>예약하기</StyledButton>
             </td>
             <td>
-              <StyledButton onClick={handleViewRecommendations}>View Recommendations</StyledButton>
+              <StyledButton onClick={handleViewRecommendations}>추천 장소</StyledButton>
             </td>
           </tr>
           <tr>
             <td>
-              <StyledButton onClick={handleViewReservations}>View My Reservations</StyledButton>
+              <StyledButton onClick={handleViewReservations}>내 장소 보기</StyledButton>
             </td>
             <td>
-              <StyledButton onClick={() => navigate('/map')}>Open Kakao Map</StyledButton>
+              <StyledButton onClick={() => navigate('/map')}>지도 보기</StyledButton>
             </td>
           </tr>
         </tbody>
@@ -70,7 +74,7 @@ const MainPage = () => {
 
       {/* 다른 콘텐츠 */}
       <KakaoMap/>
-      <p>{isAuthenticated ? '' : 'Log in to book or save your favorite places.'}</p>
+      <p>{isAuthenticated ? '' : '장소를 예약하거나 등록하기 위해 로그인이 필요합니다.'}</p>
     </div>
   );
 };

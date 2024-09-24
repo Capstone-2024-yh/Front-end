@@ -43,24 +43,24 @@ function Register() {
       }}
     >
       <Typography variant="h5" component="h1" align="center" gutterBottom>
-        Register
+        회원가입
       </Typography>
       <TextField
-        label="Username"
+        label="회원 아이디"
         fullWidth
         margin="normal"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
       <TextField
-        label="Email"
+        label="이메일"
         fullWidth
         margin="normal"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <TextField
-        label="Password"
+        label="비밀번호"
         type="password"
         fullWidth
         margin="normal"
@@ -69,7 +69,7 @@ function Register() {
       />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-        Register
+        회원 가입하기
       </Button>
     </Box>
   );
