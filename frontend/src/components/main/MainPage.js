@@ -4,7 +4,7 @@ import { logoutSuccess } from '../../store/authSlice';
 import { useNavigate } from 'react-router-dom';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
-/* import Prompt from './Prompt'; */
+import Prompt from './Prompt';
 
 const MainPage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -48,25 +48,56 @@ const MainPage = () => {
           </p>
         </>
       )}
-      {/* <Prompt/> */}
+      <Prompt/>
 
       {/* 버튼들을 테이블 형식으로 배치 */}
-      <table style={{ width: '100%', marginTop: '20px' }}>
+      <table style={{ margin: '0 auto', marginTop: '20px' }}>
         <tbody>
+          {/* 첫 번째 줄 */}
           <tr>
-            <td>
-              <StyledButton onClick={handleBookVenue}>예약하기</StyledButton>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleBookVenue} style={{ padding: '10px 20px' }}>
+                예약하기
+              </StyledButton>
             </td>
-            <td>
-              <StyledButton onClick={handleViewRecommendations}>추천 장소</StyledButton>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleViewRecommendations} style={{ padding: '10px 20px' }}>
+                추천 장소
+              </StyledButton>
+            </td>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleViewReservations} style={{ padding: '10px 20px' }}>
+                내 장소 보기
+              </StyledButton>
+            </td>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={() => navigate('/map')} style={{ padding: '10px 20px' }}>
+                지도 보기
+              </StyledButton>
             </td>
           </tr>
+
+          {/* 두 번째 줄 */}
           <tr>
-            <td>
-              <StyledButton onClick={handleViewReservations}>내 장소 보기</StyledButton>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleBookVenue} style={{ padding: '10px 20px' }}>
+                기능 5
+              </StyledButton>
             </td>
-            <td>
-              <StyledButton onClick={() => navigate('/map')}>지도 보기</StyledButton>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleViewRecommendations} style={{ padding: '10px 20px' }}>
+                기능 6
+              </StyledButton>
+            </td>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={handleViewReservations} style={{ padding: '10px 20px' }}>
+                기능 7
+              </StyledButton>
+            </td>
+            <td style={{ padding: '10px' }}>
+              <StyledButton onClick={() => navigate('/map')} style={{ padding: '10px 20px' }}>
+                기능 8
+              </StyledButton>
             </td>
           </tr>
         </tbody>
@@ -74,7 +105,7 @@ const MainPage = () => {
 
       {/* 다른 콘텐츠 */}
       <KakaoMap/>
-      <p>{isAuthenticated ? '' : '장소를 예약하거나 등록하기 위해 로그인이 필요합니다.'}</p>
+      {/* <p>{isAuthenticated ? '' : '장소를 예약하거나 등록하기 위해 로그인이 필요합니다.'}</p> */}
     </div>
   );
 };
