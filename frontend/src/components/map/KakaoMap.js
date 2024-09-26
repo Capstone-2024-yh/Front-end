@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import InfoPanel from '../panel/InfoPanel';
 
 const KakaoMap = () => {
   const mapContainer = useRef(null);
@@ -30,8 +31,12 @@ const KakaoMap = () => {
   }, [kakaoMapKey]);
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', height: '80vh', width: '100%', margin: 0, padding: 0 }}>
-      <div ref={mapContainer} style={{ width: '600px', height: '500px', backgroundColor: '#f0f0f0', marginLeft: '0px' }} />
+    <div style={{ display: 'flex', justifyContent: 'flex-start', height: '80vh', width: '100%', margin: 0, padding: 0 }}>
+      {/* 지도 영역 */}
+      <div ref={mapContainer} style={{ width: '600px', height: '500px', backgroundColor: '#f0f0f0' }} />
+
+      {/* 우측 정보 패널 */}
+      <InfoPanel />
     </div>
   );
 };
