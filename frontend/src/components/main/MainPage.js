@@ -95,14 +95,14 @@ const MainPage = () => {
               </StyledButton>
             </td>
             <td style={{ padding: '10px' }}>
-              <StyledButton onClick={() => navigate('/map')} style={{ padding: '10px 20px' }}>
+              <StyledButton onClick={handleViewReservations} style={{ padding: '10px 20px' }}>
                 기능 8
               </StyledButton>
             </td>
           </tr>
         </tbody>
       </table>
-
+      <div style={{ marginBottom: '20px' }}> </div>
       {/* 다른 콘텐츠 */}
       <KakaoMap/>
       {/* <p>{isAuthenticated ? '' : '장소를 예약하거나 등록하기 위해 로그인이 필요합니다.'}</p> */}

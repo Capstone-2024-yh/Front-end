@@ -14,6 +14,7 @@ const Button = styled.button`
   cursor: pointer;
   border-radius: 12px; /* 둥근 모서리 */
   transition-duration: 0.4s; /* 호버 애니메이션 속도 */
+  width: 150px; /* 고정된 너비 */
 
   &:hover {
     background-color: white; /* 호버 시 배경색 변경 */
