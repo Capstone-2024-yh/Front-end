@@ -8,6 +8,7 @@ import Layout from './components/login/Layout';
 import KakaoMap from './components/map/KakaoMap';
 import MainPage from './components/main/MainPage'; // 메인 페이지 컴포넌트
 import Prompt from './components/main/Prompt';
+import LocationList from './components/main/LocationList';
 import store from './store'; // Redux store
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/main" element={<MainPage />} />
             <Route path="/map" element={<KakaoMap />} />
             <Route path="/prompt" element={<Prompt />} />
+            <Route path="/location-list" element={<LocationList />} />
           </Routes>
         </Layout>
       </Router>

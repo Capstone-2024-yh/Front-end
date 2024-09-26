@@ -61,7 +61,7 @@ const MainPage = () => {
               </StyledButton>
             </td>
             <td style={{ padding: '10px' }}>
-              <StyledButton onClick={handleViewRecommendations} style={{ padding: '10px 20px' }}>
+              <StyledButton onClick={() => navigate('/location-list')} style={{ padding: '10px 20px' }}>
                 추천 장소
               </StyledButton>
             </td>
