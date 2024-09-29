@@ -108,7 +108,7 @@ const SpaceRegistration = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      console.log('Response data:', response.data);
       alert('공간이 성공적으로 등록되었습니다!');
     } catch (error) {
       console.error('Error saving space information:', error);
