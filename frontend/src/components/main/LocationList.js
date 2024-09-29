@@ -1,38 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Grid } from '@mui/material';
-// import axios from '../../axiosConfig'; // 백엔드와의 통신 부분은 주석 처리
+import { Box, Button, Grid, CircularProgress } from '@mui/material';
+import axios from 'axios'; // 백엔드와의 통신 활성화
+import { useNavigate } from 'react-router-dom'; // React Router에서 useNavigate 사용
 
 const LocationList = () => {
   const [locationData, setLocationData] = useState([]);
+  const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [error, setError] = useState(null); // 오류 상태 추가
+  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이트 함수
 
   useEffect(() => {
-    // 주석 해제 시 백엔드로부터 데이터를 받아옴
-    /*
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/locations'); // API 경로 예시
+        // 백엔드에서 데이터를 받아오는 부분
+        const response = await axios.get('/api/locations'); // API 경로를 실제 경로로 변경
         setLocationData(response.data);
       } catch (error) {
         console.error('Error fetching location data:', error);
+        setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');
+
+        // 오류 발생 시 임시 데이터 사용
+        const tempData = Array.from({ length: 12 }, (_, index) => ({
+          id: index,
+          name: `임시 장소 ${index + 1}`,
+          image: 'https://via.placeholder.com/150',  // 임시 이미지 URL
+          description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+        }));
+        setLocationData(tempData);
+      } finally {
+        setLoading(false); // 로딩 상태 해제
       }
     };
+
     fetchData();
-    */
-    
-    // 임시 데이터 설정 (주석 처리 가능)
-    const tempData = Array.from({ length: 12 }, (_, index) => ({
-      id: index,
-      name: `임시 장소 ${index + 1}`,
-      image: 'https://via.placeholder.com/150',  // 임시 이미지 URL
-      description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-    }));
-    setLocationData(tempData);
   }, []);
 
   // 버튼을 클릭했을 때 실행되는 함수
   const handleClick = (location) => {
-    console.log(`${location.name} 버튼 클릭됨`);
+    // 해당 location의 ID를 기반으로 RentalSpaceBar로 이동
+    navigate(`/rental-space/${location.id}`);
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress /> {/* 로딩 애니메이션 */}
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -73,6 +95,19 @@ const LocationList = () => {
         </Button>
       </Box>
 
+      {/* 에러 메시지 출력 */}
+      {error && (
+        <Box
+          sx={{
+            color: 'red',
+            marginBottom: '20px',
+            textAlign: 'center',
+          }}
+        >
+          {error}
+        </Box>
+      )}
+
       {/* 목록 박스 */}
       <Box
         sx={{
@@ -82,7 +117,7 @@ const LocationList = () => {
         }}
       >
         <Grid container spacing={2}>
-          {/* 임시 정보 버튼들 */}
+          {/* 백엔드에서 받아온 정보 또는 임시 정보 출력 */}
           {locationData.map((location, index) => (
             <Grid item xs={12} sm={4} key={index}>
               <Button

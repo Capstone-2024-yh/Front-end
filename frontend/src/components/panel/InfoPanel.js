@@ -1,34 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Box } from '@mui/material';
-// import axios from '../../axiosConfig';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
+import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 사용
+import axios from 'axios';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
 const InfoPanel = () => {
   const [locationData, setLocationData] = useState([]);
+  //const [error, setError] = useState(null);
+  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이트 함수
 
-  // 백엔드에서 데이터 받아오기 (예: 장소 정보, 임시로 주석 처리 가능)
+  // 백엔드에서 데이터 받아오기
   useEffect(() => {
-    // 주석 해제 시 실제 데이터를 받아올 수 있습니다.
-    /*
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/locations'); // 예시 API 경로
-        setLocationData(response.data); // 서버에서 받은 장소 데이터를 state에 저장
+        const response = await axios.get('/api/locations'); // 실제 API 호출
+        setLocationData(response.data); // 백엔드 데이터 설정
       } catch (error) {
         console.error('Error fetching location data:', error);
+        //setError('데이터를 불러오는 데 실패했습니다. 임시 데이터를 사용합니다.'); // 오류 메시지 설정
+
+        // 오류 발생 시 임시 데이터를 설정
+        const tempData = Array.from({ length: 10 }, (_, index) => ({
+          id: index,
+          name: `임시 장소 ${index + 1}`,
+          image: 'https://via.placeholder.com/50', // 임시 이미지 URL
+          description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+        }));
+        setLocationData(tempData);
       }
     };
-    fetchData();
-    */
 
-    // 임시 데이터 10개를 설정 (주석 처리 가능)
-    const tempData = Array.from({ length: 10 }, (_, index) => ({
-      id: index,
-      name: `임시 장소 ${index + 1}`,
-      image: 'https://via.placeholder.com/50', // 임시 이미지 URL
-      description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-    }));
-    setLocationData(tempData);
+    fetchData(); // 데이터 가져오기 함수 호출
   }, []);
+
+  // 버튼 클릭 시 해당 위치로 이동하는 함수
+  const handleLocationClick = (location) => {
+    navigate(`/rental-space/${location.id}`); // ID를 기반으로 RentalSpaceBar로 이동
+  };
 
   return (
     <Box
@@ -81,6 +88,7 @@ const InfoPanel = () => {
             key={index}
             variant="outlined"
             fullWidth
+            onClick={() => handleLocationClick(location)} // 버튼 클릭 시 해당 위치로 이동
             sx={{
               marginBottom: '10px',
               height: '80px', // 버튼 높이를 현재의 2배로 설정

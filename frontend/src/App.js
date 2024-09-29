@@ -9,6 +9,8 @@ import KakaoMap from './components/map/KakaoMap';
 import MainPage from './components/main/MainPage'; // 메인 페이지 컴포넌트
 import Prompt from './components/main/Prompt';
 import LocationList from './components/main/LocationList';
+import RentalSpacePage from './components/search/RentalSpacePage';
+import SpaceRegistration from './components/search/SpaceRegisteration';
 import store from './store'; // Redux store
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
             <Route path="/map" element={<KakaoMap />} />
             <Route path="/prompt" element={<Prompt />} />
             <Route path="/location-list" element={<LocationList />} />
+            <Route path="/rental-space/:locationId" element={<RentalSpacePage />} />
+            <Route path="/space-registeration" element={<SpaceRegistration />} />
           </Routes>
         </Layout>
       </Router>
