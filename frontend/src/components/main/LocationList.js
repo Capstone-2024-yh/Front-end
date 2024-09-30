@@ -14,7 +14,8 @@ const LocationList = () => {
       try {
         // 백엔드에서 데이터를 받아오는 부분
         const response = await axios.get('/api/locations'); // API 경로를 실제 경로로 변경
-        setLocationData(response.data);
+        const data = Array.isArray(response.data) ? response.data : []; // 배열인지 확인 후 설정
+        setLocationData(data);
       } catch (error) {
         console.error('Error fetching location data:', error);
         setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');

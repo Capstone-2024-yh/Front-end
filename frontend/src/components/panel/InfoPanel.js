@@ -25,7 +25,7 @@ const InfoPanel = () => {
           image: 'https://via.placeholder.com/50', // 임시 이미지 URL
           description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
         }));
-        
+        console.log('Setting tempData:', tempData);
         setLocationData(tempData); // 임시 데이터를 설정
       }
     };
