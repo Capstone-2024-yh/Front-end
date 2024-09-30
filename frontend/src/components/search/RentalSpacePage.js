@@ -24,7 +24,14 @@ const RentalSpacePage = () => {
       try {
         // 실제 백엔드 API 엔드포인트로 수정 필요
         const response = await axios.get(`/api/rental-space/${locationId}`);
-        setSpaceData(response.data);
+        const data = response.data;
+
+        // 데이터가 예상한 구조인지 확인하고, 아니면 임시 데이터 사용
+        if (data && data.sections) {
+          setSpaceData(data);
+        } else {
+          throw new Error('Invalid data structure');
+        }
       } catch (error) {
         console.error('Error fetching rental space data:', error);
         // 백엔드 데이터를 가져오지 못하면 임시 데이터를 사용
@@ -41,7 +48,7 @@ const RentalSpacePage = () => {
             qa: '궁금한 사항은 언제든지 문의 바랍니다.',
             review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
           },
-          mapImage: 'https://via.placeholder.com/600x300'
+          mapImage: 'https://via.placeholder.com/600x300',
         };
         setSpaceData(tempData); // 임시 데이터를 설정
       } finally {
@@ -71,79 +78,80 @@ const RentalSpacePage = () => {
       <Box sx={{ flex: 1, paddingRight: '20px' }}>
         {/* 1. 공간의 제목 1 */}
         <Typography variant="h4" sx={{ marginBottom: '10px' }}>
-          {spaceData.title1}
+          {spaceData?.title1 || '제목이 없습니다.'}
         </Typography>
 
         {/* 2. 간략한 소개 문장 */}
         <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-          {spaceData.intro}
+          {spaceData?.intro || '소개 문구가 없습니다.'}
         </Typography>
 
         {/* 3. 이미지 */}
         <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img src={spaceData.image} alt="공간 이미지" style={{ width: '100%' }} />
+          <img src={spaceData?.image} alt="공간 이미지" style={{ width: '100%' }} />
         </Box>
 
         {/* 4. 공간의 제목 2 */}
         <Typography variant="h5" sx={{ marginBottom: '10px' }}>
-          {spaceData.title2}
+          {spaceData?.title2 || '제목이 없습니다.'}
         </Typography>
 
         {/* 5. 목차 - Sticky로 상단에 고정 */}
-        <Box 
-          sx={{ 
-              position: 'sticky', 
-              top: '0', 
-              backgroundColor: '#fff', 
-              zIndex: '10', 
-              padding: '5px 10px',            // 세로 높이를 줄이기 위한 패딩 조정
-              height: '50px',                 // 높이를 직접 지정하여 줄임 
-              boxShadow: '0 2px 5px rgba(0,0,0,0.1)', 
-              marginBottom: '20px',
-              display: 'flex',               // 가로로 나열하기 위한 flex 설정
-              justifyContent: 'space-between', // 요소 간 간격을 자동으로 배치
-              alignItems: 'center'            // 세로 중앙 정렬
-          }}>
+        <Box
+          sx={{
+            position: 'sticky',
+            top: '0',
+            backgroundColor: '#fff',
+            zIndex: '10',
+            padding: '5px 10px', // 세로 높이를 줄이기 위한 패딩 조정
+            height: '50px', // 높이를 직접 지정하여 줄임
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+            marginBottom: '20px',
+            display: 'flex', // 가로로 나열하기 위한 flex 설정
+            justifyContent: 'space-between', // 요소 간 간격을 자동으로 배치
+            alignItems: 'center', // 세로 중앙 정렬
+          }}
+        >
           <List sx={{ display: 'flex', width: '100%' }}>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(introRef)} 
-              sx={{ borderRight: '1px solid #ddd' }}  // 세로줄 추가
+            <ListItem
+              button
+              onClick={() => scrollToSection(introRef)}
+              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="공간소개" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(facilityRef)} 
-              sx={{ borderRight: '1px solid #ddd' }}  // 세로줄 추가
+            <ListItem
+              button
+              onClick={() => scrollToSection(facilityRef)}
+              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="시설안내" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(cautionRef)} 
-              sx={{ borderRight: '1px solid #ddd' }}  // 세로줄 추가
+            <ListItem
+              button
+              onClick={() => scrollToSection(cautionRef)}
+              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="유의사항" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(refundRef)} 
-              sx={{ borderRight: '1px solid #ddd' }}  // 세로줄 추가
+            <ListItem
+              button
+              onClick={() => scrollToSection(refundRef)}
+              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="환불정책" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(qaRef)} 
-              sx={{ borderRight: '1px solid #ddd' }}  // 세로줄 추가
+            <ListItem
+              button
+              onClick={() => scrollToSection(qaRef)}
+              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="Q&A" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
-            <ListItem 
-              button 
-              onClick={() => scrollToSection(reviewRef)} 
-              sx={{ borderRight: 'none' }}  // 마지막 항목에는 세로줄 없음
+            <ListItem
+              button
+              onClick={() => scrollToSection(reviewRef)}
+              sx={{ borderRight: 'none' }} // 마지막 항목에는 세로줄 없음
             >
               <ListItemText primary="이용후기" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
@@ -157,7 +165,7 @@ const RentalSpacePage = () => {
             공간소개
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.intro}
+            {spaceData?.sections?.intro || '공간소개 정보가 없습니다.'}
           </Typography>
 
           {/* 시설안내 */}
@@ -165,7 +173,7 @@ const RentalSpacePage = () => {
             시설안내
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.facility}
+            {spaceData?.sections?.facility || '시설안내 정보가 없습니다.'}
           </Typography>
 
           {/* 유의사항 */}
@@ -173,7 +181,7 @@ const RentalSpacePage = () => {
             유의사항
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.caution}
+            {spaceData?.sections?.caution || '유의사항 정보가 없습니다.'}
           </Typography>
 
           {/* 환불정책 */}
@@ -181,7 +189,7 @@ const RentalSpacePage = () => {
             환불정책
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.refund}
+            {spaceData?.sections?.refund || '환불정책 정보가 없습니다.'}
           </Typography>
 
           {/* 지도는 목차에 포함되지 않음 */}
@@ -189,7 +197,7 @@ const RentalSpacePage = () => {
             지도
           </Typography>
           <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
-            <KakaoMapOnly/>
+            <KakaoMapOnly />
           </Box>
 
           {/* Q&A */}
@@ -197,7 +205,7 @@ const RentalSpacePage = () => {
             Q&A
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.qa}
+            {spaceData?.sections?.qa || 'Q&A 정보가 없습니다.'}
           </Typography>
 
           {/* 이용후기 */}
@@ -205,7 +213,7 @@ const RentalSpacePage = () => {
             이용후기
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData.sections.review}
+            {spaceData?.sections?.review || '이용후기 정보가 없습니다.'}
           </Typography>
         </Box>
       </Box>
