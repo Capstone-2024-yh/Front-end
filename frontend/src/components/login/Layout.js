@@ -3,8 +3,9 @@ import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
+import { Outlet } from 'react-router-dom'; // Outlet 임포트
 
-function Layout({ children }) {
+function Layout() {
   const { isAuthenticated } = useSelector((state) => state.auth); // 로그인 상태 가져오기
   const dispatch = useDispatch();
 
@@ -21,13 +22,12 @@ function Layout({ children }) {
               Capstone
             </Link>
           </Typography>
-          {!isAuthenticated &&(<div>
-            <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>로그인</Link>
-            <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>회원가입</Link>
-          </div>)}
-          {/*
-          <Link to="/status" style={{ margin: '0 10px', color: '#fff' }}>Status</Link>
-          */}
+          {!isAuthenticated && (
+            <div>
+              <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>로그인</Link>
+              <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>회원가입</Link>
+            </div>
+          )}
           {isAuthenticated && (
             <Button color="inherit" onClick={handleLogout}>
               로그아웃
@@ -35,8 +35,10 @@ function Layout({ children }) {
           )}
         </Toolbar>
       </AppBar>
+      
       <Container style={{ marginTop: '20px' }}>
-        {children}
+        {/* children 대신 Outlet 사용 */}
+        <Outlet />
       </Container>
     </div>
   );
