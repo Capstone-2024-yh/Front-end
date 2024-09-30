@@ -12,26 +12,32 @@ const InfoPanel = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/locations'); // 실제 API 호출
-        const data = Array.isArray(response.data) ? response.data : []; // 배열인지 확인 후 설정
-        setLocationData(data);
+        const response = await axios.get('/api/locations');
+        const data = response.data;
+  
+        // 응답 데이터가 배열인지 확인
+        if (!Array.isArray(data)) {
+          throw new Error('API 응답이 배열이 아닙니다.');
+        }
+  
+        setLocationData(data); // 백엔드 데이터 설정
       } catch (error) {
         console.error('Error fetching location data:', error);
+        // setError('데이터를 불러오는 데 실패했습니다. 임시 데이터를 사용합니다.');
   
         // 오류 발생 시 임시 데이터를 설정
         const tempData = Array.from({ length: 10 }, (_, index) => ({
           id: index,
           name: `임시 장소 ${index + 1}`,
-          image: 'https://via.placeholder.com/50', // 임시 이미지 URL
+          image: 'https://via.placeholder.com/50',
           description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
         }));
-        console.log('Setting tempData:', tempData);
-        setLocationData(tempData); // 임시 데이터를 설정
+        setLocationData(tempData);
       }
     };
   
-    fetchData(); // 데이터 가져오기 함수 호출
-  }, []);
+    fetchData();
+  }, []);  
 
   // 버튼 클릭 시 해당 위치로 이동하는 함수
   const handleLocationClick = (location) => {
