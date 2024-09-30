@@ -20,12 +20,16 @@ const KakaoMap = () => {
       window.kakao.maps.load(() => {
         const kakao = window.kakao;
         const container = mapContainer.current;
-        const options = {
-          center: new kakao.maps.LatLng(33.450701, 126.570667),
-          level: 3,
-        };
-
-        new kakao.maps.Map(container, options);
+        if (container) { // container가 존재하는지 확인
+          const options = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667),
+            level: 3,
+          };
+    
+          new kakao.maps.Map(container, options);
+        } else {
+          console.error('Map container is null');
+        }
       });
     };
   }, [kakaoMapKey]);

@@ -34,7 +34,11 @@ const InfoPanel = () => {
 
   // 버튼 클릭 시 해당 위치로 이동하는 함수
   const handleLocationClick = (location) => {
-    navigate(`/rental-space/${location.id}`); // ID를 기반으로 RentalSpaceBar로 이동
+    if (!location || typeof location.id === 'undefined') {
+      console.error('Invalid location object:', location);
+      return;
+    }
+    navigate(`/rental-space/${location.id}`); // ID를 기반으로 페이지 이동
   };
 
   return (
