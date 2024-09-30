@@ -13,7 +13,8 @@ const InfoPanel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('/api/locations'); // 실제 API 호출
-        setLocationData(response.data); // 백엔드 데이터 설정
+        const data = Array.isArray(response.data) ? response.data : [];
+        setLocationData(data); // 백엔드 데이터 설정
       } catch (error) {
         console.error('Error fetching location data:', error);
         //setError('데이터를 불러오는 데 실패했습니다. 임시 데이터를 사용합니다.'); // 오류 메시지 설정
