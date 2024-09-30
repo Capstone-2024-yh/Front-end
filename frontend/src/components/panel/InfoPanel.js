@@ -13,12 +13,11 @@ const InfoPanel = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('/api/locations'); // 실제 API 호출
-        const data = Array.isArray(response.data) ? response.data : [];
-        setLocationData(data); // 백엔드 데이터 설정
+        const data = Array.isArray(response.data) ? response.data : []; // 배열인지 확인 후 설정
+        setLocationData(data);
       } catch (error) {
         console.error('Error fetching location data:', error);
-        //setError('데이터를 불러오는 데 실패했습니다. 임시 데이터를 사용합니다.'); // 오류 메시지 설정
-
+  
         // 오류 발생 시 임시 데이터를 설정
         const tempData = Array.from({ length: 10 }, (_, index) => ({
           id: index,
@@ -26,10 +25,11 @@ const InfoPanel = () => {
           image: 'https://via.placeholder.com/50', // 임시 이미지 URL
           description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
         }));
-        setLocationData(tempData);
+        
+        setLocationData(tempData); // 임시 데이터를 설정
       }
     };
-
+  
     fetchData(); // 데이터 가져오기 함수 호출
   }, []);
 
