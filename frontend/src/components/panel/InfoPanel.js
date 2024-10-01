@@ -1,46 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 사용
-import axios from 'axios';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
+// import axios from 'axios';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
 const InfoPanel = () => {
   const [locationData, setLocationData] = useState([]);
-  //const [error, setError] = useState(null);
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이트 함수
 
-  // 백엔드에서 데이터 받아오기
+  // 임시 데이터 설정 함수
+  const setTemporaryData = () => {
+    const tempData = Array.from({ length: 10 }, (_, index) => ({
+      id: index,
+      name: `임시 장소 ${index + 1}`,
+      image: 'https://via.placeholder.com/50',
+      description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+    }));
+    setLocationData(tempData);
+  };
+
   useEffect(() => {
+    // 통신 부분은 주석 처리해둠
+    /*
     const fetchData = async () => {
-      try {
-        const response = await axios.get('/api/locations');
-        const data = response.data;
+       try {
+         const response = await axios.get('/api/locations');
+         const data = response.data;
 
-        // 응답 데이터가 배열인지 확인하고, 아니면 임시 데이터 사용
-        if (Array.isArray(data)) {
-          setLocationData(data);
-        } else {
-          // 데이터가 배열이 아니면 임시 데이터 설정
-          const tempData = Array.from({ length: 10 }, (_, index) => ({
-            id: index,
-            name: `임시 장소 ${index + 1}`,
-            image: 'https://via.placeholder.com/50',
-            description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-          }));
-          setLocationData(tempData);
-        }
-      } catch (error) {
-        // axios 요청 실패 시 임시 데이터 설정
-        const tempData = Array.from({ length: 10 }, (_, index) => ({
-          id: index,
-          name: `임시 장소 ${index + 1}`,
-          image: 'https://via.placeholder.com/50',
-          description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-        }));
-        setLocationData(tempData);
-      }
+         // 응답 데이터가 배열인지 확인하고, 아니면 임시 데이터 사용
+         if (Array.isArray(data)) {
+           setLocationData(data);
+         } else {
+           setTemporaryData();
+         }
+       } catch (error) {
+         // axios 요청 실패 시 임시 데이터 설정
+         setTemporaryData();
+       }
     };
+    */
 
-    fetchData();
+    // fetchData();
+
+    // 임시 데이터만 사용
+    setTemporaryData();
   }, []);
 
   // 버튼 클릭 시 해당 위치로 이동하는 함수

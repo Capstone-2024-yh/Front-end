@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Grid, CircularProgress } from '@mui/material';
-import axios from 'axios';
+// import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const LocationList = () => {
   const [locationData, setLocationData] = useState([]);
   const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
+  // const [error, setError] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
+    /* 
     const fetchData = async () => {
       try {
         const response = await axios.get('/api/locations');
@@ -39,6 +40,17 @@ const LocationList = () => {
     };
 
     fetchData();
+    */
+
+    // 임시 데이터만 사용
+    const tempData = Array.from({ length: 12 }, (_, index) => ({
+      id: index,
+      name: `임시 장소 ${index + 1}`,
+      image: 'https://via.placeholder.com/150',
+      description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+    }));
+    setLocationData(tempData);
+    setLoading(false);
   }, []);
 
   const handleClick = (location) => {
@@ -96,6 +108,7 @@ const LocationList = () => {
         </Button>
       </Box>
 
+      {/*
       {error && (
         <Box
           sx={{
@@ -107,6 +120,7 @@ const LocationList = () => {
           {error}
         </Box>
       )}
+      */}
 
       <Box
         sx={{

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
 import RentalSpaceBar from '../panel/RentalSpaceBar';
 import KakaoMapOnly from '../map/KakaoMapOnly';
-import axios from 'axios';  // 필요 시 axios 활성화
+// import axios from 'axios';  // 필요 시 axios 활성화
 
 const RentalSpacePage = () => {
   const { locationId } = useParams();  // URL에서 locationId를 추출
@@ -18,8 +18,8 @@ const RentalSpacePage = () => {
   const qaRef = useRef(null);
   const reviewRef = useRef(null);
 
-  // 백엔드에서 데이터를 받아오기 위한 useEffect
   useEffect(() => {
+    /*
     const fetchData = async () => {
       try {
         // 실제 백엔드 API 엔드포인트로 수정 필요
@@ -57,6 +57,26 @@ const RentalSpacePage = () => {
     };
 
     fetchData();
+    */
+
+    // 임시 데이터만 사용
+    const tempData = {
+      title1: '공간의 제목 1',
+      title2: '공간의 제목 2',
+      intro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
+      image: 'https://via.placeholder.com/600x300',
+      sections: {
+        intro: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
+        facility: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
+        caution: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
+        refund: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
+        qa: '궁금한 사항은 언제든지 문의 바랍니다.',
+        review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
+      },
+      mapImage: 'https://via.placeholder.com/600x300',
+    };
+    setSpaceData(tempData);
+    setLoading(false); // 데이터 로딩 완료
   }, [locationId]);
 
   // 백엔드 데이터가 없을 경우 로딩 처리

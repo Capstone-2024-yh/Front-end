@@ -24,6 +24,7 @@ function Layout() {
           </Typography>
           {!isAuthenticated && (
             <div>
+              <Link to="/space-registeration" style={{ margin: '0 10px', color: '#fff' }}>공간 등록</Link>
               <Link to="/login" style={{ margin: '0 10px', color: '#fff' }}>로그인</Link>
               <Link to="/register" style={{ margin: '0 10px', color: '#fff' }}>회원가입</Link>
             </div>

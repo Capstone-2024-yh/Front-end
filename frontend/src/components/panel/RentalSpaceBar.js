@@ -1,14 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // axios 활성화
+// import axios from 'axios'; // axios 활성화
 import { Box, Button, MenuItem, Select, Typography, CircularProgress } from '@mui/material';
 
 const RentalSpaceBar = () => {
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
-  const [error, setError] = useState(null); // 에러 상태 추가
+  // const [error, setError] = useState(null); // 에러 상태 추가
 
-  // 백엔드에서 데이터를 받아오기 위한 useEffect
+  // 임시 데이터를 설정하는 함수
+  const setTemporaryData = () => {
+    const tempData = {
+      title: '현대맨션 지층',
+      price: '₩18,000 / 시간',
+      image: 'https://via.placeholder.com/300x200',
+      description: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
+      type: '촬영스튜디오 / 렌탈스튜디오',
+      area: '20㎡',
+      reservationTime: '최소 1시간부터',
+      capacity: '최소 5명 - 최대 5명',
+      options: [
+        { available: true }
+      ],
+    };
+    setSpaceData(tempData);
+  };
+
   useEffect(() => {
+    /*
     const fetchData = async () => {
       try {
         // 백엔드에서 데이터를 불러옴
@@ -16,8 +34,7 @@ const RentalSpaceBar = () => {
         setSpaceData(response.data);
       } catch (error) {
         console.error('Error fetching rental space data:', error);
-        //setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');
-        setError();
+        setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');
 
         // 임시 데이터 (오류 발생 시 사용)
         const tempData = {
@@ -30,7 +47,8 @@ const RentalSpaceBar = () => {
           reservationTime: '최소 1시간부터',
           capacity: '최소 5명 - 최대 5명',
           options: [
-            { available: true }
+            { available: true, label: '조명 추가' },
+            { available: false, label: '촬영 장비 대여' }
           ],
         };
         setSpaceData(tempData);
@@ -40,6 +58,11 @@ const RentalSpaceBar = () => {
     };
 
     fetchData();
+    */
+
+    // 임시 데이터만 사용
+    setTemporaryData();
+    setLoading(false); // 로딩 상태 해제
   }, []);
 
   // 백엔드 데이터가 없을 경우 로딩 처리
@@ -52,6 +75,7 @@ const RentalSpaceBar = () => {
   }
 
   // 에러 메시지 표시
+  /*
   if (error) {
     return (
       <Box sx={{ textAlign: 'center', color: 'red', padding: '20px' }}>
@@ -59,6 +83,7 @@ const RentalSpaceBar = () => {
       </Box>
     );
   }
+  */
 
   return (
     <Box sx={{ width: '350px', margin: '0 auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px', marginBottom: '20px' }}>
@@ -70,51 +95,52 @@ const RentalSpaceBar = () => {
       {/* 2. 선택지와 가격대 */}
       <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          {spaceData.options.map((option, index) => (
+          {/* options가 존재하는지 확인 후 map 실행 */}
+          {spaceData?.options?.map((option, index) => (
             <label key={index}>
               <input type="checkbox" checked={option.available} readOnly />
               {option.label}
             </label>
           ))}
         </Box>
-        <Typography variant="h6" sx={{ marginLeft: '10px' }}>{spaceData.title}</Typography>
-        <Typography variant="h6" sx={{ marginLeft: 'auto' }}>{spaceData.price}</Typography>
+        <Typography variant="h6" sx={{ marginLeft: '10px' }}>{spaceData?.title}</Typography>
+        <Typography variant="h6" sx={{ marginLeft: 'auto' }}>{spaceData?.price}</Typography>
       </Box>
 
       {/* 3. 사진, 설명, 공간 정보 */}
       <Box sx={{ border: '1px solid #ddd', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
         {/* 사진 */}
         <Box sx={{ textAlign: 'center', marginBottom: '10px' }}>
-          <img src={spaceData.image} alt={spaceData.title} style={{ width: '100%' }} />
+          <img src={spaceData?.image} alt={spaceData?.title} style={{ width: '100%' }} />
         </Box>
 
         {/* 설명 */}
         <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-          {spaceData.description}
+          {spaceData?.description}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
-        
+
         {/* 공간 유형 */}
         <Typography variant="body2" sx={{ marginBottom: '5px', margin: '10px 0' }}>
-          공간유형: {spaceData.type}
+          공간유형: {spaceData?.type}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
-        
+
         {/* 공간면적 */}
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-          공간면적: {spaceData.area}
+          공간면적: {spaceData?.area}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
-        
+
         {/* 예약시간 */}
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-          예약시간: {spaceData.reservationTime}
+          예약시간: {spaceData?.reservationTime}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
-        
+
         {/* 수용인원 */}
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-          수용인원: {spaceData.capacity}
+          수용인원: {spaceData?.capacity}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 
