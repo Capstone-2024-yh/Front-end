@@ -26,10 +26,37 @@ const SpaceRegistration = () => {
     postalCode: '',
     roadAddress: '',
     detailAddress: '',
+    coordinates: null,
   });
 
   const [mainImageName, setMainImageName] = useState('');
   const [additionalImageNames, setAdditionalImageNames] = useState([]);
+
+  // Kakao API로 좌표 찾기
+  const getCoordinates = async (address) => {
+    try {
+      const response = await axios.get(
+        `https://dapi.kakao.com/v2/local/search/address.json?query=${address}`,
+        {
+          headers: {
+            Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`, // Kakao API JavaScript 키
+          },
+        }
+      );
+      if (response.data.documents.length > 0) {
+        const { x, y } = response.data.documents[0].road_address; // roadAddress 좌표만 사용
+        console.log(`Coordinates found: ${x}, ${y}`);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          coordinates: { x, y }, // 좌표를 상태에 저장
+        }));
+      } else {
+        console.error('Coordinates not found');
+      }
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+    }
+  };
 
   // 주소 검색을 실행하는 함수
   const handlePostcodeSearch = () => {
@@ -42,6 +69,8 @@ const SpaceRegistration = () => {
           postalCode: data.zonecode,
           roadAddress: roadAddr + extraRoadAddr,
         });
+        // 주소가 입력되면 좌표를 찾는다
+        getCoordinates(roadAddr);
       },
     }).open();
   };
