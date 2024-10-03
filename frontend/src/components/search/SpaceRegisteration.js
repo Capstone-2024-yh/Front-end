@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 
@@ -34,6 +35,8 @@ const SpaceRegistration = () => {
 
   const [mainImageName, setMainImageName] = useState('');
   const [additionalImageNames, setAdditionalImageNames] = useState([]);
+
+  const navigate = useNavigate();
 
   // Kakao API로 좌표 찾기
   const getCoordinates = async (address) => {
@@ -261,7 +264,7 @@ const SpaceRegistration = () => {
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
           <TextField
-            label="공간 대여 가격을 입력해주세요"
+            label="시간 당 공간 대여 가격을 입력해주세요"
             fullWidth
             required
             name="spaceFee"
@@ -512,7 +515,7 @@ const SpaceRegistration = () => {
 
         {/* 13. 이전, 저장 버튼 */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
-          <Button variant="outlined" fullWidth sx={{ marginRight: 2 }}>
+          <Button variant="outlined" onClick={() => navigate(-1)} fullWidth sx={{ marginRight: 2 }}>
             이전
           </Button>
           <Button variant="contained" type="submit" fullWidth>

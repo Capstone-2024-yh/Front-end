@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Grid, CircularProgress } from '@mui/material';
+import { Box, Select, MenuItem, Button, Grid, CircularProgress } from '@mui/material';
 // import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const LocationList = () => {
   const [locationData, setLocationData] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+  const [sortKey, setSortKey] = useState('default');
   const [loading, setLoading] = useState(true); 
   // const [error, setError] = useState(null); 
   const navigate = useNavigate();
@@ -32,6 +34,8 @@ const LocationList = () => {
           name: `임시 장소 ${index + 1}`,
           image: 'https://via.placeholder.com/150',  
           description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+          price: Math.floor(Math.random() * 100000), // 임의의 가격
+          reviews: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
         }));
         setLocationData(tempData);
       } finally {
@@ -48,10 +52,40 @@ const LocationList = () => {
       name: `임시 장소 ${index + 1}`,
       image: 'https://via.placeholder.com/150',
       description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+      price: Math.floor(Math.random() * 100000), // 임의의 가격
+      reviews: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
     }));
     setLocationData(tempData);
+    setSortedData(tempData);
     setLoading(false);
   }, []);
+
+  // 정렬 함수
+  const sortData = (data, key) => {
+    let sortedArray = [...data];
+    switch (key) {
+      case 'price-high':
+        sortedArray.sort((a, b) => b.price - a.price); // 가격 높은 순
+        break;
+      case 'price-low':
+        sortedArray.sort((a, b) => a.price - b.price); // 가격 낮은 순
+        break;
+      case 'reviews':
+        sortedArray.sort((a, b) => b.reviews - a.reviews); // 이용후기 많은 순
+        break;
+      default:
+        break;
+    }
+    return sortedArray;
+  };
+
+  // 콤보박스에서 선택 변경 시 처리
+  const handleSortChange = (event) => {
+    const newSortKey = event.target.value;
+    setSortKey(newSortKey);
+    const sorted = sortData(locationData, newSortKey);
+    setSortedData(sorted);
+  };
 
   const handleClick = (location) => {
     navigate(`/rental-space/${location.id}`);
@@ -96,16 +130,24 @@ const LocationList = () => {
           <span>💡 할인 중</span>
         </Box>
 
-        <Button
-          variant="contained"
-          color="primary"
+        {/* 필터 설정 콤보박스 */}
+        <Select
+          value={sortKey}
+          onChange={handleSortChange}
           sx={{
-            width: '100px',
+            width: '200px',
             height: '40px',
+            fontSize: '14px',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          필터 설정
-        </Button>
+          <MenuItem value="default">정렬 기준 선택</MenuItem>
+          <MenuItem value="price-high">가격 높은 순</MenuItem>
+          <MenuItem value="price-low">가격 낮은 순</MenuItem>
+          <MenuItem value="reviews">이용후기 많은 순</MenuItem>
+        </Select>
       </Box>
 
       {/*
@@ -130,7 +172,7 @@ const LocationList = () => {
         }}
       >
         <Grid container spacing={2}>
-          {locationData.map((location, index) => (
+          {sortedData.map((location, index) => (
             <Grid item xs={12} sm={4} key={index}>
               <Button
                 onClick={() => handleClick(location)}
