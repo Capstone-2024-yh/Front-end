@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Box } from '@mui/material';
+import { Box, Select, MenuItem, Button } from '@mui/material'; // Button 추가
 import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 사용
 // import axios from 'axios';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
 const InfoPanel = () => {
   const [locationData, setLocationData] = useState([]);
+  const [sortedData, setSortedData] = useState([]);
+  const [sortKey, setSortKey] = useState('default');
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이트 함수
 
   // 임시 데이터 설정 함수
@@ -14,8 +16,11 @@ const InfoPanel = () => {
       name: `임시 장소 ${index + 1}`,
       image: 'https://via.placeholder.com/50',
       description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+      price: Math.floor(Math.random() * 100000), // 임의의 가격
+      reviews: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
     }));
     setLocationData(tempData);
+    setSortedData(tempData); // 처음엔 정렬 없이 표시
   };
 
   useEffect(() => {
@@ -45,6 +50,33 @@ const InfoPanel = () => {
     setTemporaryData();
   }, []);
 
+  // 정렬 함수
+  const sortData = (data, key) => {
+    let sortedArray = [...data];
+    switch (key) {
+      case 'price-high':
+        sortedArray.sort((a, b) => b.price - a.price); // 가격 높은 순
+        break;
+      case 'price-low':
+        sortedArray.sort((a, b) => a.price - b.price); // 가격 낮은 순
+        break;
+      case 'reviews':
+        sortedArray.sort((a, b) => b.reviews - a.reviews); // 이용후기 많은 순
+        break;
+      default:
+        break;
+    }
+    return sortedArray;
+  };
+
+  // 콤보박스에서 선택 변경 시 처리
+  const handleSortChange = (event) => {
+    const newSortKey = event.target.value;
+    setSortKey(newSortKey);
+    const sorted = sortData(locationData, newSortKey);
+    setSortedData(sorted);
+  };
+
   // 버튼 클릭 시 해당 위치로 이동하는 함수
   const handleLocationClick = (location) => {
     if (!location || typeof location.id === 'undefined') {
@@ -69,28 +101,37 @@ const InfoPanel = () => {
         flexDirection: 'column', // 필터 버튼과 리스트를 위아래로 배치
       }}
     >
-      {/* 필터 설정 버튼 - 스크롤 영향을 받지 않음 */}
+      {/* 정렬 콤보박스 - 스크롤 영향을 받지 않음 */}
       <Box
         sx={{
           position: 'sticky', // 스크롤과 무관하게 고정
           top: 0,
-          zIndex: 1, // 버튼을 다른 요소보다 위에 위치하게 함
-          backgroundColor: '#f9f9f9', // 버튼의 배경색
+          zIndex: 1,
+          backgroundColor: '#f9f9f9',
           paddingBottom: '10px',
-          textAlign: 'right',
+          textAlign: 'right', // 콤보박스를 우측 정렬
+          display: 'flex', 
+          justifyContent: 'flex-end', // 박스 자체를 우측으로 이동
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
+        <Select
+          value={sortKey}
+          onChange={handleSortChange}
           sx={{
-            width: '100px',
+            width: '165px',
             height: '40px',
             marginBottom: '10px',
+            fontSize: '14px',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
           }}
         >
-          필터 설정
-        </Button>
+          <MenuItem value="default">정렬 기준 선택</MenuItem>
+          <MenuItem value="price-high">가격 높은 순</MenuItem>
+          <MenuItem value="price-low">가격 낮은 순</MenuItem>
+          <MenuItem value="reviews">이용후기 많은 순</MenuItem>
+        </Select>
       </Box>
 
       {/* 정보 버튼들 - 스크롤 가능한 영역 */}
@@ -100,7 +141,7 @@ const InfoPanel = () => {
           flexGrow: 1, // 남은 공간을 모두 차지하게 함
         }}
       >
-        {locationData.map((location, index) => (
+        {sortedData.map((location, index) => (
           <Button
             key={index}
             variant="outlined"

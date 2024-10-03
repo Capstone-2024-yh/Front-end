@@ -16,6 +16,9 @@ const SpaceRegistration = () => {
     spaceType: '',
     spaceIntro: '',
     spaceDescription: '',
+    spaceFee: '',
+    spaceArea: '',
+    spaceCapacity: '',
     spaceTags: '',
     facilities: '',
     precautions: '',
@@ -249,6 +252,72 @@ const SpaceRegistration = () => {
           multiline
           rows={4}
         />
+
+        <Box sx={{ marginTop: 2 }}></Box>
+
+        {/* 대여 가격 입력 */}
+        <Typography variant="h6" gutterBottom>
+          대여 가격
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+          <TextField
+            label="공간 대여 가격을 입력해주세요"
+            fullWidth
+            required
+            name="spaceFee"
+            type="number"
+            value={formData.spaceFee}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            ₩
+          </Typography>
+        </Box>
+
+        <Box sx={{ marginTop: 2 }}></Box>
+
+        {/* 공간 면적 입력 */}
+        <Typography variant="h6" gutterBottom>
+          공간 면적
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+          <TextField
+            label="공간의 면적을 입력해주세요"
+            fullWidth
+            required
+            name="spaceArea"
+            type="number"
+            value={formData.spaceArea}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            ㎡
+          </Typography>
+        </Box>
+
+        <Box sx={{ marginTop: 2 }}></Box>
+
+        {/* 수용 인원 입력 */}
+        <Typography variant="h6" gutterBottom>
+          수용 인원
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+          <TextField
+            label="권장하는 수용 인원을 입력해주세요."
+            fullWidth
+            required
+            name="spaceCapacity"
+            type="number"
+            value={formData.spaceCapacity}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Typography variant="body1" sx={{ marginLeft: 1 }}>
+            명
+          </Typography>
+        </Box>
 
         <Box sx={{ marginTop: 2 }}></Box>
 
