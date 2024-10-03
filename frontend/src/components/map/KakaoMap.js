@@ -73,7 +73,7 @@ const KakaoMap = () => {
   }, [kakaoMapKey, coordinates, errorOccurred]); // coordinates와 errorOccurred가 변경될 때만 지도 업데이트
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-start', height: '80vh', width: '100%', margin: 0, padding: 0 }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-start', height: '70vh', width: '100%', margin: 0, padding: 0 }}>
       {/* 지도 영역 */}
       <div ref={mapContainer} style={{ width: '600px', height: '500px', backgroundColor: '#f0f0f0' }} />
 
