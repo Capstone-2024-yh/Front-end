@@ -11,10 +11,10 @@ const RentalSpacePage = () => {
   const [loading, setLoading] = useState(true);  // 로딩 상태 추가
 
   // 각 단락을 참조할 수 있도록 ref 생성
-  const introRef = useRef(null);
-  const facilityRef = useRef(null);
-  const cautionRef = useRef(null);
-  const refundRef = useRef(null);
+  const spaceDescriptionRef = useRef(null);
+  const facilitiesRef = useRef(null);
+  const precautionsRef = useRef(null);
+  const refundPolicyRef = useRef(null);
   const qaRef = useRef(null);
   const reviewRef = useRef(null);
 
@@ -36,16 +36,15 @@ const RentalSpacePage = () => {
         console.error('Error fetching rental space data:', error);
         // 백엔드 데이터를 가져오지 못하면 임시 데이터를 사용
         const tempData = {
-          title1: '공간의 제목 1',
-          title2: '공간의 제목 2',
-          intro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
-          image: 'https://via.placeholder.com/600x300',
+          spaceName: '공간의 제목 1',
+          spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
+          mainImageBase64: 'https://via.placeholder.com/600x300',
           coordinates: { lat: 33.450701, lng: 126.570667 },
           sections: {
-            intro: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
-            facility: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
-            caution: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
-            refund: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
+            spaceDescription: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
+            facilities: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
+            precautions: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
+            refundPolicy: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
             qa: '궁금한 사항은 언제든지 문의 바랍니다.',
             review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
           },
@@ -62,16 +61,15 @@ const RentalSpacePage = () => {
 
     // 임시 데이터만 사용
     const tempData = {
-      title1: '공간의 제목 1',
-      title2: '공간의 제목 2',
-      intro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
-      image: 'https://via.placeholder.com/600x300',
+      spaceName: '공간의 제목 1',
+      spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
+      mainImageBase64: 'https://via.placeholder.com/600x300',
       coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
       sections: {
-        intro: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
-        facility: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
-        caution: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
-        refund: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
+        spaceDescription: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
+        facilities: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
+        precautions: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
+        refundPolicy: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
         qa: '궁금한 사항은 언제든지 문의 바랍니다.',
         review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
       },
@@ -100,22 +98,22 @@ const RentalSpacePage = () => {
       <Box sx={{ flex: 1, paddingRight: '20px' }}>
         {/* 1. 공간의 제목 1 */}
         <Typography variant="h4" sx={{ marginBottom: '10px' }}>
-          {spaceData?.title1 || '제목이 없습니다.'}
+          {spaceData?.spaceName || '제목이 없습니다.'}
         </Typography>
 
         {/* 2. 간략한 소개 문장 */}
         <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-          {spaceData?.intro || '소개 문구가 없습니다.'}
+          {spaceData?.spaceIntro || '소개 문구가 없습니다.'}
         </Typography>
 
         {/* 3. 이미지 */}
         <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img src={spaceData?.image} alt="공간 이미지" style={{ width: '100%' }} />
+          <img src={spaceData?.mainImageBase64} alt="공간 이미지" style={{ width: '100%' }} />
         </Box>
 
         {/* 4. 공간의 제목 2 */}
         <Typography variant="h5" sx={{ marginBottom: '10px' }}>
-          {spaceData?.title2 || '제목이 없습니다.'}
+          {spaceData?.spaceIntro || '제목이 없습니다.'}
         </Typography>
 
         {/* 5. 목차 - Sticky로 상단에 고정 */}
@@ -137,28 +135,28 @@ const RentalSpacePage = () => {
           <List sx={{ display: 'flex', width: '100%' }}>
             <ListItem
               button
-              onClick={() => scrollToSection(introRef)}
+              onClick={() => scrollToSection(spaceDescriptionRef)}
               sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="공간소개" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
-              onClick={() => scrollToSection(facilityRef)}
+              onClick={() => scrollToSection(facilitiesRef)}
               sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="시설안내" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
-              onClick={() => scrollToSection(cautionRef)}
+              onClick={() => scrollToSection(precautionsRef)}
               sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="유의사항" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
-              onClick={() => scrollToSection(refundRef)}
+              onClick={() => scrollToSection(refundPolicyRef)}
               sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
             >
               <ListItemText primary="환불정책" primaryTypographyProps={{ fontSize: '14px' }} />
@@ -183,35 +181,35 @@ const RentalSpacePage = () => {
         {/* 6. 각 단락 */}
         <Box>
           {/* 공간소개 */}
-          <Typography ref={introRef} variant="h6" sx={{ marginBottom: '10px' }}>
+          <Typography ref={spaceDescriptionRef} variant="h6" sx={{ marginBottom: '10px' }}>
             공간소개
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData?.sections?.intro || '공간소개 정보가 없습니다.'}
+            {spaceData?.sections?.spaceDescription || '공간소개 정보가 없습니다.'}
           </Typography>
 
           {/* 시설안내 */}
-          <Typography ref={facilityRef} variant="h6" sx={{ marginBottom: '10px' }}>
+          <Typography ref={facilitiesRef} variant="h6" sx={{ marginBottom: '10px' }}>
             시설안내
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData?.sections?.facility || '시설안내 정보가 없습니다.'}
+            {spaceData?.sections?.facilities || '시설안내 정보가 없습니다.'}
           </Typography>
 
           {/* 유의사항 */}
-          <Typography ref={cautionRef} variant="h6" sx={{ marginBottom: '10px' }}>
+          <Typography ref={precautionsRef} variant="h6" sx={{ marginBottom: '10px' }}>
             유의사항
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData?.sections?.caution || '유의사항 정보가 없습니다.'}
+            {spaceData?.sections?.precautions || '유의사항 정보가 없습니다.'}
           </Typography>
 
           {/* 환불정책 */}
-          <Typography ref={refundRef} variant="h6" sx={{ marginBottom: '10px' }}>
+          <Typography ref={refundPolicyRef} variant="h6" sx={{ marginBottom: '10px' }}>
             환불정책
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            {spaceData?.sections?.refund || '환불정책 정보가 없습니다.'}
+            {spaceData?.sections?.refundPolicy || '환불정책 정보가 없습니다.'}
           </Typography>
 
           {/* 지도는 목차에 포함되지 않음 */}

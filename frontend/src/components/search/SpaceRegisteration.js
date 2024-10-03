@@ -24,6 +24,7 @@ const SpaceRegistration = () => {
     spaceTags: '',
     facilities: '',
     precautions: '',
+    refundPolicy: '',
     website: '',
     pageUrl: '',
     mainImageBase64: null,  // 대표 이미지 파일
@@ -417,7 +418,25 @@ const SpaceRegistration = () => {
           예약 시 주의사항
         </Typography>
         <TextField
-          label="예약 시 주의사항"
+          label="예약 시 주의사항을 입력해주세요."
+          fullWidth
+          required
+          name="precautions"
+          value={formData.precautions}
+          onChange={handleChange}
+          margin="normal"
+          multiline
+          rows={3}
+        />
+
+        <Box sx={{ marginTop: 2 }}></Box>
+        
+        {/* 환불 정책 */}
+        <Typography variant="h6" gutterBottom>
+          환불 정책
+        </Typography>
+        <TextField
+          label="환불 정책을 입력해주세요."
           fullWidth
           required
           name="precautions"

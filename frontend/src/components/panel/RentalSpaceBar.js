@@ -10,14 +10,14 @@ const RentalSpaceBar = () => {
   // 임시 데이터를 설정하는 함수
   const setTemporaryData = () => {
     const tempData = {
-      title: '현대맨션 지층',
-      price: '₩18,000 / 시간',
-      image: 'https://via.placeholder.com/300x200',
-      description: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
-      type: '촬영스튜디오 / 렌탈스튜디오',
-      area: '20㎡',
+      spaceName: '현대맨션 지층',
+      spaceFee: '18000',
+      mainImageBase64: 'https://via.placeholder.com/300x200',
+      spaceDescription: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
+      spaceType: '촬영스튜디오 / 렌탈스튜디오',
+      spaceArea: '20',
       reservationTime: '최소 1시간부터',
-      capacity: '최소 5명 - 최대 5명',
+      spaceCapacity: '15',
       options: [
         { available: true }
       ],
@@ -38,14 +38,14 @@ const RentalSpaceBar = () => {
 
         // 임시 데이터 (오류 발생 시 사용)
         const tempData = {
-          title: '현대맨션 지층',
-          price: '₩18,000 / 시간',
-          image: 'https://via.placeholder.com/300x200',
-          description: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
-          type: '촬영스튜디오 / 렌탈스튜디오',
-          area: '20㎡',
+          spaceName: '현대맨션 지층',
+          spaceFee: '₩18,000 / 시간',
+          mainImageBase64: 'https://via.placeholder.com/300x200',
+          spaceDescription: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
+          spaceType: '촬영스튜디오 / 렌탈스튜디오',
+          spaceArea: '20㎡',
           reservationTime: '최소 1시간부터',
-          capacity: '최소 5명 - 최대 5명',
+          spaceCapacity: '최소 5명 - 최대 5명',
           options: [
             { available: true, label: '조명 추가' },
             { available: false, label: '촬영 장비 대여' }
@@ -103,32 +103,34 @@ const RentalSpaceBar = () => {
             </label>
           ))}
         </Box>
-        <Typography variant="h6" sx={{ marginLeft: '10px' }}>{spaceData?.title}</Typography>
-        <Typography variant="h6" sx={{ marginLeft: 'auto' }}>{spaceData?.price}</Typography>
+        <Typography variant="h6" sx={{ marginLeft: '10px' }}>{spaceData?.spaceName}</Typography>
+        <Typography variant="h6" sx={{ marginLeft: 'auto' }}>
+          ₩ {spaceData?.spaceFee} / 시간
+        </Typography>
       </Box>
 
       {/* 3. 사진, 설명, 공간 정보 */}
       <Box sx={{ border: '1px solid #ddd', padding: '20px', borderRadius: '10px', marginBottom: '20px' }}>
         {/* 사진 */}
         <Box sx={{ textAlign: 'center', marginBottom: '10px' }}>
-          <img src={spaceData?.image} alt={spaceData?.title} style={{ width: '100%' }} />
+          <img src={spaceData?.mainImageBase64} alt={spaceData?.spaceName} style={{ width: '100%' }} />
         </Box>
 
         {/* 설명 */}
         <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-          {spaceData?.description}
+          {spaceData?.spaceDescription}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 
         {/* 공간 유형 */}
         <Typography variant="body2" sx={{ marginBottom: '5px', margin: '10px 0' }}>
-          공간유형: {spaceData?.type}
+          공간유형: {spaceData?.spaceType}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 
         {/* 공간면적 */}
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-          공간면적: {spaceData?.area}
+          공간면적: {spaceData?.spaceArea} ㎡
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 
@@ -140,7 +142,7 @@ const RentalSpaceBar = () => {
 
         {/* 수용인원 */}
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-          수용인원: {spaceData?.capacity}
+          수용인원: {spaceData?.spaceCapacity} 명
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 

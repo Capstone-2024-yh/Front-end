@@ -31,11 +31,11 @@ const LocationList = () => {
         // 오류 발생 시 임시 데이터 사용
         const tempData = Array.from({ length: 12 }, (_, index) => ({
           id: index,
-          name: `임시 장소 ${index + 1}`,
-          image: 'https://via.placeholder.com/150',  
-          description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-          price: Math.floor(Math.random() * 100000), // 임의의 가격
-          reviews: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
+          spaceName: `임시 장소 ${index + 1}`,
+          mainImageBase64: 'https://via.placeholder.com/150',  
+          spaceIntro: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+          spaceFee: Math.floor(Math.random() * 100000), // 임의의 가격
+          reviewCount: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
         }));
         setLocationData(tempData);
       } finally {
@@ -49,11 +49,11 @@ const LocationList = () => {
     // 임시 데이터만 사용
     const tempData = Array.from({ length: 12 }, (_, index) => ({
       id: index,
-      name: `임시 장소 ${index + 1}`,
-      image: 'https://via.placeholder.com/150',
-      description: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
-      price: Math.floor(Math.random() * 100000), // 임의의 가격
-      reviews: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
+      spaceName: `임시 장소 ${index + 1}`,
+      mainImageBase64: 'https://via.placeholder.com/300x150',
+      spaceIntro: `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+      spaceFee: Math.floor(Math.random() * 100000), // 임의의 가격
+      reviewCount: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
     }));
     setLocationData(tempData);
     setSortedData(tempData);
@@ -64,14 +64,14 @@ const LocationList = () => {
   const sortData = (data, key) => {
     let sortedArray = [...data];
     switch (key) {
-      case 'price-high':
-        sortedArray.sort((a, b) => b.price - a.price); // 가격 높은 순
+      case 'spaceFee-high':
+        sortedArray.sort((a, b) => b.spaceFee - a.spaceFee); // 가격 높은 순
         break;
-      case 'price-low':
-        sortedArray.sort((a, b) => a.price - b.price); // 가격 낮은 순
+      case 'spaceFee-low':
+        sortedArray.sort((a, b) => a.spaceFee - b.spaceFee); // 가격 낮은 순
         break;
-      case 'reviews':
-        sortedArray.sort((a, b) => b.reviews - a.reviews); // 이용후기 많은 순
+      case 'reviewCount':
+        sortedArray.sort((a, b) => b.reviewCount - a.reviewCount); // 이용후기 많은 순
         break;
       default:
         break;
@@ -144,9 +144,9 @@ const LocationList = () => {
           }}
         >
           <MenuItem value="default">정렬 기준 선택</MenuItem>
-          <MenuItem value="price-high">가격 높은 순</MenuItem>
-          <MenuItem value="price-low">가격 낮은 순</MenuItem>
-          <MenuItem value="reviews">이용후기 많은 순</MenuItem>
+          <MenuItem value="spaceFee-high">가격 높은 순</MenuItem>
+          <MenuItem value="spaceFee-low">가격 낮은 순</MenuItem>
+          <MenuItem value="reviewCount">이용후기 많은 순</MenuItem>
         </Select>
       </Box>
 
@@ -189,8 +189,8 @@ const LocationList = () => {
                 }}
               >
                 <img
-                  src={location.image}
-                  alt={location.name}
+                  src={location.mainImageBase64}
+                  alt={location.spaceName}
                   style={{
                     width: '100%',
                     height: '150px',
@@ -206,7 +206,7 @@ const LocationList = () => {
                     textAlign: 'left',
                   }}
                 >
-                  {location.name}
+                  {location.spaceName}
                 </Box>
                 <hr
                   style={{
@@ -222,7 +222,7 @@ const LocationList = () => {
                     width: '100%',
                   }}
                 >
-                  {location.description}
+                  {location.spaceIntro}
                 </Box>
               </Button>
             </Grid>
