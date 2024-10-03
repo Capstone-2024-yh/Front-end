@@ -40,6 +40,7 @@ const RentalSpacePage = () => {
           title2: '공간의 제목 2',
           intro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
           image: 'https://via.placeholder.com/600x300',
+          coordinates: { lat: 33.450701, lng: 126.570667 },
           sections: {
             intro: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
             facility: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
@@ -65,6 +66,7 @@ const RentalSpacePage = () => {
       title2: '공간의 제목 2',
       intro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
       image: 'https://via.placeholder.com/600x300',
+      coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
       sections: {
         intro: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
         facility: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
@@ -217,7 +219,12 @@ const RentalSpacePage = () => {
             지도
           </Typography>
           <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
-            <KakaoMapOnly />
+            {spaceData?.coordinates ? (
+              console.log(spaceData.coordinates),
+              <KakaoMapOnly coordinates={spaceData.coordinates} />
+            ) : (
+              <div>지도를 표시할 수 없습니다.</div>
+            )}
           </Box>
 
           {/* Q&A */}

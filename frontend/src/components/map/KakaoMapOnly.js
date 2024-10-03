@@ -1,27 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+// KakaoMapOnly.js
 
-const KakaoMapOnly = () => {
+import React, { useEffect, useRef } from 'react';
+
+const KakaoMapOnly = ({ coordinates }) => {
   const mapContainer = useRef(null);
   const kakaoMapKey = process.env.REACT_APP_KAKAO_MAP_KEY;
-  const [coordinates, setCoordinates] = useState({ lat: 33.450701, lng: 126.570667 }); // 기본 좌표 설정
-
-  // 백엔드에서 좌표를 받아오는 함수 (현재는 임시로 기본 좌표를 사용)
-  const fetchCoordinates = async () => {
-    try {
-      // 백엔드가 없으므로 임시 좌표 설정
-      // 실제로는 이 부분에서 axios를 이용해 백엔드로부터 데이터를 받아오면 됩니다.
-      const response = await axios.get('/api/space-coordinates'); // 백엔드 API 요청
-      if (response.data && response.data.coordinates) {
-        const { lat, lng } = response.data.coordinates;
-        setCoordinates({ lat, lng });
-      } else {
-        console.warn('No coordinates received from backend, using default coordinates.');
-      }
-    } catch (error) {
-      console.error('Error fetching coordinates, using default coordinates:', error);
-    }
-  };
 
   useEffect(() => {
     if (!kakaoMapKey) {
@@ -29,8 +12,10 @@ const KakaoMapOnly = () => {
       return;
     }
 
-    // 좌표를 받아온 후에 지도 로드
-    fetchCoordinates();
+    if (!coordinates) {
+      console.error('Coordinates are missing.');
+      return;
+    }
 
     const script = document.createElement('script');
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&autoload=false`;
