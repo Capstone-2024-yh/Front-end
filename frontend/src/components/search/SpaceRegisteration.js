@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
+import Compressor from 'compressorjs';
 
 // Daum Postcode API를 사용하기 위한 스크립트 로드
 const loadDaumPostcodeScript = () => {
@@ -85,11 +86,20 @@ const SpaceRegistration = () => {
   const handleMainImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        mainImageFile: file,
+      new Compressor(file, {
+        quality: 0.6,
+        success(result) {
+          setFormData({
+            ...formData,
+            mainImageFile: result,
+          });
+          console.log("Compressed file:", result.name);
+          setMainImageName(result.name);  // 대표 이미지 파일 이름을 별도로 관리
+        },
+        error(err) {
+          console.log(err.message);
+        },
       });
-      setMainImageName(file.name);  // 대표 이미지 파일 이름을 별도로 관리
     }
   };
 
@@ -97,12 +107,30 @@ const SpaceRegistration = () => {
   const handleImageChange = (event) => {
     const files = event.target.files;
     if (files.length + formData.additionalImages.length <= 10) {
-      const newFiles = [...formData.additionalImages, ...files]; // 기존 이미지에 추가
-      setFormData({
-        ...formData,
-        additionalImages: newFiles, // 여러 파일을 배열로 추가
+      const compressedFilesPromises = Array.from(files).map((file) =>
+        new Promise((resolve, reject) => {
+          new Compressor(file, {
+            quality: 0.6,
+            success(result) {
+              console.log("Compressed file:", result.name);
+              resolve(result);
+            },
+            error(err) {
+              reject(err);
+            },
+          });
+        })
+      );
+
+      Promise.all(compressedFilesPromises).then((compressedFiles) => {
+        setFormData({
+          ...formData,
+          additionalImages: [...formData.additionalImages, ...compressedFiles], // 압축된 파일 추가
+        });
+        setAdditionalImageNames([...additionalImageNames, ...compressedFiles.map(file => file.name)]);
+      }).catch((err) => {
+        console.error('Image compression error:', err);
       });
-      setAdditionalImageNames([...additionalImageNames, ...Array.from(files).map(file => file.name)]);
     } else {
       alert('이미지는 최대 10장까지 업로드할 수 있습니다.');
     }
