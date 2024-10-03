@@ -26,8 +26,8 @@ const SpaceRegistration = () => {
     precautions: '',
     website: '',
     pageUrl: '',
-    mainImageFile: null,  // 대표 이미지 파일
-    additionalImages: [],  // 이미지 리스트
+    mainImageBase64: null,  // 대표 이미지 파일
+    additionalImagesBase64: [],  // 이미지 리스트
     postalCode: '',
     roadAddress: '',
     detailAddress: '',
@@ -82,6 +82,16 @@ const SpaceRegistration = () => {
     }).open();
   };
 
+  // File을 Base64로 변환하는 함수
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   // 대표 이미지 변경
   const handleMainImageChange = (event) => {
     const file = event.target.files[0];
@@ -89,12 +99,15 @@ const SpaceRegistration = () => {
       new Compressor(file, {
         quality: 0.6,
         success(result) {
-          setFormData({
-            ...formData,
-            mainImageFile: result,
+          convertToBase64(result).then((base64) => {
+            console.log(base64);
+            setFormData({
+              ...formData,
+              mainImageBase64: base64,  // 압축 후 Base64로 변환
+            });
+            console.log("Compressed file:", result.name);
+            setMainImageName(result.name);  // 대표 이미지 파일 이름 저장
           });
-          console.log("Compressed file:", result.name);
-          setMainImageName(result.name);  // 대표 이미지 파일 이름을 별도로 관리
         },
         error(err) {
           console.log(err.message);
@@ -106,14 +119,17 @@ const SpaceRegistration = () => {
   // 추가 이미지 변경
   const handleImageChange = (event) => {
     const files = event.target.files;
-    if (files.length + formData.additionalImages.length <= 10) {
+    if (files.length + formData.additionalImagesBase64.length <= 10) {
       const compressedFilesPromises = Array.from(files).map((file) =>
         new Promise((resolve, reject) => {
           new Compressor(file, {
             quality: 0.6,
             success(result) {
+              convertToBase64(result).then((base64) => {
+                console.log(base64);
+                resolve(base64);
+              });
               console.log("Compressed file:", result.name);
-              resolve(result);
             },
             error(err) {
               reject(err);
@@ -122,12 +138,12 @@ const SpaceRegistration = () => {
         })
       );
 
-      Promise.all(compressedFilesPromises).then((compressedFiles) => {
+      Promise.all(compressedFilesPromises).then((base64Images) => {
         setFormData({
           ...formData,
-          additionalImages: [...formData.additionalImages, ...compressedFiles], // 압축된 파일 추가
+          additionalImagesBase64: [...formData.additionalImagesBase64, ...base64Images],  // Base64로 변환된 이미지 추가
         });
-        setAdditionalImageNames([...additionalImageNames, ...compressedFiles.map(file => file.name)]);
+        setAdditionalImageNames([...additionalImageNames, ...Array.from(files).map(file => file.name)]);
       }).catch((err) => {
         console.error('Image compression error:', err);
       });
@@ -150,20 +166,11 @@ const SpaceRegistration = () => {
     try {
       // FormData를 사용해 파일 데이터도 함께 전송
       const data = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (key === 'additionalImages') {
-          formData.additionalImages.forEach((file, index) => {
-            data.append(`additionalImages[${index}]`, file);
-          });
-        } else {
-          data.append(key, formData[key]);
-        }
+      data.append('spaceName', formData.spaceName);
+      data.append('mainImageBase64', formData.mainImageBase64);  // 대표 이미지 Base64
+      formData.additionalImagesBase64.forEach((base64Image, index) => {
+        data.append(`additionalImagesBase64[${index}]`, base64Image);  // 추가 이미지 Base64 리스트
       });
-
-      // 대표 이미지 추가
-      if (formData.mainImageFile) {
-        data.append('mainImageFile', formData.mainImageFile);
-      }
 
       // 백엔드로 데이터 전송
       const response = await axios.post('/api/register-space', data, {
