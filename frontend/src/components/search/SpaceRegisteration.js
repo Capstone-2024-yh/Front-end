@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import axios from 'axios';
 import Compressor from 'compressorjs';
+import EquipmentChecklist from '../panel/EquipmentCheckList';
 
 // Daum Postcode API를 사용하기 위한 스크립트 로드
 const loadDaumPostcodeScript = () => {
@@ -14,29 +15,30 @@ const loadDaumPostcodeScript = () => {
 
 const SpaceRegistration = () => {
   const [formData, setFormData] = useState({
-    spaceName: '',
-    spaceType: '',
-    spaceIntro: '',
-    spaceDescription: '',
-    spaceFee: '',
-    spaceArea: '',
-    spaceCapacity: '',
-    spaceTags: '',
-    facilities: '',
-    precautions: '',
-    refundPolicy: '',
-    website: '',
-    pageUrl: '',
-    mainImageBase64: null,  // 대표 이미지 파일
-    additionalImagesBase64: [],  // 이미지 리스트
-    postalCode: '',
-    roadAddress: '',
-    detailAddress: '',
-    coordinates: null,
+    spaceName: '',              // 공간 제목
+    spaceType: '',              // 공간 유형
+    spaceIntro: '',             // 공간 소개
+    spaceDescription: '',       // 공간 설명
+    spaceFee: '',               // 대여 가격
+    spaceArea: '',              // 공간 면적
+    spaceCapacity: '',          // 수용 인원
+    spaceTags: [],              // 공간 태그
+    facilities: '',             // 시설 안내
+    precautions: '',            // 예약 시 주의사항
+    refundPolicy: '',           // 환불 정책
+    website: '',                // 웹사이트 URL
+    mainImageBase64: null,      // 대표 이미지 파일
+    additionalImagesBase64: [], // 이미지 리스트
+    postalCode: '',             // 우편번호
+    roadAddress: '',            // 도로명 주소
+    detailAddress: '',          // 상세 주소
+    coordinates: null,          // 좌표
   });
 
+  const [inputTag, setInputTag] = useState('');
   const [mainImageName, setMainImageName] = useState('');
   const [additionalImageNames, setAdditionalImageNames] = useState([]);
+  const [selectedEquipment, setSelectedEquipment] = useState([]); // 기자재 선택 상태
 
   const navigate = useNavigate();
 
@@ -64,6 +66,31 @@ const SpaceRegistration = () => {
     } catch (error) {
       console.error('Error fetching coordinates:', error);
     }
+  };
+
+  // 태그 입력 처리 함수
+  const handleTagInput = (e) => {
+    const { value } = e.target;
+    // 스페이스바가 입력되면 새로운 태그를 추가
+    if (e.key === ' ') {
+      e.preventDefault();
+      if (inputTag.trim() !== '') {
+        setFormData((prev) => ({
+          ...prev,
+          spaceTags: [...prev.spaceTags, `#${inputTag.trim()}`], // 태그 앞에 #을 붙여 추가
+        }));
+        setInputTag(''); // 입력 필드 초기화
+      }
+    } else {
+      setInputTag(value);
+    }
+  };
+
+  const handleTagDelete = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      spaceTags: prev.spaceTags.filter((_, i) => i !== index),
+    }));
   };
 
   // 주소 검색을 실행하는 함수
@@ -172,6 +199,7 @@ const SpaceRegistration = () => {
       formData.additionalImagesBase64.forEach((base64Image, index) => {
         data.append(`additionalImagesBase64[${index}]`, base64Image);  // 추가 이미지 Base64 리스트
       });
+      data.append('selectedEquipment', JSON.stringify(selectedEquipment));
 
       // 백엔드로 데이터 전송
       const response = await axios.post('/api/register-space', data, {
@@ -222,7 +250,7 @@ const SpaceRegistration = () => {
           공간 유형
         </Typography>
         <FormControl fullWidth margin="normal">
-          <InputLabel>공간 유형</InputLabel>
+          <InputLabel>공간 유형을 선택해주세요.</InputLabel>
           <Select
             label="공간 유형"
             required
@@ -361,36 +389,35 @@ const SpaceRegistration = () => {
         <Box sx={{ marginTop: 2 }}></Box>
 
         {/* 5. 공간 태그 */}
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom sx={{ marginBottom: '0px' }}>
           공간 태그
         </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+          {formData.spaceTags.map((tag, index) => (
+            <Box key={index} sx={{ backgroundColor: '#e0e0e0', padding: '5px 10px', borderRadius: '15px', display: 'flex', alignItems: 'center' }}>
+              <Typography variant="body2" sx={{ mr: 1 }}>{tag}</Typography>
+              <Button 
+                size="small" 
+                onClick={() => handleTagDelete(index)} 
+                sx={{ 
+                    minWidth: '24px',
+                    padding: '2px', 
+                    fontSize: '12px'
+                }}
+              >
+                X
+              </Button>
+            </Box>
+          ))}
+        </Box>
         <TextField
-          label="공간 태그"
+          label="태그를 입력해주세요. (스페이스바로 구분됩니다)"
           fullWidth
-          required
-          name="spaceTags"
-          value={formData.spaceTags}
-          onChange={handleChange}
-          helperText="#태그 형식으로 주요 특징을 입력해주세요."
+          value={inputTag}
+          onChange={(e) => setInputTag(e.target.value)}
+          onKeyDown={handleTagInput}
+          //helperText="# 태그를 입력해주세요"
           margin="normal"
-          onFocus={(e) => {
-            if (formData.spaceTags === '') {
-              setFormData({
-                ...formData,
-                spaceTags: '#', // 입력 시작 시 #을 추가
-              });
-              e.target.value = '#'; // 텍스트 필드의 값도 업데이트
-            }
-          }}
-          onBlur={(e) => {
-            // 입력이 없을 때 #이 아닌 상태로 두기
-            if (e.target.value === '#') {
-              setFormData({
-                ...formData,
-                spaceTags: '', // 공백으로 초기화
-              });
-            }
-          }}
         />
 
         <Box sx={{ marginTop: 2 }}></Box>
@@ -400,7 +427,7 @@ const SpaceRegistration = () => {
           시설 안내
         </Typography>
         <TextField
-          label="시설 안내"
+          label="시설 안내사항을 입력해주세요."
           fullWidth
           required
           name="facilities"
@@ -556,13 +583,18 @@ const SpaceRegistration = () => {
             </Button>
         </Box>
         <TextField
-            label="상세 주소"
+            label="상세 주소를 입력해주세요."
             fullWidth
             required
             name="detailAddress"
             value={formData.detailAddress}
             onChange={handleChange}
             margin="normal"
+        />
+
+        <EquipmentChecklist 
+          selectedEquipment={selectedEquipment} 
+          setSelectedEquipment={setSelectedEquipment} 
         />
 
         <Box sx={{ marginTop: 2 }}></Box>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import axios from 'axios'; // axios 활성화
-import { Box, Button, MenuItem, Select, Typography, CircularProgress } from '@mui/material';
+import { Box, Button, MenuItem, Select, Typography, CircularProgress, Grid } from '@mui/material';
 
 const RentalSpaceBar = () => {
   const [spaceData, setSpaceData] = useState(null);
@@ -20,6 +20,10 @@ const RentalSpaceBar = () => {
       spaceCapacity: '15',
       options: [
         { available: true }
+      ],
+      equipment: [
+        '빔 프로젝터', '마이크', '냉난방기', '책상', '의자', '화이트보드',
+        '음향 시스템', '조명 장비', 'WiFi'
       ],
     };
     setSpaceData(tempData);
@@ -47,8 +51,11 @@ const RentalSpaceBar = () => {
           reservationTime: '최소 1시간부터',
           spaceCapacity: '최소 5명 - 최대 5명',
           options: [
-            { available: true, label: '조명 추가' },
-            { available: false, label: '촬영 장비 대여' }
+            { available: true }
+          ],
+          equipment: [
+            '빔 프로젝터', '마이크', '냉난방기', '책상', '의자', '화이트보드',
+            '음향 시스템', '조명 장비', 'WiFi'
           ],
         };
         setSpaceData(tempData);
@@ -144,6 +151,19 @@ const RentalSpaceBar = () => {
         <Typography variant="body2" sx={{ marginBottom: '10px' }}>
           수용인원: {spaceData?.spaceCapacity} 명
         </Typography>
+        <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
+
+        {/* 기자재 목록 */}
+        <Typography variant="body2" sx={{ marginBottom: '10px', fontWeight: 'bold' }}>
+          제공 기자재
+        </Typography>
+        <Grid container spacing={1}>
+          {spaceData?.equipment?.map((item, index) => (
+            <Grid item xs={4} key={index}>
+              <Typography variant="body2">{item}</Typography>
+            </Grid>
+          ))}
+        </Grid>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 
         {/* 예약 선택 */}
