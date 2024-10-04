@@ -8,7 +8,8 @@ const equipmentList = [
   'TV', '키보드', '냉장고', '전자레인지', 
   '커피머신', '세탁기', '건조기', '청소기', 
   '카메라', '삼각대', '녹음 장비', 'DVD 플레이어', 
-  '스피커', '헤드셋', 'HDMI 케이블', '전동 스크린'
+  '스피커', '헤드셋', 'HDMI 케이블', '전동 스크린',
+  '화장실', '주차장', '기타 1', '기타 2'
 ];
 
 const EquipmentChecklist = ({ selectedEquipment, setSelectedEquipment }) => {

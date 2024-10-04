@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
-// import axios from 'axios'; // axios 활성화
 import { Box, Button, MenuItem, Select, Typography, CircularProgress, Grid } from '@mui/material';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import axios from 'axios'; // axios 활성화
 
 const RentalSpaceBar = () => {
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('');
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const [selectedComboTime, setSelectedComboTime] = useState('');
+  // const [isLoggedIn, setIsLoggedIn] = useState(true); // 로그인 상태 추가
   // const [error, setError] = useState(null); // 에러 상태 추가
 
   // 임시 데이터를 설정하는 함수
@@ -72,6 +80,51 @@ const RentalSpaceBar = () => {
     setLoading(false); // 로딩 상태 해제
   }, []);
 
+  const handleDateSelect = (info) => {
+    setSelectedDate(info.dateStr);
+    // 시간 테이블을 열기 위한 가짜 데이터 생성
+    const times = Array.from({ length: 25 }, (_, i) => `${i}:00`);
+    setAvailableTimes(times);
+  };
+
+  const handleTimeSelect = (event) => {
+    setSelectedTime(event.target.value);
+  };
+
+  const handleComboTimeChange = (event) => {
+    setSelectedComboTime(event.target.value);
+  };
+
+  const handleReservationSubmit = () => {
+    if (!selectedDate || !selectedTime || !selectedComboTime) {
+      alert('날짜, 시간을 선택해주세요.');
+      return;
+    }
+
+    // 예약 정보를 백엔드로 전송하는 부분
+    const reservationData = {
+      date: selectedDate,
+      time: selectedTime,
+      comboTime: selectedComboTime,
+    };
+    console.log('예약 정보 전송:', reservationData);
+
+    // 여기서 axios나 fetch로 백엔드에 요청을 보냄
+    async function makeReservation() {
+      try {
+        const response = await axios.post('/api/reservations', reservationData); // POST 요청
+        console.log('예약 성공:', response.data);
+        alert('예약이 완료되었습니다!');
+      } catch (error) {
+        console.error('예약 오류:', error);
+        alert('예약 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 함수 호출
+    makeReservation();
+  };
+
   // 백엔드 데이터가 없을 경우 로딩 처리
   if (loading) {
     return (
@@ -91,6 +144,17 @@ const RentalSpaceBar = () => {
     );
   }
   */
+
+  const CalendarStyles = `
+    .fc-header-toolbar {
+      font-size: 12px;
+    }
+
+    .fc-button {
+      padding: 3px 6px;
+      font-size: 12px;
+    }
+  `;
 
   return (
     <Box sx={{ width: '350px', margin: '0 auto', padding: '20px', border: '1px solid #ddd', borderRadius: '10px', marginBottom: '20px' }}>
@@ -172,7 +236,7 @@ const RentalSpaceBar = () => {
         </Typography>
 
         {/* 예약시간 콤보박스 */}
-        <Select fullWidth defaultValue="select" sx={{ marginBottom: '10px' }}>
+        <Select fullWidth value={selectedComboTime} onChange={handleComboTimeChange} sx={{ marginBottom: '10px' }}>
           <MenuItem value="select" disabled>시간 선택</MenuItem>
           <MenuItem value="1hour">1시간 예약</MenuItem>
           <MenuItem value="2hours">2시간 예약</MenuItem>
@@ -180,6 +244,48 @@ const RentalSpaceBar = () => {
           <MenuItem value="4hours">4시간 예약</MenuItem>
           <MenuItem value="5hours">5시간 예약</MenuItem>
         </Select>
+
+        {/* FullCalendar 날짜 선택 */}
+        {selectedComboTime && (
+          <Box>
+            <style>{CalendarStyles}</style>
+            <FullCalendar
+              plugins={[dayGridPlugin, interactionPlugin]}
+              initialView="dayGridMonth"
+              selectable={true}
+              dateClick={handleDateSelect}
+              validRange={{
+                start: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0], // 내일 날짜부터 선택 가능
+              }}
+            />
+          </Box>
+        )}
+
+        {selectedDate && (
+          <Box>
+            <Typography variant="body2" sx={{ marginBottom: '10px', fontWeight: 'bold' }}>
+              선택한 날짜: {selectedDate}
+            </Typography>
+
+            {/* 시간 선택 콤보박스 */}
+            <Select
+              fullWidth
+              value={selectedTime}
+              onChange={handleTimeSelect}
+              displayEmpty
+              sx={{ marginBottom: '10px' }}
+            >
+              <MenuItem value="" disabled>
+                시간 선택
+              </MenuItem>
+              {availableTimes.map((time, index) => (
+                <MenuItem key={index} value={time}>
+                  {time}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        )}
       </Box>
 
       {/* 4. 전화, 채팅, 예약 신청하기 버튼 */}
@@ -190,9 +296,21 @@ const RentalSpaceBar = () => {
         <Button variant="outlined" sx={{ width: '30%' }}>
           채팅
         </Button>
+        {/*
         <Button variant="contained" color="primary" sx={{ width: '35%' }}>
           예약 신청
         </Button>
+        */}
+        {selectedTime && (
+          <Box>
+            <Typography variant="body2" sx={{ marginBottom: '10px', fontWeight: 'bold' }}>
+              선택한 시간: {selectedTime}
+            </Typography>
+            <Button variant="contained" color="primary" fullWidth onClick={handleReservationSubmit}>
+              예약 신청
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );
