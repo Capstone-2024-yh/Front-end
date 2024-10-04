@@ -36,7 +36,7 @@ function Prompt() {
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 5, p: 3, boxShadow: 3, borderRadius: 2 }}>
       <Typography variant="h5" component="h1" gutterBottom align="center">
-        조건 입력기
+        AI를 통해 알맞는 장소를 찾아보세요!
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField

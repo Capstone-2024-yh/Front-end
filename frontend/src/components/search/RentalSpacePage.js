@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 import RentalSpaceBar from '../panel/RentalSpaceBar';
 import KakaoMapOnly from '../map/KakaoMapOnly';
 // import axios from 'axios';  // 필요 시 axios 활성화
 
 const RentalSpacePage = () => {
+  const navigate = useNavigate();
   const { locationId } = useParams();  // URL에서 locationId를 추출
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true);  // 로딩 상태 추가
@@ -38,6 +39,7 @@ const RentalSpacePage = () => {
         const tempData = {
           spaceName: '공간의 제목 1',
           spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
+          spaceTags: ['#촬영스튜디오', '#편리한위치', '#최신장비'],
           mainImageBase64: 'https://via.placeholder.com/600x300',
           coordinates: { lat: 33.450701, lng: 126.570667 },
           sections: {
@@ -63,6 +65,7 @@ const RentalSpacePage = () => {
     const tempData = {
       spaceName: '공간의 제목 1',
       spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
+      spaceTags: ['#촬영스튜디오', '#편리한위치', '#최신장비'],
       mainImageBase64: 'https://via.placeholder.com/600x300',
       coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
       sections: {
@@ -78,6 +81,10 @@ const RentalSpacePage = () => {
     setSpaceData(tempData);
     setLoading(false); // 데이터 로딩 완료
   }, [locationId]);
+
+  const handleTagClick = (tag) => {
+    navigate(`/location-list?tag=${tag}`);
+  };
 
   // 백엔드 데이터가 없을 경우 로딩 처리
   if (loading) {
@@ -106,17 +113,31 @@ const RentalSpacePage = () => {
           {spaceData?.spaceIntro || '소개 문구가 없습니다.'}
         </Typography>
 
-        {/* 3. 이미지 */}
+        {/* 3. 태그들 */}
+        <Box sx={{ marginBottom: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {spaceData?.spaceTags?.map((tag, index) => (
+            <Button 
+              key={index} 
+              variant="outlined" 
+              sx={{ textTransform: 'none' }}
+              onClick={() => handleTagClick(tag)} // 클릭 이벤트 예시
+            >
+              {tag}
+            </Button>
+          ))}
+        </Box>
+
+        {/* 4. 이미지 */}
         <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
           <img src={spaceData?.mainImageBase64} alt="공간 이미지" style={{ width: '100%' }} />
         </Box>
 
-        {/* 4. 공간의 제목 2 */}
+        {/* 5. 공간의 제목 2 */}
         <Typography variant="h5" sx={{ marginBottom: '10px' }}>
           {spaceData?.spaceIntro || '제목이 없습니다.'}
         </Typography>
 
-        {/* 5. 목차 - Sticky로 상단에 고정 */}
+        {/* 6. 목차 - Sticky로 상단에 고정 */}
         <Box
           sx={{
             position: 'sticky',
@@ -178,7 +199,7 @@ const RentalSpacePage = () => {
           </List>
         </Box>
 
-        {/* 6. 각 단락 */}
+        {/* 7. 각 단락 */}
         <Box>
           {/* 공간소개 */}
           <Typography ref={spaceDescriptionRef} variant="h6" sx={{ marginBottom: '10px' }}>
