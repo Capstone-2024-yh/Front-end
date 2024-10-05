@@ -28,10 +28,16 @@ const dummyUser = {
 const UserDashboard = () => {
   // 상태 관리 예시
   const dispatch = useDispatch();
+  /*
   const [user, setUser] = useState(dummyUser);
   const [reservations, setReservations] = useState(user.reservations);
   const [reviews, setReviews] = useState(user.reviews);
   const [wishlist, setWishlist] = useState(user.wishlist);
+  */
+  const [user] = useState(dummyUser);
+  const [reservations] = useState(user.reservations);
+  const [reviews] = useState(user.reviews);
+  const [wishlist] = useState(user.wishlist);
 
   useEffect(() => {
     // 백엔드에서 데이터를 받아오는 함수
