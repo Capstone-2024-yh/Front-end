@@ -27,14 +27,13 @@ function Login() {
 
       if (response.status === 200) {
         dispatch(loginSuccess({ email }));
-        // 로그인 성공 시 KakaoMap 페이지로 이동
-        navigate('/main'); // '/map' 경로로 리디렉션
+        navigate('/main'); 
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        setErrorMessage('Invalid credentials');
+        setErrorMessage('회원정보가 존재하지 않습니다.');
       } else {
-        setErrorMessage('An error occurred');
+        setErrorMessage('로그인에 문제가 발생하였습니다.');
       }
     }
   };
