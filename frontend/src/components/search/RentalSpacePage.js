@@ -1,15 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
+import { useSelector } from 'react-redux';
 import RentalSpaceBar from '../panel/RentalSpaceBar';
 import KakaoMapOnly from '../map/KakaoMapOnly';
+import CommentsSection from '../panel/CommentsSection';
 // import axios from 'axios';  // 필요 시 axios 활성화
 
-const RentalSpacePage = () => {
+const RentalSpacePage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
   const { locationId } = useParams();  // URL에서 locationId를 추출
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true);  // 로딩 상태 추가
+
+  // Redux에서 로그인된 사용자 정보 가져오기
+  const authState = useSelector((state) => state.auth);
+  const userEmail = authState.email; // 로그인된 사용자의 이메일
 
   // 각 단락을 참조할 수 있도록 ref 생성
   const spaceDescriptionRef = useRef(null);
@@ -254,13 +260,17 @@ const RentalSpacePage = () => {
             {spaceData?.sections?.qa || 'Q&A 정보가 없습니다.'}
           </Typography>
 
-          {/* 이용후기 */}
+          {/* 이용후기 
           <Typography ref={reviewRef} variant="h6" sx={{ marginBottom: '10px' }}>
             이용후기
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
             {spaceData?.sections?.review || '이용후기 정보가 없습니다.'}
           </Typography>
+          */}
+
+          {/* 댓글 컴포넌트 사용 */}
+          <CommentsSection isLoggedIn={!!userEmail} userEmail={userEmail} locationId={locationId} />
         </Box>
       </Box>
 

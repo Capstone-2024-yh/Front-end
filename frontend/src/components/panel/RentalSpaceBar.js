@@ -22,6 +22,7 @@ const RentalSpaceBar = () => {
       spaceFee: '18000',
       mainImageBase64: 'https://via.placeholder.com/300x200',
       spaceDescription: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
+      website: 'https://www.google.com/',
       spaceType: '촬영스튜디오 / 렌탈스튜디오',
       spaceArea: '20',
       reservationTime: '최소 1시간부터',
@@ -54,6 +55,7 @@ const RentalSpaceBar = () => {
           spaceFee: '₩18,000 / 시간',
           mainImageBase64: 'https://via.placeholder.com/300x200',
           spaceDescription: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
+          website: 'https://www.google.com/',
           spaceType: '촬영스튜디오 / 렌탈스튜디오',
           spaceArea: '20㎡',
           reservationTime: '최소 1시간부터',
@@ -190,6 +192,25 @@ const RentalSpaceBar = () => {
         {/* 설명 */}
         <Typography variant="body1" sx={{ marginBottom: '10px' }}>
           {spaceData?.spaceDescription}
+        </Typography>
+        <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
+
+        {/* 공간 사이트 */}
+        <Typography variant="body2" sx={{ marginBottom: '5px', margin: '10px 0' }}>
+          공간URL:{" "}
+          {spaceData?.website ? (
+            <a
+              href={spaceData.website.startsWith('http://') || spaceData.website.startsWith('https://') 
+                ? spaceData.website 
+                : `https://${spaceData.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {spaceData.website}
+            </a>
+          ) : (
+            "URL이 없습니다"
+          )}
         </Typography>
         <hr style={{ border: 'none', borderTop: '1px solid #ddd', margin: '10px 0' }} />
 

@@ -47,7 +47,7 @@ const KakaoMapOnly = ({ coordinates }) => {
   }, [kakaoMapKey, coordinates]);
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'flex-start', height: '80vh', width: '100%', margin: 0, padding: 0 }}>
+    <div style={{ display: 'flex', justifyContent: 'flex-start', height: '70vh', width: '100%', margin: 0, padding: 0 }}>
       {/* 지도 영역 */}
       <div ref={mapContainer} style={{ width: '600px', height: '500px', backgroundColor: '#f0f0f0' }} />
     </div>

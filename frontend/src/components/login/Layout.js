@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
 import { Outlet } from 'react-router-dom'; // Outlet 임포트
@@ -8,9 +8,14 @@ import { Outlet } from 'react-router-dom'; // Outlet 임포트
 function Layout() {
   const { isAuthenticated } = useSelector((state) => state.auth); // 로그인 상태 가져오기
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logoutSuccess()); // 로그아웃 액션 디스패치
+  };
+
+  const handleUser = (user) => {
+    navigate(`/user-page?user=${user}`);
   };
 
   return (
@@ -54,9 +59,14 @@ function Layout() {
             </div>
           )}
           {isAuthenticated && (
-            <Button color="inherit" onClick={handleLogout}>
-              로그아웃
-            </Button>
+            <div>
+              <Button color="inherit" onClick={handleUser}>
+                마이페이지
+              </Button>
+              <Button color="inherit" onClick={handleLogout}>
+                로그아웃
+              </Button>
+            </div>
           )}
         </Toolbar>
       </AppBar>

@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import Login from './components/login/Login';
 import Register from './components/login/Register';
 import Status from './components/login/Status';
+import UserDashboard from './components/main/UserDashBoard';
 import Layout from './components/login/Layout';
 import KakaoMap from './components/map/KakaoMap';
 import MainPage from './components/main/MainPage';
@@ -26,6 +27,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route path="status" element={<Status />} />
+            <Route path="user-page" element={<UserDashboard />} />
             <Route path="main" element={<MainPage />} />
             <Route path="map" element={<KakaoMap />} />
             <Route path="prompt" element={<Prompt />} />
