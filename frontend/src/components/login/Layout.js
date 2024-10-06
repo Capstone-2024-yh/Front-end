@@ -1,27 +1,41 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, Container, Button } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, Container, Button, Drawer, IconButton } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
 import { Outlet } from 'react-router-dom'; // Outlet 임포트
+import UserDashBar from '../panel/UserDashBar';
+import MenuIcon from '@mui/icons-material/Menu';
 
 function Layout() {
   const { isAuthenticated } = useSelector((state) => state.auth); // 로그인 상태 가져오기
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [showDashBar, setShowDashBar] = useState(false);
 
   const handleLogout = () => {
     dispatch(logoutSuccess()); // 로그아웃 액션 디스패치
   };
 
-  const handleUser = (user) => {
-    navigate(`/user-page?user=${user}`);
+  const toggleDashBar = () => {
+    setShowDashBar(!showDashBar); // 대시바 토글
   };
 
   return (
     <div>
       <AppBar position="static">
         <Toolbar>
+          {/* 메뉴 토글 버튼 */}
+          {isAuthenticated && (
+            <div>
+              <IconButton color="inherit" onClick={toggleDashBar}>
+                <MenuIcon />
+              </IconButton>
+            </div>
+          )}
+          {/* 임시 토글 버튼 */}
+          <IconButton color="inherit" onClick={toggleDashBar}>
+            <MenuIcon />
+          </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
               Capstone
@@ -60,9 +74,6 @@ function Layout() {
           )}
           {isAuthenticated && (
             <div>
-              <Button color="inherit" onClick={handleUser}>
-                마이페이지
-              </Button>
               <Button color="inherit" onClick={handleLogout}>
                 로그아웃
               </Button>
@@ -70,6 +81,11 @@ function Layout() {
           )}
         </Toolbar>
       </AppBar>
+
+      {/* Drawer를 사용해 UserDashBar를 사이드 패널처럼 보여줌 */}
+      <Drawer anchor="left" open={showDashBar} onClose={toggleDashBar}>
+        <UserDashBar />
+      </Drawer>
       
       <Container style={{ marginTop: '20px' }}>
         {/* children 대신 Outlet 사용 */}
