@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { Avatar, Box, Button, Typography, List, ListItem, ListItemText, IconButton, Paper } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LogoutIcon from '@mui/icons-material/Logout';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios'; // axios 임포트
 import { logoutSuccess } from '../../store/authSlice';
 
@@ -22,6 +24,10 @@ const dummyUser = {
   wishlist: [
     { id: 1, spaceName: "세미나실 D" },
     { id: 2, spaceName: "공유 주방 E" }
+  ],
+  paymentMethods: [
+    { id: 1, cardName: "신한카드", cardNumber: "**** **** **** 1234" },
+    { id: 2, cardName: "국민카드", cardNumber: "**** **** **** 5678" }
   ]
 };
 
@@ -33,11 +39,13 @@ const UserDashboard = () => {
   const [reservations, setReservations] = useState(user.reservations);
   const [reviews, setReviews] = useState(user.reviews);
   const [wishlist, setWishlist] = useState(user.wishlist);
+  const [paymentMethods, setPaymentMethods] = useState(user.paymentMethods);
   */
   const [user] = useState(dummyUser);
   const [reservations] = useState(user.reservations);
   const [reviews] = useState(user.reviews);
   const [wishlist] = useState(user.wishlist);
+  const [paymentMethods] = useState(user.paymentMethods);
 
   useEffect(() => {
     // 백엔드에서 데이터를 받아오는 함수
@@ -52,6 +60,7 @@ const UserDashboard = () => {
         setReservations(fetchedData.reservations);
         setReviews(fetchedData.reviews);
         setWishlist(fetchedData.wishlist);
+        setPaymentMethods(fetchedData.paymentMethods);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류가 발생했습니다:', error);
         // 오류 발생 시 더미 데이터 유지
@@ -149,7 +158,29 @@ const UserDashboard = () => {
         </List>
       </Paper>
 
-      {/* 9. 로그아웃 및 기타 설정 */}
+      {/* 9. 결제 수단 관리 */}
+      <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px' }}>
+        <Typography variant="h6" gutterBottom>결제 수단 관리</Typography>
+        <List>
+          {paymentMethods.length === 0 ? (
+            <Typography>등록된 결제 수단이 없습니다.</Typography>
+          ) : (
+            paymentMethods.map((method) => (
+              <ListItem key={method.id}>
+                <ListItemText primary={method.cardName} secondary={method.cardNumber} />
+                <IconButton edge="end">
+                  <DeleteIcon color="error" />
+                </IconButton>
+              </ListItem>
+            ))
+          )}
+        </List>
+        <Button variant="contained" sx={{ marginTop: '10px' }} startIcon={<CreditCardIcon />}>
+          결제 수단 추가
+        </Button>
+      </Paper>
+
+      {/* 10. 로그아웃 및 기타 설정 */}
       <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
