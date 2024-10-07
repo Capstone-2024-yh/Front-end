@@ -467,7 +467,7 @@ const SpaceRegistration = () => {
           fullWidth
           required
           name="precautions"
-          value={formData.precautions}
+          value={formData.refundPolicy}
           onChange={handleChange}
           margin="normal"
           multiline

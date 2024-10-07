@@ -36,7 +36,7 @@ const MainPage = () => {
 
   const handleLogout = () => {
     dispatch(logoutSuccess());
-    navigate('/login');
+    navigate('/main');
   };
 
   const handleTagClick = (tag) => {

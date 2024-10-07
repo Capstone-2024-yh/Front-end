@@ -25,14 +25,6 @@ function Layout() {
       <AppBar position="static">
         <Toolbar>
           {/* 메뉴 토글 버튼 */}
-          {isAuthenticated && (
-            <div>
-              <IconButton color="inherit" onClick={toggleDashBar}>
-                <MenuIcon />
-              </IconButton>
-            </div>
-          )}
-          {/* 임시 토글 버튼 */}
           <IconButton color="inherit" onClick={toggleDashBar}>
             <MenuIcon />
           </IconButton>
