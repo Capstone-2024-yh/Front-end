@@ -16,8 +16,7 @@ const loadDaumPostcodeScript = () => {
 
 const SpaceRegistration = () => {
   // 외부 데이터들
-  const user = useSelector((state) => state.auth.user);
-  const ownerId = user ? user.id : null;
+  const ownerId = useSelector((state) => state.auth.user?.id);
   const [spaceName, setSpaceName] = useState('');
   const [spaceType, setSpaceType] = useState('');
   const [spaceIntro, setSpaceIntro] = useState('');

@@ -18,28 +18,24 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    // 디버깅용 고정 임시 계정 정보
-    const testEmail = 'test@test.com';
-    const testPassword = '1234';
-    const testOwnerId = 1;
-
-    // 입력된 이메일과 비밀번호가 고정 임시 계정과 일치하는지 확인
-    if (email === testEmail && password === testPassword) {
-      dispatch(loginSuccess({ email, id: testOwnerId }));
-      navigate('/main');
-      return; // 백엔드 요청을 생략하고 함수 종료
-    }
-
+  
     try {
       const response = await axios.post('/auth/login', {
         "email": email,
         "password": password,
       });
-
+  
       if (response.status === 200) {
-        const { email, id } = response.data;
-        dispatch(loginSuccess({ email, id }));
+        // 응답 데이터 전체 확인
+        console.log('Login response data:', response.data);
+  
+        // response.data에서 사용자 ID 추출
+        const id = response.data;
+        console.log('Extracted ID:', id); // id 값 확인
+  
+        // loginSuccess 액션에 사용자 ID만 전달하여 저장
+        dispatch(loginSuccess({ id }));
+  
         navigate('/main'); 
       }
     } catch (error) {

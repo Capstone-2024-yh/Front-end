@@ -6,7 +6,7 @@ import { logoutSuccess } from '../../store/authSlice';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
 import Prompt from './Prompt';
-// import axios from 'axios';
+// import axios from '../../axiosConfig';
 
 const MainPage = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);

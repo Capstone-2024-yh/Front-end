@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import RentalSpaceBar from '../panel/RentalSpaceBar';
 import KakaoMapOnly from '../map/KakaoMapOnly';
 import CommentsSection from '../panel/CommentsSection';
-// import axios from 'axios';  // 필요 시 axios 활성화
+// import axios from '../../axiosConfig';  // 필요 시 axios 활성화
 
 const RentalSpacePage = ({ isLoggedIn }) => {
   const navigate = useNavigate();

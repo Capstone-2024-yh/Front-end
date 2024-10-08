@@ -5,7 +5,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios'; // axios 임포트
+import axios from '../../axiosConfig'; // axios 임포트
 import { logoutSuccess } from '../../store/authSlice';
 
 // 더미 데이터 예시

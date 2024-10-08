@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Box, Button, Typography, List, ListItem, ListItemText, Paper, Drawer } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
-import axios from 'axios'; // axios 임포트
+import axios from '../../axiosConfig'; // axios 임포트
 import { logoutSuccess } from '../../store/authSlice';
 
 // 더미 데이터 예시

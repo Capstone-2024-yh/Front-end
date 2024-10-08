@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import axios from 'axios'; // axios 활성화
+import axios from '../../axiosConfig'; // axios 활성화
 
 const RentalSpaceBar = () => {
   const user = useSelector((state) => state.auth.user);

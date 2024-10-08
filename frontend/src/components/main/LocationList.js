@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button, Grid, CircularProgress } from '@mui/material';
-// import axios from 'axios';
+// import axios from '../../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 const LocationList = () => {

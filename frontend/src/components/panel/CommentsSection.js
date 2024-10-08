@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, TextField } from '@mui/material';
-// import axios from 'axios';  // 필요 시 axios 활성화
+// import axios from '../../axiosConfig';  // 필요 시 axios 활성화
 
 const CommentsSection = ({ isLoggedIn, userEmail, locationId }) => {
     const [comments, setComments] = useState([]); // 댓글 상태 관리

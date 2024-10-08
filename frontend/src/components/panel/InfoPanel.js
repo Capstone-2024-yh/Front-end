@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button } from '@mui/material'; // Button 추가
 import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 사용
-// import axios from 'axios';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
+// import axios from '../../axiosConfig';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
 const InfoPanel = () => {
   const [locationData, setLocationData] = useState([]);
