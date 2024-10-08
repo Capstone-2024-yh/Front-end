@@ -7,8 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import axios from '../../axiosConfig'; // axios 활성화
 
 const RentalSpaceBar = () => {
-  const user = useSelector((state) => state.auth.user);
-  const ownerId = user ? user.id : null;
+  const ownerId = useSelector((state) => state.auth.user?.id);
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [selectedDate, setSelectedDate] = useState(null);
@@ -108,7 +107,7 @@ const RentalSpaceBar = () => {
 
     // 예약 정보를 백엔드로 전송하는 부분
     const reservationData = {
-      "ownerId":   ownerId,            // 사용자
+      "ownerId":    ownerId,            // 사용자
       "time":       selectedTime,       // 예약 시간
       "date":       selectedDate,       // 예약 날짜
       "startTime":  selectedStartTime,  // 시작 시간
