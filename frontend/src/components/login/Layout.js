@@ -14,6 +14,9 @@ function Layout() {
 
   const handleLogout = () => {
     dispatch(logoutSuccess()); // 로그아웃 액션 디스패치
+    setTimeout(() => {
+        window.location.reload();  // 페이지 새로고침
+    }, 0);
   };
 
   const toggleDashBar = () => {

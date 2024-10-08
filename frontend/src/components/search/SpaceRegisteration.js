@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { Box, Button, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import Compressor from 'compressorjs';
 import EquipmentChecklist from '../panel/EquipmentCheckList';
 
@@ -14,6 +15,9 @@ const loadDaumPostcodeScript = () => {
 };
 
 const SpaceRegistration = () => {
+  // 외부 데이터들
+  const user = useSelector((state) => state.auth.user);
+  const ownerId = user ? user.id : null;
   const [spaceName, setSpaceName] = useState('');
   const [spaceType, setSpaceType] = useState('');
   const [spaceIntro, setSpaceIntro] = useState('');
@@ -22,20 +26,22 @@ const SpaceRegistration = () => {
   const [spaceArea, setSpaceArea] = useState('');
   const [spaceCapacity, setSpaceCapacity] = useState('');
   const [spaceTags, setSpaceTags] = useState([]);
-  const [facilities, setFacilities] = useState('');
+  const [facilityInfo, setFacilityInfo] = useState('');
   const [precautions, setPrecautions] = useState('');
   const [refundPolicy, setRefundPolicy] = useState('');
   const [website, setWebsite] = useState('');
   const [mainImageBase64, setMainImageBase64] = useState(null);
-  const [additionalImagesBase64, setAdditionalImagesBase64] = useState([]);
   const [postalCode, setPostalCode] = useState('');
   const [roadAddress, setRoadAddress] = useState('');
   const [detailAddress, setDetailAddress] = useState('');
   const [coordinates, setCoordinates] = useState(null);
+  const [selectedEquipment, setSelectedEquipment] = useState([]);
+  // const [additionalImagesBase64, setAdditionalImagesBase64] = useState([]);
+
+  // 내부 데이터들
   const [inputTag, setInputTag] = useState('');
   const [mainImageName, setMainImageName] = useState('');
-  const [additionalImageNames, setAdditionalImageNames] = useState([]);
-  const [selectedEquipment, setSelectedEquipment] = useState([]);
+  // const [additionalImageNames, setAdditionalImageNames] = useState([]);
 
   const navigate = useNavigate();
 
@@ -126,6 +132,7 @@ const SpaceRegistration = () => {
   };
 
   // 추가 이미지 처리
+  /*
   const handleImageChange = (event) => {
     const files = event.target.files;
     if (files.length + additionalImagesBase64.length <= 10) {
@@ -157,38 +164,68 @@ const SpaceRegistration = () => {
       alert('이미지는 최대 10장까지 업로드할 수 있습니다.');
     }
   };
+  */
 
   // 저장 버튼을 눌렀을 때 실행되는 함수
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const data = {
-        "spaceName":              spaceName,              // 공간 제목
-        "spaceType":              spaceType,              // 공간 유형
-        "spaceIntro":             spaceIntro,             // 공간 소개
-        "spaceDescription":       spaceDescription,       // 공간 설명
-        "spaceFee":               spaceFee,               // 대여 가격
-        "spaceArea":              spaceArea,              // 공간 면적
-        "spaceCapacity":          spaceCapacity,          // 수용 인원
-        "spaceTags":              spaceTags,              // 공간 태그
-        "facilities":             facilities,             // 시설 안내
-        "precautions":            precautions,            // 예약 시 주의사항
-        "refundPolicy":           refundPolicy,           // 환불 정책
-        "website":                website,                // 웹사이트 URL
-        "mainImageBase64":        mainImageBase64,        // 대표 이미지
-        "additionalImagesBase64": additionalImagesBase64, // 추가 이미지
-        "postalCode":             postalCode,             // 우편번호
-        "roadAddress":            roadAddress,            // 도로명 주소
-        "detailAddress":          detailAddress,          // 상세 주소
-        "coordinates":            coordinates,            // 좌표
-        "selectedEquipment":      selectedEquipment,      // 기자재
+        // 추가할 사항들
+        "ownerId":                ownerId,                // 사용자 id
+        "name":                   spaceName,              // 공간 제목 - X string
+        "spaceType":              spaceType,              // 공간 유형 - O
+        "simpleDescription":      spaceIntro,             // 공간 한줄 - X string
+        "description":            spaceDescription,       // 공간 설명 - X string
+        "rentalFee":              spaceFee,               // 대여 가격 - O
+        "area":                   spaceArea,              // 공간 면적 - O
+        "capacity":               spaceCapacity,          // 수용 인원 - O int
+        "facilityInfo":           facilityInfo,           // 시설 안내 - X string
+        "precautions":            precautions,            // 예약 시 주의사항 - X string
+        "refundPolicy":           refundPolicy,           // 환불 정책 - X string
+        "websiteURL":             website,                // 웹사이트 URL - X string
+        "postalCode":             postalCode,             // 우편번호 - X int - 제외 예정
+        "address":                roadAddress,            // 도로명 주소 - O
+        "detailAddress":          detailAddress,          // 상세 주소 - X string
+        "latitude":               coordinates ? coordinates.x : null, 
+        "longitude":             coordinates ? coordinates.y : null,
+        // "additionalImagesBase64": additionalImagesBase64, // 추가 이미지 - X string 배열 - 제외
       };
 
-      const response = await axios.post('/api/register-space', data, {
+      console.log('Data: ', data)
+
+      const response = await axios.post('/venues/create', data, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      const spaceId = response.data.spaceId; // 공간 ID를 받아옵니다.
+
+      // spaceTags를 별도의 API로 전송
+      if (spaceTags.length > 0) {
+        await axios.post('/venues/tags', {
+          spaceId,
+          tags: spaceTags,
+        });
+      }
+
+      // mainImageBase64를 별도의 API로 전송
+      if (mainImageBase64) {
+        await axios.post('/api/space-image', {
+          spaceId,
+          image: mainImageBase64,
+        });
+      }
+
+      // selectedEquipment를 별도의 API로 전송
+      if (selectedEquipment.length > 0) {
+        await axios.post('/api/space-equipment', {
+          spaceId,
+          equipment: selectedEquipment,
+        });
+      }
+
       console.log('Response data:', response.data);
       alert('공간이 성공적으로 등록되었습니다!');
     } catch (error) {
@@ -416,8 +453,8 @@ const SpaceRegistration = () => {
           label="시설 안내사항을 입력해주세요."
           fullWidth
           required
-          value={facilities}
-          onChange={(e) => setFacilities(e.target.value)}
+          value={facilityInfo}
+          onChange={(e) => setFacilityInfo(e.target.value)}
           margin="normal"
           multiline
           rows={3}
@@ -500,7 +537,7 @@ const SpaceRegistration = () => {
 
         <Box sx={{ marginTop: 2 }}></Box>
 
-        {/* 10. 추가 이미지 첨부 */}
+        {/* 10. 추가 이미지 첨부
         <Box
           sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 1 }}
         >
@@ -528,6 +565,7 @@ const SpaceRegistration = () => {
             <input type="file" accept="image/*" multiple hidden onChange={handleImageChange} />
           </Button>
         </Box>
+         */}
 
         <Box sx={{ marginTop: 2 }}></Box>
 

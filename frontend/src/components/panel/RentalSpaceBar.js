@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, MenuItem, Select, Typography, CircularProgress, Grid } from '@mui/material';
+import { useSelector } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from 'axios'; // axios 활성화
 
 const RentalSpaceBar = () => {
+  const user = useSelector((state) => state.auth.user);
+  const ownerId = user ? user.id : null;
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [selectedComboTime, setSelectedComboTime] = useState('');
+  const [selectedStartTime, setSelectedStartTime] = useState('');
   // const [isLoggedIn, setIsLoggedIn] = useState(true); // 로그인 상태 추가
   // const [error, setError] = useState(null); // 에러 상태 추가
 
@@ -93,21 +96,22 @@ const RentalSpaceBar = () => {
     setSelectedTime(event.target.value);
   };
 
-  const handleComboTimeChange = (event) => {
-    setSelectedComboTime(event.target.value);
+  const handleStartTimeChange = (event) => {
+    setSelectedStartTime(event.target.value);
   };
 
   const handleReservationSubmit = () => {
-    if (!selectedDate || !selectedTime || !selectedComboTime) {
+    if (!selectedDate || !selectedTime || !selectedStartTime) {
       alert('날짜, 시간을 선택해주세요.');
       return;
     }
 
     // 예약 정보를 백엔드로 전송하는 부분
     const reservationData = {
-      date: selectedDate,
-      time: selectedTime,
-      comboTime: selectedComboTime,
+      "ownerId":   ownerId,            // 사용자
+      "time":       selectedTime,       // 예약 시간
+      "date":       selectedDate,       // 예약 날짜
+      "startTime":  selectedStartTime,  // 시작 시간
     };
     console.log('예약 정보 전송:', reservationData);
 
@@ -257,7 +261,7 @@ const RentalSpaceBar = () => {
         </Typography>
 
         {/* 예약시간 콤보박스 */}
-        <Select fullWidth value={selectedComboTime} onChange={handleComboTimeChange} sx={{ marginBottom: '10px' }}>
+        <Select fullWidth value={selectedStartTime} onChange={handleStartTimeChange} sx={{ marginBottom: '10px' }}>
           <MenuItem value="select" disabled>시간 선택</MenuItem>
           <MenuItem value="1hour">1시간 예약</MenuItem>
           <MenuItem value="2hours">2시간 예약</MenuItem>
@@ -267,7 +271,7 @@ const RentalSpaceBar = () => {
         </Select>
 
         {/* FullCalendar 날짜 선택 */}
-        {selectedComboTime && (
+        {selectedStartTime && (
           <Box>
             <style>{CalendarStyles}</style>
             <FullCalendar

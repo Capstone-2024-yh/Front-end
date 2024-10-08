@@ -22,10 +22,11 @@ function Login() {
     // 디버깅용 고정 임시 계정 정보
     const testEmail = 'test@test.com';
     const testPassword = '1234';
+    const testOwnerId = 1;
 
     // 입력된 이메일과 비밀번호가 고정 임시 계정과 일치하는지 확인
     if (email === testEmail && password === testPassword) {
-      dispatch(loginSuccess({ email }));
+      dispatch(loginSuccess({ email, id: testOwnerId }));
       navigate('/main');
       return; // 백엔드 요청을 생략하고 함수 종료
     }
@@ -37,7 +38,8 @@ function Login() {
       });
 
       if (response.status === 200) {
-        dispatch(loginSuccess({ email }));
+        const { email, id } = response.data;
+        dispatch(loginSuccess({ email, id }));
         navigate('/main'); 
       }
     } catch (error) {
