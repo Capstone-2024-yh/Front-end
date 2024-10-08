@@ -32,8 +32,8 @@ function Login() {
 
     try {
       const response = await axios.post('/auth/login', {
-        email,
-        password,
+        "email": email,
+        "password": password,
       });
 
       if (response.status === 200) {
