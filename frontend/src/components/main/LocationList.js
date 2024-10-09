@@ -9,6 +9,10 @@ const LocationList = () => {
   const [sortKey, setSortKey] = useState('default');
   const [loading, setLoading] = useState(true); 
   // const [error, setError] = useState(null); 
+
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const itemsPerPage = 6; // 한 페이지에 보여줄 항목 수
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +51,7 @@ const LocationList = () => {
     */
 
     // 임시 데이터만 사용
-    const tempData = Array.from({ length: 12 }, (_, index) => ({
+    const tempData = Array.from({ length: 18 }, (_, index) => ({
       id: index,
       spaceName: `임시 장소 ${index + 1}`,
       mainImageBase64: 'https://via.placeholder.com/300x150',
@@ -85,10 +89,26 @@ const LocationList = () => {
     setSortKey(newSortKey);
     const sorted = sortData(locationData, newSortKey);
     setSortedData(sorted);
+    setCurrentPage(1); // 정렬 변경 시 첫 페이지로 이동
   };
 
   const handleClick = (location) => {
     navigate(`/rental-space/${location.id}`);
+  };
+
+  // 페이징을 위한 계산
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
   };
 
   if (loading) {
@@ -98,7 +118,7 @@ const LocationList = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100vh',
+          height: '82vh',
         }}
       >
         <CircularProgress />
@@ -110,7 +130,7 @@ const LocationList = () => {
     <Box
       sx={{
         width: '100%',
-        height: '100vh',
+        height: '82vh',
         backgroundColor: '#f5f5f5',
         padding: '20px',
       }}
@@ -167,12 +187,12 @@ const LocationList = () => {
       <Box
         sx={{
           overflowY: 'scroll',
-          height: 'calc(100vh - 100px)', 
+          height: 'calc(82vh - 100px)', 
           paddingRight: '10px',
         }}
       >
         <Grid container spacing={2}>
-          {sortedData.map((location, index) => (
+          {currentItems.map((location, index) => (
             <Grid item xs={12} sm={4} key={index}>
               <Button
                 onClick={() => handleClick(location)}
@@ -183,6 +203,7 @@ const LocationList = () => {
                   padding: '10px',
                   textAlign: 'center',
                   width: '100%',
+                  height: '217px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -192,8 +213,8 @@ const LocationList = () => {
                   src={location.mainImageBase64}
                   alt={location.spaceName}
                   style={{
-                    width: '100%',
-                    height: '150px',
+                    width: '90%',
+                    height: '120px',
                     objectFit: 'cover',
                     marginBottom: '10px',
                   }}
@@ -228,6 +249,20 @@ const LocationList = () => {
             </Grid>
           ))}
         </Grid>
+
+        {/* 페이지 네이션 버튼 */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+          {pageNumbers.map((pageNumber) => (
+            <Button
+              key={pageNumber}
+              onClick={() => handlePageChange(pageNumber)}
+              disabled={currentPage === pageNumber}
+              sx={{ margin: '0 5px' }}
+            >
+              {pageNumber}
+            </Button>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

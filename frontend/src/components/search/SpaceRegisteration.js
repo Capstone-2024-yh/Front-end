@@ -203,7 +203,7 @@ const SpaceRegistration = () => {
 
       // spaceTags를 별도의 API로 전송
       if (spaceTags.length > 0) {
-        await axios.post('/venues/tag', {
+        await axios.post('/tag/create', {
           spaceId,
           tags: spaceTags,
         });
@@ -211,7 +211,7 @@ const SpaceRegistration = () => {
 
       // mainImageBase64를 별도의 API로 전송
       if (mainImageBase64) {
-        await axios.post('/venues/image', {
+        await axios.post('/venuePhoto/create', {
           spaceId,
           image: mainImageBase64,
         });
@@ -219,7 +219,7 @@ const SpaceRegistration = () => {
 
       // selectedEquipment를 별도의 API로 전송
       if (selectedEquipment.length > 0) {
-        await axios.post('/venues/equipment', {
+        await axios.post('/equipment/create', {
           spaceId,
           equipment: selectedEquipment,
         });
