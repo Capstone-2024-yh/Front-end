@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Container, Button, Drawer, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutSuccess } from '../../store/authSlice';
 import { Outlet } from 'react-router-dom'; // Outlet 임포트
 import UserDashBar from '../panel/UserDashBar';
+import { loginSuccess } from '../../store/authSlice';
 import MenuIcon from '@mui/icons-material/Menu';
 
 function Layout() {
   const { isAuthenticated } = useSelector((state) => state.auth); // 로그인 상태 가져오기
   const dispatch = useDispatch();
   const [showDashBar, setShowDashBar] = useState(false);
+
+  useEffect(() => {
+    const savedAuth = localStorage.getItem('auth');
+    if (savedAuth) {
+      const authData = JSON.parse(savedAuth);
+      if (authData.isAuthenticated) {
+        dispatch(loginSuccess(authData.user)); // 로그인 상태 복원
+      }
+    }
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(logoutSuccess()); // 로그아웃 액션 디스패치
