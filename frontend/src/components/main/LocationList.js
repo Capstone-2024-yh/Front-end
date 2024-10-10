@@ -19,7 +19,7 @@ const LocationList = () => {
     /* 
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/locations');
+        const response = await axios.get('/venues/AllSearch');
         const data = response.data;
 
         // 응답 데이터가 배열인지 확인

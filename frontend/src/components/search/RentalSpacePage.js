@@ -9,7 +9,8 @@ import CommentsSection from '../panel/CommentsSection';
 
 const RentalSpacePage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
-  const { locationId } = useParams();  // URL에서 locationId를 추출
+  const { id } = useParams();  // URL에서 id를 추출
+  // const ownerId = useSelector((state) => state.auth.user?.id);
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true);  // 로딩 상태 추가
 
@@ -30,7 +31,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
     const fetchData = async () => {
       try {
         // 실제 백엔드 API 엔드포인트로 수정 필요
-        const response = await axios.get(`/api/rental-space/${locationId}`);
+        const response = await axios.get(`/venues/${id}`);
         const data = response.data;
 
         // 데이터가 예상한 구조인지 확인하고, 아니면 임시 데이터 사용
@@ -86,7 +87,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
     };
     setSpaceData(tempData);
     setLoading(false); // 데이터 로딩 완료
-  }, [locationId]);
+  }, [id]);
 
   const handleTagClick = (tag) => {
     navigate(`/location-list?tag=${tag}`);
@@ -270,7 +271,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
           */}
 
           {/* 댓글 컴포넌트 사용 */}
-          <CommentsSection isLoggedIn={!!userEmail} userEmail={userEmail} locationId={locationId} />
+          <CommentsSection isLoggedIn={!!userEmail} userEmail={userEmail} id={id} />
         </Box>
       </Box>
 

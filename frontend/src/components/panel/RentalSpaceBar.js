@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// import { useParams } from 'react-router-dom';
 import { Box, Button, MenuItem, Select, Typography, CircularProgress, Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
@@ -6,8 +7,20 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import axios from '../../axiosConfig'; // axios 활성화
 
+const equipmentMap = {
+  1: '빔 프로젝터', 2: '마이크', 3: '냉난방기', 4: '책상', 
+  5: '의자', 6: '화이트보드', 7: '음향 시스템', 8: '조명 장비', 
+  9: '컴퓨터', 10: '프린터', 11: '모니터', 12: 'WiFi', 
+  13: 'TV', 14: '키보드', 15: '냉장고', 16: '전자레인지', 
+  17: '커피머신', 18: '세탁기', 19: '건조기', 20: '청소기', 
+  21: '카메라', 22: '삼각대', 23: '녹음 장비', 24: 'DVD 플레이어', 
+  25: '스피커', 26: '헤드셋', 27: 'HDMI 케이블', 28: '전동 스크린',
+  29: '화장실', 30: '주차장', 31: '기타 1', 32: '기타 2'
+};
+
 const RentalSpaceBar = () => {
   const ownerId = useSelector((state) => state.auth.user?.id);
+  // const { id } = useParams();
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [selectedDate, setSelectedDate] = useState(null);
@@ -32,10 +45,7 @@ const RentalSpaceBar = () => {
       options: [
         { available: true }
       ],
-      equipment: [
-        '빔 프로젝터', '마이크', '냉난방기', '책상', '의자', '화이트보드',
-        '음향 시스템', '조명 장비', 'WiFi'
-      ],
+      equipment: [1, 2, 3, 4, 5, 6, 7, 8, 12],
     };
     setSpaceData(tempData);
   };
@@ -45,7 +55,7 @@ const RentalSpaceBar = () => {
     const fetchData = async () => {
       try {
         // 백엔드에서 데이터를 불러옴
-        const response = await axios.get('/api/rental-space'); // API 경로 수정 필요
+        const response = await axios.get('/venues/${id}'); // API 경로 수정 필요
         setSpaceData(response.data);
       } catch (error) {
         console.error('Error fetching rental space data:', error);
@@ -65,10 +75,7 @@ const RentalSpaceBar = () => {
           options: [
             { available: true }
           ],
-          equipment: [
-            '빔 프로젝터', '마이크', '냉난방기', '책상', '의자', '화이트보드',
-            '음향 시스템', '조명 장비', 'WiFi'
-          ],
+          equipment: [1, 2, 3, 4, 5, 6, 7, 8, 12],
         };
         setSpaceData(tempData);
       } finally {
@@ -248,7 +255,7 @@ const RentalSpaceBar = () => {
         <Grid container spacing={1}>
           {spaceData?.equipment?.map((item, index) => (
             <Grid item xs={4} key={index}>
-              <Typography variant="body2">{item}</Typography>
+              <Typography variant="body2">{equipmentMap[item]}</Typography>
             </Grid>
           ))}
         </Grid>

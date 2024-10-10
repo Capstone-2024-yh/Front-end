@@ -168,6 +168,7 @@ const SpaceRegistration = () => {
   // 저장 버튼을 눌렀을 때 실행되는 함수
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const data = {
         // 추가할 사항들
@@ -186,8 +187,8 @@ const SpaceRegistration = () => {
         "postalCode":             postalCode,             // 우편번호 - X int - 제외 예정
         "address":                roadAddress,            // 도로명 주소 - O
         "detailAddress":          detailAddress,          // 상세 주소 - X string
-        "latitude":               coordinates ? coordinates.x : null, 
-        "longitude":             coordinates ? coordinates.y : null,
+        "latitude":               coordinates ? coordinates.x : null, // 위도 - O
+        "longitude":              coordinates ? coordinates.y : null, // 경도 - O
         // "additionalImagesBase64": additionalImagesBase64, // 추가 이미지 - X string 배열 - 제외
       };
 
@@ -199,30 +200,34 @@ const SpaceRegistration = () => {
         },
       });
 
-      const spaceId = response.data.spaceId; // 공간 ID를 받아옵니다.
+      const venueId = response.data.venueId;
 
       // spaceTags를 별도의 API로 전송
       if (spaceTags.length > 0) {
-        await axios.post('/tag/create', {
-          spaceId,
-          tags: spaceTags,
+        const tagsResponse = await axios.post('/tag/create', {
+          "venueId": venueId,
+          "tags": spaceTags,
         });
+        console.log('Tags Response:', tagsResponse.data);
       }
 
       // mainImageBase64를 별도의 API로 전송
       if (mainImageBase64) {
-        await axios.post('/venuePhoto/create', {
-          spaceId,
-          image: mainImageBase64,
+        const imageResponse = await axios.post('/venuePhoto/create', {
+          "venueId": venueId,
+          "base64Image": mainImageBase64,
         });
+        console.log('Image Response:', imageResponse.data);
       }
 
       // selectedEquipment를 별도의 API로 전송
       if (selectedEquipment.length > 0) {
-        await axios.post('/equipment/create', {
-          spaceId,
-          equipment: selectedEquipment,
+        const sanitizedEquipment = selectedEquipment.map(Number);
+        const equipmentResponse = await axios.post('/equipment/create', {
+          "venueId": venueId,
+          "equipments": sanitizedEquipment,
         });
+        console.log('Equipment Response:', equipmentResponse.data);
       }
 
       console.log('Response data:', response.data);
