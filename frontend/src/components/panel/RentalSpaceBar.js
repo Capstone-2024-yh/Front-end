@@ -70,11 +70,13 @@ const RentalSpaceBar = () => {
       setSpaceData({
         spaceName: venueResponse.data.name,
         spaceFee: venueResponse.data.rentalFee,
+        spaceCapacity: venueResponse.data.capacity,
         mainImageBase64: photoBase64,
         spaceDescription: venueResponse.data.simpleDescription,
         website: venueResponse.data.websiteURL,
         spaceType: venueResponse.data.spaceType,
         spaceArea: venueResponse.data.area,
+        reservationTime: '최소 1시간부터',
         // 여기서 location은 무시
         equipment: equipmentIds,
       });
