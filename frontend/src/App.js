@@ -32,7 +32,7 @@ function App() {
             <Route path="map" element={<KakaoMap />} />
             <Route path="prompt" element={<Prompt />} />
             <Route path="location-list" element={<LocationList />} />
-            <Route path="rental-space/:locationId" element={<RentalSpacePage />} />
+            <Route path="rental-space/:venueId" element={<RentalSpacePage />} />
             <Route path="space-registeration" element={<SpaceRegistration />} />
           </Route>
         </Routes>

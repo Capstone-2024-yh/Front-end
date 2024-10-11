@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-// import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import { Box, Button, MenuItem, Select, Typography, CircularProgress, Grid } from '@mui/material';
 import { useSelector } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
@@ -20,7 +20,7 @@ const equipmentMap = {
 
 const RentalSpaceBar = () => {
   const ownerId = useSelector((state) => state.auth.user?.id);
-  // const { id } = useParams();
+  const { venueId } = useParams();
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
   const [selectedDate, setSelectedDate] = useState(null);
@@ -50,46 +50,45 @@ const RentalSpaceBar = () => {
     setSpaceData(tempData);
   };
 
+  // 장소, 사진, 장비 정보를 백엔드에서 받아오는 함수
+  const fetchSpaceData = useCallback(async () => {
+    try {
+      // 1. 장소 정보 받아오기
+      const venueResponse = await axios.get(`/venues/${venueId}`);
+
+      console.log('venueResponse:', venueResponse.data);
+  
+      // 2. 사진 정보 받아오기
+      const photoResponse = await axios.get(`/venuePhoto/${venueId}`);
+      const photoBase64 = photoResponse.data[0]?.photoBase64 || '';
+  
+      // 3. 장비 정보 받아오기
+      const equipmentResponse = await axios.get(`/equipment/${venueId}`);
+      const equipmentIds = equipmentResponse.data.map(equip => equip.equipmentId);
+  
+      // 받아온 정보들 중 필요한 데이터만 사용 (location 제외)
+      setSpaceData({
+        spaceName: venueResponse.data.name,
+        spaceFee: venueResponse.data.rentalFee,
+        mainImageBase64: photoBase64,
+        spaceDescription: venueResponse.data.simpleDescription,
+        website: venueResponse.data.websiteURL,
+        spaceType: venueResponse.data.spaceType,
+        spaceArea: venueResponse.data.area,
+        // 여기서 location은 무시
+        equipment: equipmentIds,
+      });
+    } catch (error) {
+      console.error('Error fetching rental space data:', error);
+      setTemporaryData(); // 오류 시 임시 데이터 설정
+    } finally {
+      setLoading(false); // 로딩 상태 해제
+    }
+  }, [venueId]);  
+
   useEffect(() => {
-    /*
-    const fetchData = async () => {
-      try {
-        // 백엔드에서 데이터를 불러옴
-        const response = await axios.get('/venues/${id}'); // API 경로 수정 필요
-        setSpaceData(response.data);
-      } catch (error) {
-        console.error('Error fetching rental space data:', error);
-        setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');
-
-        // 임시 데이터 (오류 발생 시 사용)
-        const tempData = {
-          spaceName: '현대맨션 지층',
-          spaceFee: '₩18,000 / 시간',
-          mainImageBase64: 'https://via.placeholder.com/300x200',
-          spaceDescription: '태국에서 직접 수입한 소품들이 공간 곳곳에 배치되어 있어 독특한 분위기를 연출합니다.',
-          website: 'https://www.google.com/',
-          spaceType: '촬영스튜디오 / 렌탈스튜디오',
-          spaceArea: '20㎡',
-          reservationTime: '최소 1시간부터',
-          spaceCapacity: '최소 5명 - 최대 5명',
-          options: [
-            { available: true }
-          ],
-          equipment: [1, 2, 3, 4, 5, 6, 7, 8, 12],
-        };
-        setSpaceData(tempData);
-      } finally {
-        setLoading(false); // 로딩 상태 해제
-      }
-    };
-
-    fetchData();
-    */
-
-    // 임시 데이터만 사용
-    setTemporaryData();
-    setLoading(false); // 로딩 상태 해제
-  }, []);
+    fetchSpaceData();
+  }, [fetchSpaceData]);
 
   const handleDateSelect = (info) => {
     setSelectedDate(info.dateStr);
