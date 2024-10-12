@@ -5,12 +5,11 @@ import { useSelector } from 'react-redux';
 import RentalSpaceBar from '../panel/RentalSpaceBar';
 import KakaoMapOnly from '../map/KakaoMapOnly';
 import CommentsSection from '../panel/CommentsSection';
-// import axios from '../../axiosConfig';  // 필요 시 axios 활성화
+import axios from '../../axiosConfig';  // axios 활성화
 
 const RentalSpacePage = ({ isLoggedIn }) => {
   const navigate = useNavigate();
-  const { id } = useParams();  // URL에서 id를 추출
-  // const ownerId = useSelector((state) => state.auth.user?.id);
+  const { venueId } = useParams();  // URL에서 venueId를 추출
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true);  // 로딩 상태 추가
 
@@ -27,19 +26,38 @@ const RentalSpacePage = ({ isLoggedIn }) => {
   const reviewRef = useRef(null);
 
   useEffect(() => {
-    /*
     const fetchData = async () => {
       try {
-        // 실제 백엔드 API 엔드포인트로 수정 필요
-        const response = await axios.get(`/venues/${id}`);
-        const data = response.data;
+        // 1. 장소 정보 받아오기
+        const venueResponse = await axios.get(`/venues/${venueId}`);
+        const venueData = venueResponse.data;
 
-        // 데이터가 예상한 구조인지 확인하고, 아니면 임시 데이터 사용
-        if (data && data.sections) {
-          setSpaceData(data);
-        } else {
-          throw new Error('Invalid data structure');
-        }
+        console.log('venueData:', venueData);
+
+        // 2. 태그 정보 받아오기
+        const tagResponse = await axios.get(`/tag/venue/${venueId}`);
+        const tagsData = tagResponse.data.map(tag => tag.tag); // 태그 문자열만 추출
+
+        // 3. 사진 정보 받아오기
+        const photoResponse = await axios.get(`/venuePhoto/${venueId}`);
+        const photoBase64 = photoResponse.data[0]?.photoBase64 || '';
+
+        // 통합된 데이터를 state에 저장
+        setSpaceData({
+          spaceName: venueData.name,
+          spaceIntro: venueData.simpleDescription,
+          spaceTags: tagsData,  // 태그 정보
+          mainImageBase64: photoBase64,  // 사진
+          coordinates: { lat: venueData.latitude, lng: venueData.longitude },
+          sections: {
+            spaceDescription: venueData.simpleDescription,
+            facilities: venueData.facilityInfo,
+            precautions: venueData.precautions,
+            refundPolicy: venueData.refundPolicy,
+            qa: '궁금한 사항은 언제든지 문의 바랍니다.',
+            review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
+          }
+        });
       } catch (error) {
         console.error('Error fetching rental space data:', error);
         // 백엔드 데이터를 가져오지 못하면 임시 데이터를 사용
@@ -48,7 +66,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
           spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
           spaceTags: ['#촬영스튜디오', '#편리한위치', '#최신장비'],
           mainImageBase64: 'https://via.placeholder.com/600x300',
-          coordinates: { lat: 33.450701, lng: 126.570667 },
+          coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
           sections: {
             spaceDescription: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
             facilities: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
@@ -66,28 +84,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
     };
 
     fetchData();
-    */
-
-    // 임시 데이터만 사용
-    const tempData = {
-      spaceName: '공간의 제목 1',
-      spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
-      spaceTags: ['#촬영스튜디오', '#편리한위치', '#최신장비'],
-      mainImageBase64: 'https://via.placeholder.com/600x300',
-      coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
-      sections: {
-        spaceDescription: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
-        facilities: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
-        precautions: '스튜디오 이용 시, 사전에 예약을 필히 완료해주시기 바랍니다.',
-        refundPolicy: '예약 후 24시간 전까지는 전액 환불이 가능하며, 이후에는 환불이 불가합니다.',
-        qa: '궁금한 사항은 언제든지 문의 바랍니다.',
-        review: '많은 고객들이 만족하고 있습니다. 후기들을 확인해보세요!',
-      },
-      mapImage: 'https://via.placeholder.com/600x300',
-    };
-    setSpaceData(tempData);
-    setLoading(false); // 데이터 로딩 완료
-  }, [id]);
+  }, [venueId]);
 
   const handleTagClick = (tag) => {
     navigate(`/location-list?tag=${tag}`);
@@ -151,55 +148,55 @@ const RentalSpacePage = ({ isLoggedIn }) => {
             top: '0',
             backgroundColor: '#fff',
             zIndex: '10',
-            padding: '5px 10px', // 세로 높이를 줄이기 위한 패딩 조정
-            height: '50px', // 높이를 직접 지정하여 줄임
+            padding: '5px 10px',
+            height: '50px',
             boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
             marginBottom: '20px',
-            display: 'flex', // 가로로 나열하기 위한 flex 설정
-            justifyContent: 'space-between', // 요소 간 간격을 자동으로 배치
-            alignItems: 'center', // 세로 중앙 정렬
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
           <List sx={{ display: 'flex', width: '100%' }}>
             <ListItem
               button
               onClick={() => scrollToSection(spaceDescriptionRef)}
-              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
+              sx={{ borderRight: '1px solid #ddd' }}
             >
               <ListItemText primary="공간소개" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(facilitiesRef)}
-              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
+              sx={{ borderRight: '1px solid #ddd' }}
             >
               <ListItemText primary="시설안내" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(precautionsRef)}
-              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
+              sx={{ borderRight: '1px solid #ddd' }}
             >
               <ListItemText primary="유의사항" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(refundPolicyRef)}
-              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
+              sx={{ borderRight: '1px solid #ddd' }}
             >
               <ListItemText primary="환불정책" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(qaRef)}
-              sx={{ borderRight: '1px solid #ddd' }} // 세로줄 추가
+              sx={{ borderRight: '1px solid #ddd' }}
             >
               <ListItemText primary="Q&A" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(reviewRef)}
-              sx={{ borderRight: 'none' }} // 마지막 항목에는 세로줄 없음
+              sx={{ borderRight: 'none' }}
             >
               <ListItemText primary="이용후기" primaryTypographyProps={{ fontSize: '14px' }} />
             </ListItem>
@@ -246,7 +243,6 @@ const RentalSpacePage = ({ isLoggedIn }) => {
           </Typography>
           <Box sx={{ textAlign: 'center', marginBottom: '20px' }}>
             {spaceData?.coordinates ? (
-              console.log(spaceData.coordinates),
               <KakaoMapOnly coordinates={spaceData.coordinates} />
             ) : (
               <div>지도를 표시할 수 없습니다.</div>
@@ -261,17 +257,16 @@ const RentalSpacePage = ({ isLoggedIn }) => {
             {spaceData?.sections?.qa || 'Q&A 정보가 없습니다.'}
           </Typography>
 
-          {/* 이용후기 
+          {/* 이용후기 */}
           <Typography ref={reviewRef} variant="h6" sx={{ marginBottom: '10px' }}>
             이용후기
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
             {spaceData?.sections?.review || '이용후기 정보가 없습니다.'}
           </Typography>
-          */}
 
           {/* 댓글 컴포넌트 사용 */}
-          <CommentsSection isLoggedIn={!!userEmail} userEmail={userEmail} id={id} />
+          <CommentsSection isLoggedIn={!!userEmail} userEmail={userEmail} venueId={venueId} />
         </Box>
       </Box>
 

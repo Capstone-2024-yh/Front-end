@@ -56,7 +56,7 @@ const RentalSpaceBar = () => {
       // 1. 장소 정보 받아오기
       const venueResponse = await axios.get(`/venues/${venueId}`);
 
-      console.log('venueResponse:', venueResponse.data);
+      // console.log('venueResponse:', venueResponse.data);
   
       // 2. 사진 정보 받아오기
       const photoResponse = await axios.get(`/venuePhoto/${venueId}`);

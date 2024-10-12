@@ -276,35 +276,35 @@ const SpaceRegistration = () => {
             <MenuItem value="" disabled>
               모임
             </MenuItem>
-            <MenuItem value="party">파티룸</MenuItem>
-            <MenuItem value="study">스터디룸</MenuItem>
-            <MenuItem value="lecture">강의실</MenuItem>
-            <MenuItem value="cafe">카페</MenuItem>
-            <MenuItem value="kitchen">공유주방</MenuItem>
-            <MenuItem value="discussion">회의실</MenuItem>
-            <MenuItem value="seminar">세미나실</MenuItem>
+            <MenuItem value="파티룸">파티룸</MenuItem>
+            <MenuItem value="스터디룸">스터디룸</MenuItem>
+            <MenuItem value="강의실">강의실</MenuItem>
+            <MenuItem value="카페">카페</MenuItem>
+            <MenuItem value="공유주방">공유주방</MenuItem>
+            <MenuItem value="회의실">회의실</MenuItem>
+            <MenuItem value="세미나실">세미나실</MenuItem>
             <MenuItem value="" disabled>
               연습
             </MenuItem>
-            <MenuItem value="practice">연습실</MenuItem>
-            <MenuItem value="vocal">보컬연습실</MenuItem>
-            <MenuItem value="music">악기연습실</MenuItem>
-            <MenuItem value="record">녹음실</MenuItem>
-            <MenuItem value="workout">운동시설</MenuItem>
+            <MenuItem value="연습실">연습실</MenuItem>
+            <MenuItem value="보컬연습실">보컬연습실</MenuItem>
+            <MenuItem value="악기연습실">악기연습실</MenuItem>
+            <MenuItem value="녹음실">녹음실</MenuItem>
+            <MenuItem value="운동시설">운동시설</MenuItem>
             <MenuItem value="" disabled>
               촬영
             </MenuItem>
-            <MenuItem value="studio">촬영스튜디오</MenuItem>
-            <MenuItem value="cyclorama">호리존</MenuItem>
-            <MenuItem value="live">라이브방송</MenuItem>
-            <MenuItem value="outside">실외촬영</MenuItem>
+            <MenuItem value="촬영스튜디오">촬영스튜디오</MenuItem>
+            <MenuItem value="호리존">호리존</MenuItem>
+            <MenuItem value="라이브방송">라이브방송</MenuItem>
+            <MenuItem value="실외촬영">실외촬영</MenuItem>
             <MenuItem value="" disabled>
               행사
             </MenuItem>
-            <MenuItem value="concert">공연장</MenuItem>
-            <MenuItem value="hall">갤러리</MenuItem>
-            <MenuItem value="wedding">스몰웨딩</MenuItem>
-            <MenuItem value="conference">컨퍼런스</MenuItem>
+            <MenuItem value="공연장">공연장</MenuItem>
+            <MenuItem value="갤러리">갤러리</MenuItem>
+            <MenuItem value="스몰웨딩">스몰웨딩</MenuItem>
+            <MenuItem value="컨퍼런스">컨퍼런스</MenuItem>
           </Select>
         </FormControl>
 
