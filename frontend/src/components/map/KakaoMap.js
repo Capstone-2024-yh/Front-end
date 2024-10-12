@@ -70,7 +70,7 @@ const KakaoMap = () => {
         }
       });
     };
-  }, [kakaoMapKey, coordinates, errorOccurred]); // coordinates와 errorOccurred가 변경될 때만 지도 업데이트
+  }, [kakaoMapKey, errorOccurred]); // coordinates와 errorOccurred가 변경될 때만 지도 업데이트
 
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-start', height: '70vh', width: '100%', margin: 0, padding: 0 }}>

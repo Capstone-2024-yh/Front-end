@@ -49,16 +49,21 @@ const SpaceRegistration = () => {
     loadDaumPostcodeScript();
   }, []);
 
+  // Kakao API 요청용 별도의 axios 인스턴스
+  const kakaoInstance = axios.create({
+    baseURL: '',  // baseURL을 비워두고 프록시를 통해 Kakao API 요청
+  });
+
   // Kakao API로 좌표 찾기
   const getCoordinates = async (address) => {
     try {
-      const response = await axios.get(
-        `https://dapi.kakao.com/v2/local/search/address.json?query=${address}`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`,
-          },
-        }
+      const response = await kakaoInstance.get(
+          `/v2/local/search/address.json?query=${encodeURIComponent(address)}`, // 프록시 사용
+          {
+            headers: {
+              Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`,
+            },
+          }
       );
       if (response.data.documents.length > 0) {
         const { x, y } = response.data.documents[0].road_address;
