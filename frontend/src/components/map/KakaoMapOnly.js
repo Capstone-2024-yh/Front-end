@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const KakaoMapOnly = ({ latitude, longitude }) => {
+const KakaoMapOnly = ({ coordinates }) => {
   const mapContainer = useRef(null);
   const kakaoMapKey = process.env.REACT_APP_KAKAO_MAP_KEY;
 
@@ -9,8 +9,11 @@ const KakaoMapOnly = ({ latitude, longitude }) => {
   const defaultLongitude = 126.570667;
 
   // 전달된 좌표가 없을 경우 기본 좌표 사용
-  const mapLatitude = latitude ?? defaultLatitude;
-  const mapLongitude = longitude ?? defaultLongitude;
+  const mapLatitude = coordinates?.lng ?? defaultLongitude;
+  const mapLongitude = coordinates?.lat ?? defaultLatitude;
+
+  console.log('mapLatitude:', mapLatitude);
+  console.log('mapLongitude:', mapLongitude);
 
   useEffect(() => {
     if (!kakaoMapKey || !mapContainer.current) {
@@ -19,12 +22,12 @@ const KakaoMapOnly = ({ latitude, longitude }) => {
     }
 
     console.log('Map coordinates:', { latitude: mapLatitude, longitude: mapLongitude });
-  
+
     const script = document.createElement('script');
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&autoload=false`;
     script.async = true;
     document.head.appendChild(script);
-  
+
     script.onload = () => {
       window.kakao.maps.load(() => {
         if (mapContainer.current) {
@@ -33,7 +36,7 @@ const KakaoMapOnly = ({ latitude, longitude }) => {
             level: 3,
           };
           const map = new window.kakao.maps.Map(mapContainer.current, options);
-  
+
           const markerPosition = new window.kakao.maps.LatLng(mapLatitude, mapLongitude);
           const marker = new window.kakao.maps.Marker({
             position: markerPosition,
@@ -44,7 +47,7 @@ const KakaoMapOnly = ({ latitude, longitude }) => {
         }
       });
     };
-  
+
     return () => {
       document.head.removeChild(script);
     };

@@ -163,42 +163,42 @@ const RentalSpacePage = ({ isLoggedIn }) => {
               onClick={() => scrollToSection(spaceDescriptionRef)}
               sx={{ borderRight: '1px solid #ddd' }}
             >
-              <ListItemText primary="공간소개" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="공간소개" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(facilitiesRef)}
               sx={{ borderRight: '1px solid #ddd' }}
             >
-              <ListItemText primary="시설안내" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="시설안내" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(precautionsRef)}
               sx={{ borderRight: '1px solid #ddd' }}
             >
-              <ListItemText primary="유의사항" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="유의사항" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(refundPolicyRef)}
               sx={{ borderRight: '1px solid #ddd' }}
             >
-              <ListItemText primary="환불정책" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="환불정책" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(qaRef)}
               sx={{ borderRight: '1px solid #ddd' }}
             >
-              <ListItemText primary="Q&A" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="Q&A" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
             <ListItem
               button
               onClick={() => scrollToSection(reviewRef)}
               sx={{ borderRight: 'none' }}
             >
-              <ListItemText primary="이용후기" primaryTypographyProps={{ fontSize: '14px' }} />
+              <ListItemText primary="이용후기" primaryTypographyProps={{ fontSize: '13px' }} />
             </ListItem>
           </List>
         </Box>
