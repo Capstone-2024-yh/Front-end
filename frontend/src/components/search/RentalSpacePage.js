@@ -66,7 +66,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
           spaceIntro: '이 공간은 최적의 촬영 스튜디오를 제공합니다.',
           spaceTags: ['#촬영스튜디오', '#편리한위치', '#최신장비'],
           mainImageBase64: 'https://via.placeholder.com/600x300',
-          coordinates: { lat:  37.5064746281, lng: 126.95559491195 },
+          coordinates: { lng: 37.5064746281, lat: 126.95559491195 },
           sections: {
             spaceDescription: '이 공간은 사진 촬영과 영상 촬영에 최적화된 다양한 시설을 제공합니다.',
             facilities: '스튜디오 내에는 다양한 배경과 조명 설정이 가능하며, 최신 장비도 구비되어 있습니다.',
