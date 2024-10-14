@@ -271,7 +271,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
       </Box>
 
       {/* 우측에 RentalSpaceInfo 컴포넌트 배치 */}
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, position: 'sticky', top: '0', overflow: 'visible', alignSelf: 'start' }}>
         <RentalSpaceBar />
       </Box>
     </Box>
