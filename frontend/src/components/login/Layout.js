@@ -36,7 +36,7 @@ function Layout() {
 
   return (
     <div>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           {/* 메뉴 토글 버튼 */}
           <IconButton color="inherit" onClick={toggleDashBar}>

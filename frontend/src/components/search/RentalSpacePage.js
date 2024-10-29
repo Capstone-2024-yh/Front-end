@@ -145,7 +145,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
         <Box
           sx={{
             position: 'sticky',
-            top: '0',
+            top: '64px',  // AppBar 높이만큼 떨어지도록 설정
             backgroundColor: '#fff',
             zIndex: '10',
             padding: '5px 10px',
@@ -271,7 +271,7 @@ const RentalSpacePage = ({ isLoggedIn }) => {
       </Box>
 
       {/* 우측에 RentalSpaceInfo 컴포넌트 배치 */}
-      <Box sx={{ flex: 1, position: 'sticky', top: '0', overflow: 'visible', alignSelf: 'start' }}>
+      <Box sx={{ flex: 1, position: 'sticky', top: '64px', overflow: 'visible', alignSelf: 'start' }}>
         <RentalSpaceBar />
       </Box>
     </Box>
