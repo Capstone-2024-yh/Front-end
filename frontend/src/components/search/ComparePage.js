@@ -68,22 +68,22 @@ function Sidebar({ setSelectedType }) {
 function ComparisonArea({ selectedType }) {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
-  const [facilityOptions, setFacilityOptions] = useState([]);
+  const [facilities, setFacilities] = useState([]);
 
   useEffect(() => {
     async function fetchFacilities() {
       try {
         const response = await axios.get(`/api/facilities?type=${selectedType}`);
-        setFacilityOptions(response.data);
+        setFacilities(response.data);
         setLeftFacility(response.data[0]?.id);
         setRightFacility(response.data[1]?.id);
       } catch (error) {
         console.error("Error fetching facilities", error);
         const tempFacilities = [
-          { id: 'temp1', name: '임시 시설 1', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 1000 },
-          { id: 'temp2', name: '임시 시설 2', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 2000 },
+          { id: 'temp1', name: '임시 시설 1', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 1000, area: 50, capacity: 10, precautions: '주의사항 예시', refundPolicy: '환불 정책 예시' },
+          { id: 'temp2', name: '임시 시설 2', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 2000, area: 70, capacity: 20, precautions: '주의사항 예시', refundPolicy: '환불 정책 예시' },
         ];
-        setFacilityOptions(tempFacilities);
+        setFacilities(tempFacilities);
         setLeftFacility('temp1');
         setRightFacility('temp2');
       }
@@ -101,6 +101,9 @@ function ComparisonArea({ selectedType }) {
   const handleRightFacilityChange = (event) => {
     setRightFacility(event.target.value);
   };
+
+  const leftFacilityData = facilities.find(facility => facility.id === leftFacility);
+  const rightFacilityData = facilities.find(facility => facility.id === rightFacility);
 
   return (
     <div className="comparison-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%', maxWidth: '1200px', marginLeft: '200px', marginTop: '-100px' }}>
@@ -121,11 +124,11 @@ function ComparisonArea({ selectedType }) {
             display: 'block',
             marginBottom: '10px'
           }}>
-            {facilityOptions.map(option => (
-              <option key={option.id} value={option.id}>{option.name}</option>
+            {facilities.map(facility => (
+              <option key={facility.id} value={facility.id}>{facility.name}</option>
             ))}
           </select>
-          <FacilitySimpleDetail id={leftFacility} facilityOptions={facilityOptions} />
+          <FacilitySimpleDetail facility={leftFacilityData} />
         </div>
         {/* 가운데 목차 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '80px', marginTop: '70px' }}>
@@ -152,18 +155,18 @@ function ComparisonArea({ selectedType }) {
             display: 'block',
             marginBottom: '10px'
           }}>
-            {facilityOptions.map(option => (
-              <option key={option.id} value={option.id}>{option.name}</option>
+            {facilities.map(facility => (
+              <option key={facility.id} value={facility.id}>{facility.name}</option>
             ))}
           </select>
-          <FacilitySimpleDetail id={rightFacility} facilityOptions={facilityOptions} />
+          <FacilitySimpleDetail facility={rightFacilityData} />
         </div>
       </div>
 
       <hr style={{ width: '100%', borderTop: '1px solid #ccc', margin: '20px 0' }} />
 
       <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
-        <FacilityDetail id={leftFacility} />
+        <FacilityDetail facility={leftFacilityData} />
         {/* 가운데 목차 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '40px' }}>
           <div style={{ height: '38px', display: 'flex', alignItems: 'center', marginTop: '5px' }}>
@@ -182,16 +185,14 @@ function ComparisonArea({ selectedType }) {
             <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>환불정책</p>
           </div>
         </div>
-        <FacilityDetail id={rightFacility} />
+        <FacilityDetail facility={rightFacilityData} />
       </div>
     </div>
   );
 }
 
 // FacilitySimpleDetail 컴포넌트
-function FacilitySimpleDetail({ id, facilityOptions }) {
-  const facility = facilityOptions.find(option => option.id === id);
-
+function FacilitySimpleDetail({ facility }) {
   return facility ? (
     <div className="facility-simple-detail" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <img src={facility.image} alt={facility.name} style={{ width: '100%', maxWidth: '150px', marginBottom: '10px' }} />
@@ -203,23 +204,7 @@ function FacilitySimpleDetail({ id, facilityOptions }) {
 }
 
 // FacilityDetail 컴포넌트
-function FacilityDetail({ id }) {
-  const [facility, setFacility] = useState(null);
-
-  useEffect(() => {
-    async function fetchFacilityDetail() {
-      try {
-        const response = await axios.get(`/api/facilities/${id}/details`);
-        setFacility(response.data);
-      } catch (error) {
-        console.error("Error fetching facility details", error);
-        // 임시 데이터 사용
-        setFacility({ price: 3000, area: 100, capacity: 50, precautions: "주의사항 예시", refundPolicy: "환불 정책 예시" });
-      }
-    }
-    if (id) fetchFacilityDetail();
-  }, [id]);
-
+function FacilityDetail({ facility }) {
   return facility ? (
     <div className="facility-detail" style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}>
       <h3>₩{facility.price}</h3>
