@@ -16,18 +16,20 @@ function Sidebar({ setSelectedType }) {
         setActiveType(firstTypeId);
       } catch (error) {
         console.error("Error fetching facility types", error);
-        const defaultTypes = [{ id: 1, name: "임시 유형 1" }, 
-                              { id: 2, name: "임시 유형 2" }, 
-                              { id: 3, name: "임시 유형 3" },
-                              { id: 4, name: "임시 유형 4" }, 
-                              { id: 5, name: "임시 유형 5" }, 
-                              { id: 6, name: "임시 유형 6" }, 
-                              { id: 7, name: "임시 유형 7" }, 
-                              { id: 8, name: "임시 유형 8" }, 
-                              { id: 9, name: "임시 유형 9" }, 
-                              { id: 10, name: "임시 유형 10" }, 
-                              { id: 11, name: "임시 유형 11" }, 
-                              { id: 12, name: "임시 유형 12" }];
+        const defaultTypes = [
+          { id: 1, name: "임시 유형 1" }, 
+          { id: 2, name: "임시 유형 2" }, 
+          { id: 3, name: "임시 유형 3" },
+          { id: 4, name: "임시 유형 4" }, 
+          { id: 5, name: "임시 유형 5" }, 
+          { id: 6, name: "임시 유형 6" }, 
+          { id: 7, name: "임시 유형 7" }, 
+          { id: 8, name: "임시 유형 8" }, 
+          { id: 9, name: "임시 유형 9" }, 
+          { id: 10, name: "임시 유형 10" }, 
+          { id: 11, name: "임시 유형 11" }, 
+          { id: 12, name: "임시 유형 12" }
+        ];
         setFacilityTypes(defaultTypes);
         setSelectedType(defaultTypes[0].id);
         setActiveType(defaultTypes[0].id);
@@ -67,7 +69,6 @@ function ComparisonArea({ selectedType }) {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
   const [facilityOptions, setFacilityOptions] = useState([]);
-  const [selectedFacilityId, setSelectedFacilityId] = useState(null);
 
   useEffect(() => {
     async function fetchFacilities() {
@@ -78,10 +79,11 @@ function ComparisonArea({ selectedType }) {
         setRightFacility(response.data[1]?.id);
       } catch (error) {
         console.error("Error fetching facilities", error);
-        setFacilityOptions([
-          { id: 'temp1', name: '임시 시설 1', image: 'https://via.placeholder.com/150', shortDescription: '임시 소개', price: 1000 },
-          { id: 'temp2', name: '임시 시설 2', image: 'https://via.placeholder.com/150', shortDescription: '임시 소개', price: 2000 },
-        ]);
+        const tempFacilities = [
+          { id: 'temp1', name: '임시 시설 1', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 1000 },
+          { id: 'temp2', name: '임시 시설 2', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 2000 },
+        ];
+        setFacilityOptions(tempFacilities);
         setLeftFacility('temp1');
         setRightFacility('temp2');
       }
@@ -92,31 +94,102 @@ function ComparisonArea({ selectedType }) {
     }
   }, [selectedType]);
 
+  const handleLeftFacilityChange = (event) => {
+    setLeftFacility(event.target.value);
+  };
+
+  const handleRightFacilityChange = (event) => {
+    setRightFacility(event.target.value);
+  };
+
   return (
-    <div className="comparison-area" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '80%', maxWidth: '1200px', marginTop: '-200px' }}>
-      <div className="facility-box" style={{ width: '45%', textAlign: 'center', margin: '0 10px' }}>
-        {leftFacility && <FacilitySimpleDetail id={leftFacility} facilityOptions={facilityOptions} setSelectedFacilityId={setSelectedFacilityId} />}
-      </div>
-
-      <div className="facility-box" style={{ width: '45%', textAlign: 'center', margin: '0 10px' }}>
-        {rightFacility && <FacilitySimpleDetail id={rightFacility} facilityOptions={facilityOptions} setSelectedFacilityId={setSelectedFacilityId} />}
-      </div>
-
-      {/* FacilityDetail 팝업 */}
-      {selectedFacilityId && (
-        <div className="facility-detail-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', width: '80%', maxWidth: '500px' }}>
-            <button onClick={() => setSelectedFacilityId(null)} style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }}>X</button>
-            <FacilityDetail id={selectedFacilityId} />
+    <div className="comparison-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%', maxWidth: '1200px', marginLeft: '200px', marginTop: '-100px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
+        <div style={{ width: '45%', margin: '0 10px' }}>
+          <select value={leftFacility} onChange={handleLeftFacilityChange} style={{
+            width: '70%',
+            padding: '6px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#333',
+            backgroundColor: '#f0f0f0',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            appearance: 'none',
+            cursor: 'pointer',
+            margin: '0 auto', 
+            display: 'block',
+            marginBottom: '10px'
+          }}>
+            {facilityOptions.map(option => (
+              <option key={option.id} value={option.id}>{option.name}</option>
+            ))}
+          </select>
+          <FacilitySimpleDetail id={leftFacility} facilityOptions={facilityOptions} />
+        </div>
+        {/* 가운데 목차 영역 */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '80px', marginTop: '70px' }}>
+          <div style={{ height: '100px', display: 'flex', alignItems: 'center', marginTop: '180px' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>공간한줄</p>
+          </div>
+          <div style={{ height: '0px', display: 'flex', alignItems: 'center' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>가격</p>
           </div>
         </div>
-      )}
+        <div style={{ width: '45%', margin: '0 10px' }}>
+          <select value={rightFacility} onChange={handleRightFacilityChange} style={{
+            width: '70%',
+            padding: '6px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#333',
+            backgroundColor: '#f0f0f0',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
+            appearance: 'none',
+            cursor: 'pointer',
+            margin: '0 auto', 
+            display: 'block',
+            marginBottom: '10px'
+          }}>
+            {facilityOptions.map(option => (
+              <option key={option.id} value={option.id}>{option.name}</option>
+            ))}
+          </select>
+          <FacilitySimpleDetail id={rightFacility} facilityOptions={facilityOptions} />
+        </div>
+      </div>
+
+      <hr style={{ width: '100%', borderTop: '1px solid #ccc', margin: '20px 0' }} />
+
+      <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
+        <FacilityDetail id={leftFacility} />
+        {/* 가운데 목차 영역 */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '40px' }}>
+          <div style={{ height: '38px', display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>가격</p>
+          </div>
+          <div style={{ height: '38px', display: 'flex', alignItems: 'center' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>면적</p>
+          </div>
+          <div style={{ height: '38px', display: 'flex', alignItems: 'center' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>수용인원</p>
+          </div>
+          <div style={{ height: '38px', display: 'flex', alignItems: 'center' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>주의사항</p>
+          </div>
+          <div style={{ height: '38px', display: 'flex', alignItems: 'center' }}>
+            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>환불정책</p>
+          </div>
+        </div>
+        <FacilityDetail id={rightFacility} />
+      </div>
     </div>
   );
 }
 
 // FacilitySimpleDetail 컴포넌트
-function FacilitySimpleDetail({ id, facilityOptions, setSelectedFacilityId }) {
+function FacilitySimpleDetail({ id, facilityOptions }) {
   const facility = facilityOptions.find(option => option.id === id);
 
   return facility ? (
@@ -125,7 +198,6 @@ function FacilitySimpleDetail({ id, facilityOptions, setSelectedFacilityId }) {
       <h2>{facility.name}</h2>
       <p>{facility.shortDescription}</p>
       <p>₩{facility.price}</p>
-      <button onClick={() => setSelectedFacilityId(id)}>상세 정보 보기</button>
     </div>
   ) : null;
 }
@@ -149,12 +221,12 @@ function FacilityDetail({ id }) {
   }, [id]);
 
   return facility ? (
-    <div className="facility-detail" style={{ textAlign: 'center', marginTop: '20px' }}>
-      <h3>가격: ₩{facility.price}</h3>
-      <p>면적: {facility.area}㎡</p>
-      <p>수용 인원: {facility.capacity}</p>
-      <p>주의사항: {facility.precautions}</p>
-      <p>환불 정책: {facility.refundPolicy}</p>
+    <div className="facility-detail" style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}>
+      <h3>₩{facility.price}</h3>
+      <p>{facility.area}㎡</p>
+      <p>최대 {facility.capacity}명</p>
+      <p>{facility.precautions}</p>
+      <p>{facility.refundPolicy}</p>
     </div>
   ) : null;
 }
@@ -166,9 +238,7 @@ function ComparePage() {
   return (
     <div className="compare-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
       <Sidebar setSelectedType={setSelectedType} />
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '250px' }}>
-        <ComparisonArea selectedType={selectedType} />
-      </div>
+      <ComparisonArea selectedType={selectedType} />
     </div>
   );
 }
