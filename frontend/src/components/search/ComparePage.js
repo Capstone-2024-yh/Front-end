@@ -82,6 +82,7 @@ function ComparisonArea({ selectedType }) {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
   const [facilities, setFacilities] = useState([]);
+  const { venueId } = useParams();
 
   useEffect(() => {
     async function fetchSpaceTypeAndFacilities() {
