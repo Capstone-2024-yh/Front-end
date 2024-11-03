@@ -3,28 +3,31 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const equipmentMap = {
-  1: '빔 프로젝터', 2: '마이크', 3: '냉난방기', 4: '책상', 
-  5: '의자', 6: '화이트보드', 7: '음향 시스템', 8: '조명 장비', 
-  9: '컴퓨터', 10: '프린터', 11: '모니터', 12: 'WiFi', 
-  13: 'TV', 14: '키보드', 15: '냉장고', 16: '전자레인지', 
-  17: '커피머신', 18: '세탁기', 19: '건조기', 20: '청소기', 
-  21: '카메라', 22: '삼각대', 23: '녹음 장비', 24: 'DVD 플레이어', 
+  1: '빔 프로젝터', 2: '마이크', 3: '냉난방기', 4: '책상',
+  5: '의자', 6: '화이트보드', 7: '음향 시스템', 8: '조명 장비',
+  9: '컴퓨터', 10: '프린터', 11: '모니터', 12: 'WiFi',
+  13: 'TV', 14: '키보드', 15: '냉장고', 16: '전자레인지',
+  17: '커피머신', 18: '세탁기', 19: '건조기', 20: '청소기',
+  21: '카메라', 22: '삼각대', 23: '녹음 장비', 24: 'DVD 플레이어',
   25: '스피커', 26: '헤드셋', 27: 'HDMI 케이블', 28: '전동 스크린',
   29: '화장실', 30: '주차장', 31: '기타 1', 32: '기타 2'
 };
 
 // Sidebar 컴포넌트
 function Sidebar({ setSelectedType }) {
+  const { venueId } = useParams();
   const [facilityTypes, setFacilityTypes] = useState([]);
   const [activeType, setActiveType] = useState(null);
-  const { venueId } = useParams();
+  
+  console.log(venueId);
 
   useEffect(() => {
     async function fetchFacilityTypes() {
       try {
         const response = await axios.get(`/venues/${venueId}`);
-        setFacilityTypes(response.data);
-        const firstTypeId = response.data[0]?.id;
+        //console.log(response.data);
+        setFacilityTypes([response.data]);
+        const firstTypeId = response.data.venueId;
         setSelectedType(firstTypeId);
         setActiveType(firstTypeId);
       } catch (error) {
@@ -87,11 +90,9 @@ function ComparisonArea({ selectedType }) {
   useEffect(() => {
     async function fetchSpaceTypeAndFacilities() {
       try {
-        // venueId를 사용하여 spaceType을 가져옵니다
-        const venueResponse = await axios.get(`/avenues/${venueId}`);
+        const venueResponse = await axios.get(`/venues/${venueId}`);
         const spaceType = venueResponse.data.spaceType;
-  
-        // spaceType에 맞는 시설 데이터를 가져옵니다
+
         const facilitiesResponse = await axios.get(`/api/facilities?type=${spaceType}`);
         setFacilities(facilitiesResponse.data);
         setLeftFacility(facilitiesResponse.data[0]?.id);
@@ -107,7 +108,7 @@ function ComparisonArea({ selectedType }) {
         setRightFacility('temp2');
       }
     }
-  
+
     if (venueId) {
       fetchSpaceTypeAndFacilities();
     }
@@ -139,7 +140,7 @@ function ComparisonArea({ selectedType }) {
             borderRadius: '5px',
             appearance: 'none',
             cursor: 'pointer',
-            margin: '0 auto', 
+            margin: '0 auto',
             display: 'block',
             marginBottom: '10px'
           }}>
@@ -149,7 +150,6 @@ function ComparisonArea({ selectedType }) {
           </select>
           <FacilitySimpleDetail facility={leftFacilityData} />
         </div>
-        {/* 가운데 목차 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '80px', marginTop: '70px' }}>
           <div style={{ height: '103px', display: 'flex', alignItems: 'center', marginTop: '180px' }}>
             <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>공간한줄</p>
@@ -170,7 +170,7 @@ function ComparisonArea({ selectedType }) {
             borderRadius: '5px',
             appearance: 'none',
             cursor: 'pointer',
-            margin: '0 auto', 
+            margin: '0 auto',
             display: 'block',
             marginBottom: '10px'
           }}>
@@ -181,12 +181,9 @@ function ComparisonArea({ selectedType }) {
           <FacilitySimpleDetail facility={rightFacilityData} />
         </div>
       </div>
-
       <hr style={{ width: '100%', borderTop: '1px solid #ccc', margin: '20px 0' }} />
-
       <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
         <FacilityDetail facility={leftFacilityData} />
-        {/* 가운데 목차 영역 */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '40px' }}>
           <div style={{ height: '40px', display: 'flex', alignItems: 'center', marginTop: '5px' }}>
             <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>가격</p>
