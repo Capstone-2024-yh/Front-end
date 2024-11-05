@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
+import axios from 'axios';
 
 function Prompt() {
   const [prompt, setPrompt] = useState(''); // 사용자가 입력한 프롬프트 저장
@@ -11,21 +12,12 @@ function Prompt() {
     setError(null); // 오류 초기화
 
     try {
-      // 백엔드 API 호출
-      const res = await fetch('/api/prompt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }), // 입력된 프롬프트를 JSON으로 변환하여 전송
+      // axios를 사용한 백엔드 API 호출
+      const res = await axios.post('/gptCall/Call', {
+        question: prompt, // Question 객체에 맞게 key를 "question"으로 전송
       });
 
-      if (!res.ok) {
-        throw new Error('백엔드 오류');
-      }
-
-      const data = await res.json();
-      setResponse(`AI의 답변: ${data.response}`); // 백엔드에서 받은 응답 출력
+      setResponse(`AI의 답변: ${res.data}`); // 백엔드에서 받은 응답 출력
     } catch (error) {
       // 오류가 발생하면 입력된 프롬프트를 그대로 출력
       setError(true);
