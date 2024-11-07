@@ -1,7 +1,9 @@
+// ComparePage.jsx
+
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+// equipmentMap 정의
 const equipmentMap = {
   1: '빔 프로젝터', 2: '마이크', 3: '냉난방기', 4: '책상',
   5: '의자', 6: '화이트보드', 7: '음향 시스템', 8: '조명 장비',
@@ -13,46 +15,37 @@ const equipmentMap = {
   29: '화장실', 30: '주차장', 31: '기타 1', 32: '기타 2'
 };
 
+// facilityTypes 정의
+const facilityTypes = [
+  { id: '파티룸', name: '파티룸' },
+  { id: '스터디룸', name: '스터디룸' },
+  { id: '강의실', name: '강의실' },
+  { id: '카페', name: '카페' },
+  { id: '공유주방', name: '공유주방' },
+  { id: '회의실', name: '회의실' },
+  { id: '세미나실', name: '세미나실' },
+  { id: '연습실', name: '연습실' },
+  { id: '보컬연습실', name: '보컬연습실' },
+  { id: '악기연습실', name: '악기연습실' },
+  { id: '녹음실', name: '녹음실' },
+  { id: '운동시설', name: '운동시설' },
+  { id: '촬영스튜디오', name: '촬영스튜디오' },
+  { id: '호리존', name: '호리존' },
+  { id: '라이브방송', name: '라이브방송' },
+  { id: '실외촬영', name: '실외촬영' },
+  { id: '공연장', name: '공연장' },
+  { id: '갤러리', name: '갤러리' },
+  { id: '스몰웨딩', name: '스몰웨딩' },
+  { id: '컨퍼런스', name: '컨퍼런스' },
+];
+
 // Sidebar 컴포넌트
 function Sidebar({ setSelectedType }) {
-  const { venueId } = useParams();
-  const [facilityTypes, setFacilityTypes] = useState([]);
-  const [activeType, setActiveType] = useState(null);
-  
-  console.log(venueId);
+  const [activeType, setActiveType] = useState(facilityTypes[0]?.id);
 
   useEffect(() => {
-    async function fetchFacilityTypes() {
-      try {
-        const response = await axios.get(`/venues/${venueId}`);
-        //console.log(response.data);
-        setFacilityTypes([response.data]);
-        const firstTypeId = response.data.venueId;
-        setSelectedType(firstTypeId);
-        setActiveType(firstTypeId);
-      } catch (error) {
-        console.error("Error fetching facility types", error);
-        const defaultTypes = [
-          { id: 1, name: "임시 유형 1" },
-          { id: 2, name: "임시 유형 2" },
-          { id: 3, name: "임시 유형 3" },
-          { id: 4, name: "임시 유형 4" },
-          { id: 5, name: "임시 유형 5" },
-          { id: 6, name: "임시 유형 6" },
-          { id: 7, name: "임시 유형 7" },
-          { id: 8, name: "임시 유형 8" },
-          { id: 9, name: "임시 유형 9" },
-          { id: 10, name: "임시 유형 10" },
-          { id: 11, name: "임시 유형 11" },
-          { id: 12, name: "임시 유형 12" }
-        ];
-        setFacilityTypes(defaultTypes);
-        setSelectedType(defaultTypes[0].id);
-        setActiveType(defaultTypes[0].id);
-      }
-    }
-    fetchFacilityTypes();
-  }, [venueId, setSelectedType]);
+    setSelectedType(facilityTypes[0]?.id);
+  }, [setSelectedType]);
 
   const handleTypeClick = (typeId) => {
     setSelectedType(typeId);
@@ -60,17 +53,33 @@ function Sidebar({ setSelectedType }) {
   };
 
   return (
-    <div className="sidebar" style={{ width: '200px', position: 'fixed', top: '64px', left: 0, height: 'calc(100% - 64px)', backgroundColor: '#f4f4f4', zIndex: 1, overflowY: 'auto' }}>
-      {facilityTypes.map(type => (
+    <div
+      className="sidebar"
+      style={{
+        width: '200px',
+        position: 'fixed',
+        top: '64px',
+        left: 0,
+        height: 'calc(100% - 64px)',
+        backgroundColor: '#f4f4f4',
+        zIndex: 1,
+        overflowY: 'auto',
+      }}
+    >
+      {facilityTypes.map((type) => (
         <button
           key={type.id}
           onClick={() => handleTypeClick(type.id)}
           style={{
-            width: '100%', padding: '15px 10px',
+            width: '100%',
+            padding: '15px 10px',
             backgroundColor: activeType === type.id ? '#4CAF50' : '#fff',
             color: activeType === type.id ? '#fff' : '#333',
-            border: 'none', borderBottom: '1px solid #ddd',
-            cursor: 'pointer', textAlign: 'left', fontSize: '16px',
+            border: 'none',
+            borderBottom: '1px solid #ddd',
+            cursor: 'pointer',
+            textAlign: 'left',
+            fontSize: '16px',
           }}
         >
           {type.name}
@@ -85,121 +94,222 @@ function ComparisonArea({ selectedType }) {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
   const [facilities, setFacilities] = useState([]);
-  const { venueId } = useParams();
 
   useEffect(() => {
-    async function fetchSpaceTypeAndFacilities() {
+    async function fetchFacilities() {
       try {
-        const venueResponse = await axios.get(`/venues/${venueId}`);
-        const spaceType = venueResponse.data.spaceType;
-
-        const facilitiesResponse = await axios.get(`/api/facilities?type=${spaceType}`);
-        setFacilities(facilitiesResponse.data);
-        setLeftFacility(facilitiesResponse.data[0]?.id);
-        setRightFacility(facilitiesResponse.data[1]?.id);
+        // 응답을 텍스트로 받아옵니다.
+        const response = await axios.get('/venues/AllSearch', { responseType: 'text' });
+        let responseData = response.data;
+  
+        // 'location' 필드를 제거하며 JSON 형식을 유지합니다.
+        responseData = responseData.replace(/"location":\{[^{}]*\},?/g, '');
+  
+        // JSON 파싱을 진행합니다.
+        const venues = JSON.parse(responseData);
+        const filteredVenues = venues.filter((venue) => venue.spaceType === selectedType);
+  
+        const facilitiesData = await Promise.all(
+          filteredVenues.map(async (venue) => {
+            const photoResponse = await axios.get(`/venuePhoto/${venue.venueId}`);
+            const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
+  
+            const equipmentResponse = await axios.get(`/equipment/${venue.venueId}`);
+            const equipmentIds = equipmentResponse.data.map((eq) => eq.equipmentTypeId);
+  
+            return {
+              id: venue.venueId,
+              name: venue.name,
+              image: `data:image/jpeg;base64,${imageBase64}`,
+              shortDescription: venue.simpleDescription,
+              price: venue.rentalFee,
+              area: venue.area,
+              capacity: venue.capacity,
+              equipment: equipmentIds,
+              facilityInfo: venue.facilityInfo,
+              precautions: venue.precautions,
+              refundPolicy: venue.refundPolicy,
+            };
+          })
+        );
+  
+        setFacilities(facilitiesData);
+        setLeftFacility(facilitiesData[0]?.id);
+        setRightFacility(facilitiesData[1]?.id);
       } catch (error) {
-        console.error("Error fetching facilities", error);
+        console.error('Error fetching facilities:', error);
+        // 에러 발생 시 임시 데이터 사용
         const tempFacilities = [
-          { id: 'temp1', name: '임시 시설 1', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 1000, area: 50, capacity: 10, equipment: [1, 2, 3], refundPolicy: '환불 정책 예시' },
-          { id: 'temp2', name: '임시 시설 2', image: 'https://via.placeholder.com/150', shortDescription: '이 문장은 임시 소개문입니다.', price: 2000, area: 70, capacity: 20, equipment: [4, 5, 6], refundPolicy: '환불 정책 예시' },
+          {
+            id: 'temp1',
+            name: '임시 시설 1',
+            image: 'https://via.placeholder.com/150',
+            shortDescription: '이 문장은 임시 소개문입니다.',
+            price: 1000,
+            area: 50,
+            capacity: 10,
+            equipment: [1, 2, 3],
+            facilityInfo: '시설 운영 예시',
+            precautions: '주의사항 예시',
+            refundPolicy: '환불 정책 예시',
+          },
+          {
+            id: 'temp2',
+            name: '임시 시설 2',
+            image: 'https://via.placeholder.com/150',
+            shortDescription: '이 문장은 임시 소개문입니다.',
+            price: 2000,
+            area: 70,
+            capacity: 20,
+            equipment: [4, 5, 6],
+            facilityInfo: '시설 운영 예시',
+            precautions: '주의사항 예시',
+            refundPolicy: '환불 정책 예시',
+          },
         ];
         setFacilities(tempFacilities);
         setLeftFacility('temp1');
         setRightFacility('temp2');
       }
     }
-
-    if (venueId) {
-      fetchSpaceTypeAndFacilities();
+  
+    if (selectedType) {
+      fetchFacilities();
     }
-  }, [venueId]);
+  }, [selectedType]);
+  
 
   const handleLeftFacilityChange = (event) => {
-    setLeftFacility(event.target.value);
+    setLeftFacility(parseInt(event.target.value));
   };
 
   const handleRightFacilityChange = (event) => {
-    setRightFacility(event.target.value);
+    setRightFacility(parseInt(event.target.value));
   };
 
-  const leftFacilityData = facilities.find(facility => facility.id === leftFacility);
-  const rightFacilityData = facilities.find(facility => facility.id === rightFacility);
+  const leftFacilityData = facilities.find((facility) => facility.id === leftFacility);
+  const rightFacilityData = facilities.find((facility) => facility.id === rightFacility);
 
   return (
-    <div className="comparison-area" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%', maxWidth: '1200px', marginLeft: '200px', marginTop: '-50px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', width: '100%' }}>
+    <div
+      className="comparison-area"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '80%',
+        maxWidth: '1200px',
+        marginLeft: '200px',
+        marginTop: '0px',
+      }}
+    >
+      {/* 상단 비교 영역 */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          width: '100%',
+        }}
+      >
+        {/* 좌측 시설 선택 및 간단 정보 */}
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <select value={leftFacility} onChange={handleLeftFacilityChange} style={{
-            width: '70%',
-            padding: '6px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#333',
-            backgroundColor: '#f0f0f0',
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-            appearance: 'none',
-            cursor: 'pointer',
-            margin: '0 auto',
-            display: 'block',
-            marginBottom: '10px'
-          }}>
-            {facilities.map(facility => (
-              <option key={facility.id} value={facility.id}>{facility.name}</option>
+          <select
+            value={leftFacility || ''}
+            onChange={handleLeftFacilityChange}
+            style={selectStyle}
+          >
+            {facilities.map((facility) => (
+              <option key={facility.id} value={facility.id}>
+                {facility.name}
+              </option>
             ))}
           </select>
           <FacilitySimpleDetail facility={leftFacilityData} />
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '80px', marginTop: '70px' }}>
-          <div style={{ height: '103px', display: 'flex', alignItems: 'center', marginTop: '180px' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>공간한줄</p>
+
+        {/* 중앙 비교 항목 레이블 */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '80px',
+            minWidth: '80px',
+            marginTop: '70px',
+          }}
+        >
+          <div
+            style={{
+              height: '103px',
+              display: 'flex',
+              alignItems: 'center',
+              marginTop: '180px',
+            }}
+          >
+            <p style={labelStyle}>공간한줄</p>
           </div>
           <div style={{ height: '0px', display: 'flex', alignItems: 'center' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>가격</p>
+            <p style={labelStyle}>가격</p>
           </div>
         </div>
+
+        {/* 우측 시설 선택 및 간단 정보 */}
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <select value={rightFacility} onChange={handleRightFacilityChange} style={{
-            width: '70%',
-            padding: '6px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#333',
-            backgroundColor: '#f0f0f0',
-            border: '1px solid #ccc',
-            borderRadius: '5px',
-            appearance: 'none',
-            cursor: 'pointer',
-            margin: '0 auto',
-            display: 'block',
-            marginBottom: '10px'
-          }}>
-            {facilities.map(facility => (
-              <option key={facility.id} value={facility.id}>{facility.name}</option>
+          <select
+            value={rightFacility || ''}
+            onChange={handleRightFacilityChange}
+            style={selectStyle}
+          >
+            {facilities.map((facility) => (
+              <option key={facility.id} value={facility.id}>
+                {facility.name}
+              </option>
             ))}
           </select>
           <FacilitySimpleDetail facility={rightFacilityData} />
         </div>
       </div>
-      <hr style={{ width: '100%', borderTop: '1px solid #ccc', margin: '20px 0' }} />
-      <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
+
+      <hr
+        style={{
+          width: '100%',
+          borderTop: '1px solid #ccc',
+          margin: '20px 0',
+        }}
+      />
+
+      {/* 상세 비교 영역 */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          width: '100%',
+          marginTop: '20px',
+        }}
+      >
         <FacilityDetail facility={leftFacilityData} />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '80px', minWidth: '40px' }}>
-          <div style={{ height: '40px', display: 'flex', alignItems: 'center', marginTop: '5px' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', lineHeight: '1.2', textAlign: 'center' }}>가격</p>
-          </div>
-          <div style={{ height: '40px', display: 'flex', alignItems: 'center' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>면적</p>
-          </div>
-          <div style={{ height: '40px', display: 'flex', alignItems: 'center' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>수용인원</p>
-          </div>
-          <div style={{ height: '70px', display: 'flex', alignItems: 'center' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>기자재</p>
-          </div>
-          <div style={{ height: '40px', display: 'flex', alignItems: 'center' }}>
-            <p style={{ fontSize: '16px', fontWeight: 'bold', margin: '0', textAlign: 'center' }}>환불정책</p>
-          </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '80px',
+            minWidth: '40px',
+          }}
+        >
+          {['가격', '면적', '수용인원', '기자재', '이용 안내', '주의사항', '환불정책'].map(
+            (label) => (
+              <div
+                key={label}
+                style={{ height: '40px', display: 'flex', alignItems: 'center' }}
+              >
+                <p style={labelStyle}>{label}</p>
+              </div>
+            )
+          )}
         </div>
         <FacilityDetail facility={rightFacilityData} />
       </div>
@@ -210,8 +320,19 @@ function ComparisonArea({ selectedType }) {
 // FacilitySimpleDetail 컴포넌트
 function FacilitySimpleDetail({ facility }) {
   return facility ? (
-    <div className="facility-simple-detail" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <img src={facility.image} alt={facility.name} style={{ width: '100%', maxWidth: '150px', marginBottom: '10px' }} />
+    <div
+      className="facility-simple-detail"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <img
+        src={facility.image}
+        alt={facility.name}
+        style={{ width: '100%', maxWidth: '150px', marginBottom: '10px' }}
+      />
       <h2>{facility.name}</h2>
       <p>{facility.shortDescription}</p>
       <p>₩{facility.price}</p>
@@ -222,12 +343,21 @@ function FacilitySimpleDetail({ facility }) {
 // FacilityDetail 컴포넌트
 function FacilityDetail({ facility }) {
   return facility ? (
-    <div className="facility-detail" style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}>
+    <div
+      className="facility-detail"
+      style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}
+    >
       <h3>₩{facility.price}</h3>
       <p>{facility.area}㎡</p>
       <p>최대 {facility.capacity}명</p>
       <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
         <p>{facility.equipment?.map((id) => equipmentMap[id]).join(', ')}</p>
+      </div>
+      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
+        <p>{facility.facilityInfo}</p>
+      </div>
+      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
+        <p>{facility.precautions}</p>
       </div>
       <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
         <p>{facility.refundPolicy}</p>
@@ -236,12 +366,45 @@ function FacilityDetail({ facility }) {
   ) : null;
 }
 
+// 스타일 정의
+const selectStyle = {
+  width: '70%',
+  padding: '6px',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  color: '#333',
+  backgroundColor: '#f0f0f0',
+  border: '1px solid #ccc',
+  borderRadius: '5px',
+  appearance: 'none',
+  cursor: 'pointer',
+  margin: '0 auto',
+  display: 'block',
+  marginBottom: '10px',
+};
+
+const labelStyle = {
+  fontSize: '16px',
+  fontWeight: 'bold',
+  margin: '0',
+  lineHeight: '1.2',
+  textAlign: 'center',
+};
+
 // ComparePage 컴포넌트
 function ComparePage() {
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState(facilityTypes[0]?.id);
 
   return (
-    <div className="compare-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+    <div
+      className="compare-page"
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+      }}
+    >
       <Sidebar setSelectedType={setSelectedType} />
       <ComparisonArea selectedType={selectedType} />
     </div>
