@@ -1,25 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button, Grid, CircularProgress } from '@mui/material';
 // import axios from '../../axiosConfig';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
+import axios from "axios";
 
 const LocationList = () => {
   const [locationData, setLocationData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState('default');
   const [loading, setLoading] = useState(true); 
-  // const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const itemsPerPage = 6; // 한 페이지에 보여줄 항목 수
 
   const navigate = useNavigate();
+  const location = useLocation()
+
 
   useEffect(() => {
-    /* 
+    const searchParams = new URLSearchParams(location.search);
+    // const tag = searchParams.get('tag');
+    const type = searchParams.get('type');
+
     const fetchData = async () => {
       try {
-        const response = await axios.get('/venues/AllSearch');
+        let apiCall;
+        if(type){
+          apiCall = '/venues/typeSearch?type='.concat(type)
+          console.log('ONO')
+        }
+        else{
+          apiCall = '/venues/AllSearch'
+          console.log('NONONO')
+        }
+        const response = await axios.get(apiCall);
         const data = response.data;
 
         // 응답 데이터가 배열인지 확인
@@ -27,7 +42,28 @@ const LocationList = () => {
           throw new Error('API 응답이 배열이 아닙니다.');
         }
 
-        setLocationData(data); // 데이터가 배열일 경우에만 설정
+        const imagePromises = data.map((venue) =>
+            axios.get(`/venuePhoto/${venue.venueId}`)
+        );
+
+        const images = await Promise.all(imagePromises);
+        const imageData = images.map((image) =>
+            image.data[0]?.photoBase64 || 'https://via.placeholder.com/150'
+        );
+
+        const ConvData = data.map((venue, index) => {
+          return {
+            id: venue.venueId,
+            spaceName: venue.name || `임시 장소 ${index + 1}`,  // venue.name이 없으면 임시 장소 이름 사용
+            mainImageBase64: imageData[index],  // 이미지 URL 임시 설정
+            spaceIntro: venue.simpleDescription || `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+            spaceFee: venue.rentalFee || Math.floor(Math.random() * 100000),  // 가격이 없으면 임의의 가격 사용
+            reviewCount: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
+          }
+        });
+
+        setLocationData(ConvData); // 데이터가 배열일 경우에만 설정
+        setSortedData(ConvData)
       } catch (error) {
         console.error('Error fetching location data:', error);
         setError('데이터를 불러오지 못했습니다. 임시 데이터를 사용합니다.');
@@ -48,8 +84,8 @@ const LocationList = () => {
     };
 
     fetchData();
-    */
 
+/*
     // 임시 데이터만 사용
     const tempData = Array.from({ length: 18 }, (_, index) => ({
       id: index,
@@ -61,8 +97,8 @@ const LocationList = () => {
     }));
     setLocationData(tempData);
     setSortedData(tempData);
-    setLoading(false);
-  }, []);
+    setLoading(false);*/
+  }, [location.search]);
 
   // 정렬 함수
   const sortData = (data, key) => {
@@ -170,7 +206,6 @@ const LocationList = () => {
         </Select>
       </Box>
 
-      {/*
       {error && (
         <Box
           sx={{
@@ -182,7 +217,6 @@ const LocationList = () => {
           {error}
         </Box>
       )}
-      */}
 
       <Box
         sx={{
