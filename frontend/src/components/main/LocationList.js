@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button, Grid, CircularProgress } from '@mui/material';
 // import axios from '../../axiosConfig';
-import {useNavigate, useParams, useLocation} from 'react-router-dom';
+import {useNavigate, useLocation} from 'react-router-dom';
 import axios from "axios";
 
 const LocationList = () => {
@@ -20,7 +20,7 @@ const LocationList = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const tag = searchParams.get('tag');
+    // const tag = searchParams.get('tag');
     const type = searchParams.get('type');
 
     const fetchData = async () => {
@@ -98,7 +98,7 @@ const LocationList = () => {
     setLocationData(tempData);
     setSortedData(tempData);
     setLoading(false);*/
-  }, []);
+  }, [location.search]);
 
   // 정렬 함수
   const sortData = (data, key) => {
@@ -206,7 +206,6 @@ const LocationList = () => {
         </Select>
       </Box>
 
-      {/*
       {error && (
         <Box
           sx={{
@@ -218,7 +217,6 @@ const LocationList = () => {
           {error}
         </Box>
       )}
-      */}
 
       <Box
         sx={{
