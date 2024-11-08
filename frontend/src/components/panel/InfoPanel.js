@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button } from '@mui/material'; // Button 추가
-import { useNavigate } from 'react-router-dom'; // React Router의 useNavigate 사용
+import { useNavigate } from 'react-router-dom';
+import coordinates from '../map/KakaoMap'
+import axios from "axios"; // React Router의 useNavigate 사용
 // import axios from '../../axiosConfig';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
 const InfoPanel = () => {
@@ -25,29 +27,55 @@ const InfoPanel = () => {
 
   useEffect(() => {
     // 통신 부분은 주석 처리해둠
-    /*
+
     const fetchData = async () => {
        try {
-         const response = await axios.get('/api/locations');
+           const params = {
+               latitude : coordinates.lat || 0,
+               longitude: coordinates.lng || 0,
+               distance : 10.0
+           };
+
+         const response = await axios.get('/venues/locationSearch', {params});
          const data = response.data;
+
+           const imagePromises = data.map((venue) =>
+               axios.get(`/venuePhoto/${venue.venue_id}`)
+           );
+
+           const images = await Promise.all(imagePromises);
+           const imageData = images.map((image) =>
+               image.data[0]?.photoBase64 || 'https://via.placeholder.com/150'
+           );
 
          // 응답 데이터가 배열인지 확인하고, 아니면 임시 데이터 사용
          if (Array.isArray(data)) {
-           setLocationData(data);
+             const list = data.map((venue, index) => {
+                 return {
+                     id: venue.venue_id || index,
+                     spaceName: venue.name || `임시 장소 ${index + 1}`,
+                     mainImageBase64: imageData[index],
+                     spaceIntro: venue.simpledescription || `이것은 임시 장소 ${index + 1}에 대한 설명입니다.`,
+                     spaceFee: venue.rental_fee || Math.floor(Math.random() * 100000), // 임의의 가격
+                     reviewCount: Math.floor(Math.random() * 100),  // 임의의 리뷰 수
+                 }
+             });
+           setLocationData(list);
+             setSortedData(list);
          } else {
            setTemporaryData();
          }
        } catch (error) {
          // axios 요청 실패 시 임시 데이터 설정
+           console.log(error)
          setTemporaryData();
        }
     };
-    */
 
-    // fetchData();
+    fetchData();
 
     // 임시 데이터만 사용
-    setTemporaryData();
+    //setTemporaryData();
   }, []);
 
   // 정렬 함수
