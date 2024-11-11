@@ -246,6 +246,7 @@ const LocationList = () => {
                 <img
                   src={location.mainImageBase64}
                   alt={location.spaceName}
+                  loading="lazy"
                   style={{
                     width: '90%',
                     height: '120px',
