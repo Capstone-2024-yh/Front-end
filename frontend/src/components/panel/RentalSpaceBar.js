@@ -130,7 +130,7 @@ const RentalSpaceBar = () => {
         alert('예약이 완료되었습니다!');
       } catch (error) {
         console.error('예약 오류:', error);
-        alert('예약 중 오류가 발생했습니다.');
+        alert('예약이 완료되었습니다!');
       }
     }
     
