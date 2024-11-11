@@ -6,6 +6,7 @@ import { logoutSuccess } from '../../store/authSlice';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
 import Prompt from './Prompt';
+import SearchBar from '../panel/SearchBar';
 // import axios from '../../axiosConfig';
 
 const MainPage = () => {
@@ -47,8 +48,14 @@ const MainPage = () => {
     navigate(`/location-list?type=${type}`);
   };
 
+  const handleSearch = (query) => {
+    navigate(`/search-results?query=${query}`);
+  };
+
   return (
     <div>
+      <SearchBar onSearch={handleSearch} />
+
       {isAuthenticated ? (
         <>
           <h1>어서오세요, {user && user.username}!</h1>
