@@ -5,7 +5,7 @@ import coordinates from '../map/KakaoMap'
 import axios from "axios"; // React Router의 useNavigate 사용
 // import axios from '../../axiosConfig';  // 백엔드에서 데이터를 받아오기 위해 axios 사용
 
-const InfoPanel = () => {
+const InfoPanel = ({ locations }) => {
   const [locationData, setLocationData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [sortKey, setSortKey] = useState('default');
@@ -26,7 +26,7 @@ const InfoPanel = () => {
   };
 
   useEffect(() => {
-    // 통신 부분은 주석 처리해둠
+    setSortedData(locations);
 
     const fetchData = async () => {
        try {
@@ -76,7 +76,7 @@ const InfoPanel = () => {
 
     // 임시 데이터만 사용
     //setTemporaryData();
-  }, []);
+  }, [locations]);
 
   // 정렬 함수
   const sortData = (data, key) => {
