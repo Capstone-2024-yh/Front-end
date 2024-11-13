@@ -18,14 +18,15 @@ function CommonPrompt() {
     try {
       // axios를 사용한 백엔드 API 호출
       const res = await axios.post('/gptCall/Call', {
-        question: prompt, // Question 객체에 맞게 key를 "question"으로 전송
+        question: commonPrompt, // Question 객체에 맞게 key를 "question"으로 전송
       });
 
       setResponse(`AI의 답변: ${res.data}`); // 백엔드에서 받은 응답 출력
     } catch (error) {
       // 오류가 발생하면 입력된 프롬프트를 그대로 출력
+      console.error("Error during API call:", error);
       setError(true);
-      setResponse(`AI의 답변(임시): ${prompt}`);
+      setResponse(`AI의 답변(임시): ${commonPrompt}`);
     } finally {
       setIsLoading(false); // 로딩 종료
     }

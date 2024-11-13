@@ -5,7 +5,7 @@ import { Box, Button } from '@mui/material';
 import { logoutSuccess } from '../../store/authSlice';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
-import Prompt from './Prompt';
+import CommonPrompt from './CommonPrompt';
 import SearchBar from '../panel/SearchBar';
 // import axios from '../../axiosConfig';
 
@@ -16,6 +16,8 @@ const MainPage = () => {
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState([]);
 
+  console.log(user);
+  
   useEffect(() => {
     const fetchPopularTags = async () => {
       /*
@@ -72,7 +74,7 @@ const MainPage = () => {
           </p>
         </>
       )}
-      <Prompt/>
+      <CommonPrompt/>
 
       {/* 인기 태그 표시 */}
       <h2 style={{ textAlign: 'center' }}>인기 태그들을 확인해보세요!</h2>

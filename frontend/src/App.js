@@ -9,6 +9,7 @@ import Layout from './components/login/Layout';
 import KakaoMap from './components/map/KakaoMap';
 import MainPage from './components/main/MainPage';
 import Prompt from './components/main/Prompt';
+import CommonPrompt from './components/main/CommonPrompt';
 import LocationList from './components/main/LocationList';
 import RentalSpacePage from './components/search/RentalSpacePage';
 import SpaceRegistration from './components/search/SpaceRegisteration';
@@ -33,6 +34,7 @@ function App() {
             <Route path="main" element={<MainPage />} />
             <Route path="map" element={<KakaoMap />} />
             <Route path="prompt" element={<Prompt />} />
+            <Route path="common-prompt" element={<CommonPrompt />} />
             <Route path="location-list" element={<LocationList />} />
             <Route path="rental-space/:venueId" element={<RentalSpacePage />} />
             <Route path="space-registeration" element={<SpaceRegistration />} />
