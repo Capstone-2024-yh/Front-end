@@ -1,32 +1,43 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
 function Prompt() {
-  const [prompt, setPrompt] = useState(''); // 사용자가 입력한 프롬프트 저장
-  const [response, setResponse] = useState(''); // GPT 응답 저장
-  const [error, setError] = useState(null); // 오류 상태 저장
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 저장
+  const [prompt, setPrompt] = useState('');
+  const [response, setResponse] = useState('');
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // 오류 초기화
-    setIsLoading(true); // 로딩 시작
+    setError(null);
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append('question', prompt);
+    if (file) {
+      formData.append('file', file);
+    }
 
     try {
-      // axios를 사용한 백엔드 API 호출
-      const res = await axios.post('/gptCall/Call', {
-        question: prompt, // Question 객체에 맞게 key를 "question"으로 전송
+      const res = await axios.post('/gptCall/Call', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      setResponse(`AI의 답변: ${res.data}`); // 백엔드에서 받은 응답 출력
+      setResponse(`AI의 답변: ${res.data}`);
     } catch (error) {
-      // 오류가 발생하면 입력된 프롬프트를 그대로 출력
       setError(true);
       setResponse(`AI의 답변(임시): ${prompt}`);
     } finally {
-      setIsLoading(false); // 로딩 종료
+      setIsLoading(false);
     }
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   return (
@@ -36,7 +47,7 @@ function Prompt() {
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
-          label="원하시는 조건을 입력하세요"
+          label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
           multiline
           rows={4}
           fullWidth
@@ -45,19 +56,32 @@ function Prompt() {
           onChange={(e) => setPrompt(e.target.value)}
           variant="outlined"
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }} disabled={isLoading}>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <TextField
+            variant="outlined"
+            size="small"
+            fullWidth
+            value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
+            disabled
+          />
+          <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+            파일 선택
+            <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
+          </Button>
+        </Box>
+
+        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }} disabled={isLoading}>
           제출
         </Button>
       </form>
 
-      {/* 로딩 표시 */}
       {isLoading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {/* GPT 응답을 보여주는 박스 */}
       {response && (
         <Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
           <Typography variant="h6">답변</Typography>
@@ -65,7 +89,6 @@ function Prompt() {
         </Box>
       )}
 
-      {/* 오류 메시지 출력 */}
       {error && (
         <Box sx={{ mt: 2, p: 2, border: '1px solid red', borderRadius: 2 }}>
           <Typography color="error">백엔드와의 연결에 문제가 발생했습니다. 입력하신 내용을 임시로 보여드립니다.</Typography>
