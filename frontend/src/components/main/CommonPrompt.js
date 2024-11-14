@@ -44,7 +44,7 @@ function CommonPrompt() {
           rows={4}
           fullWidth
           margin="normal"
-          value={prompt}
+          value={commonPrompt}
           onChange={(e) => setCommonPrompt(e.target.value)}
           variant="outlined"
         />
