@@ -147,17 +147,6 @@ function Prompt() {
       {/* 프롬프트 입력 부분 */}
       <Box sx={{ position: 'sticky', bottom: 0, width: '100%', maxWidth: 800, backgroundColor: 'white', zIndex: 1, boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.1)', padding: 2 }}>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <TextField
-            label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
-            multiline
-            rows={1}
-            fullWidth
-            margin="normal"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            variant="outlined"
-          />
-
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
             <TextField
               variant="outlined"
@@ -172,9 +161,36 @@ function Prompt() {
             </Button>
           </Box>
 
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }} disabled={isLoading}>
-            제출
-          </Button>
+          <Box sx={{ position: 'relative', mt: 2 }}>
+            <TextField
+              label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
+              multiline
+              width
+              margin="normal"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              variant="outlined"
+              maxRows={10}
+              sx={{ width: 'calc(100% - 70px)' }}
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                bottom: 8,
+                minWidth: '48px',
+                minHeight: '57px',
+                padding: '8px',
+              }}
+              disabled={isLoading}
+            >
+              ↥
+            </Button>
+          </Box>
         </form>
       </Box>
 

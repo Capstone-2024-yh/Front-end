@@ -5,7 +5,6 @@ import { Box, Button } from '@mui/material';
 import { logoutSuccess } from '../../store/authSlice';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
-import CommonPrompt from './CommonPrompt';
 import SearchBar from '../panel/SearchBar';
 // import axios from '../../axiosConfig';
 
@@ -74,7 +73,25 @@ const MainPage = () => {
           </p>
         </>
       )}
-      <CommonPrompt/>
+      
+      <h2 style={{ textAlign: 'center' }}>어떻게 할지 감이 안오시나요?</h2>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button
+          onClick={() => navigate('/prompt')}
+          sx={{
+            backgroundColor: '#C8A2C8',     // 버튼 배경색 설정
+            color: 'white',                 // 버튼 텍스트 색상
+            fontSize: '1.2rem',             // 텍스트 크기
+            padding: '12px 24px',           // 버튼 내부 여백 설정
+            borderRadius: '8px',            // 모서리 둥글게 설정
+            '&:hover': {
+              backgroundColor: '#B389B3',   // 호버 시 색상 변경
+            },
+          }}
+        >
+          직접 물어보세요!
+        </Button>
+      </Box>
 
       {/* 인기 태그 표시 */}
       <h2 style={{ textAlign: 'center' }}>인기 태그들을 확인해보세요!</h2>
