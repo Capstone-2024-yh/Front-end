@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
@@ -8,10 +8,18 @@ function Prompt() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const bottomRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    if (prompt.trim() === '/kill') {
+      setResponse([]);
+      setPrompt('');
+      return;
+    }
+
     setIsLoading(true);
   
     const formData = new FormData();
@@ -30,7 +38,6 @@ function Prompt() {
       setResponse((prevResponse) => [
         ...(prevResponse || []),
         {
-          places: res.data.places,
           feedback: res.data.feedback,
           detailedPlaces: res.data.detailedPlaces,
         },
@@ -40,36 +47,37 @@ function Prompt() {
       setResponse((prevResponse) => [
         ...(prevResponse || []),
         {
-          places: [
-            { title: '임시 장소 1', features: '특징 1', considerations: '주의사항 1', recommendedUsage: '추천 용도 1' },
-            { title: '임시 장소 2', features: '특징 2', considerations: '주의사항 2', recommendedUsage: '추천 용도 2' },
-            { title: '임시 장소 3', features: '특징 3', considerations: '주의사항 3', recommendedUsage: '추천 용도 3' },
-          ],
           feedback: '임시 피드백: 프롬프트와 관련된 피드백입니다.',
           detailedPlaces: [
             {
               imageUrl: 'https://via.placeholder.com/50',
+              title: '임시 장소 1', 
               location: '임시 위치 1',
               address: '임시 주소 1',
               price: '임시 가격 1',
               simpleDescription: '간단한 설명 1',
               precautions: '주의사항 1',
+              recommendedUsage: '추천 용도 1',
             },
             {
               imageUrl: 'https://via.placeholder.com/50',
+              title: '임시 장소 2', 
               location: '임시 위치 2',
               address: '임시 주소 2',
               price: '임시 가격 2',
               simpleDescription: '간단한 설명 2',
               precautions: '주의사항 2',
+              recommendedUsage: '추천 용도 2',
             },
             {
               imageUrl: 'https://via.placeholder.com/50',
+              title: '임시 장소 3', 
               location: '임시 위치 3',
               address: '임시 주소 3',
               price: '임시 가격 3',
               simpleDescription: '간단한 설명 3',
               precautions: '주의사항 3',
+              recommendedUsage: '추천 용도 3',
             },
           ],
         },
@@ -82,6 +90,13 @@ function Prompt() {
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
+
+  useEffect(() => {
+    // response가 변경될 때마다 하단으로 스크롤
+    if (response.length > 0) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [response]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
@@ -101,19 +116,6 @@ function Prompt() {
 
         {response && response.map((res, index) => (
           <Box key={index} sx={{ width: '100%', mt: 4 }}>
-            {/* 추천 장소 리스트 */}
-            <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-              <Typography variant="h6">추천 장소</Typography>
-              {res.places?.map((place, index) => (
-                <Box key={index} sx={{ mb: 2 }}>
-                  <Typography><strong>제목:</strong> {place.title}</Typography>
-                  <Typography><strong>특징:</strong> {place.features}</Typography>
-                  <Typography><strong>신경 써야 할 사항:</strong> {place.considerations}</Typography>
-                  <Typography><strong>추천 용도:</strong> {place.recommendedUsage}</Typography>
-                </Box>
-              ))}
-            </Box>
-
             {/* 피드백 */}
             <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
               <Typography variant="h6">피드백</Typography>
@@ -127,11 +129,13 @@ function Prompt() {
                 <Box key={index} sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}>
                   <img src={place.imageUrl} alt={place.title} style={{ width: '150px', height: '100px', marginRight: '20px' }} />
                   <Box>
+                    <Typography><strong>제목:</strong> {place.title}</Typography>
                     <Typography><strong>위치:</strong> {place.location}</Typography>
                     <Typography><strong>주소:</strong> {place.address}</Typography>
                     <Typography><strong>가격:</strong> {place.price}</Typography>
                     <Typography><strong>간단한 설명:</strong> {place.simpleDescription}</Typography>
                     <Typography><strong>주의사항:</strong> {place.precautions}</Typography>
+                    <Typography><strong>추천 용도:</strong> {place.recommendedUsage}</Typography>
                   </Box>
                 </Box>
               ))}
@@ -173,6 +177,8 @@ function Prompt() {
           </Button>
         </form>
       </Box>
+
+      <div ref={bottomRef} />
     </Box>
   );
 }
