@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function Prompt() {
   const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
@@ -13,74 +13,98 @@ function Prompt() {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
-
+  
     const formData = new FormData();
     formData.append('question', prompt);
     if (file) {
       formData.append('file', file);
     }
-
+  
     try {
       const res = await axios.post('/gptCall/Call', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      setResponse(res.data);
+  
+      setResponse((prevResponse) => [
+        ...(prevResponse || []),
+        {
+          places: res.data.places,
+          feedback: res.data.feedback,
+          detailedPlaces: res.data.detailedPlaces,
+        },
+      ]);
     } catch (error) {
       setError(true);
-      setResponse({
-        places: [
-          { title: '임시 장소 1', features: '특징 1', considerations: '주의사항 1', recommendedUsage: '추천 용도 1' },
-          { title: '임시 장소 2', features: '특징 2', considerations: '주의사항 2', recommendedUsage: '추천 용도 2' },
-          { title: '임시 장소 3', features: '특징 3', considerations: '주의사항 3', recommendedUsage: '추천 용도 3' },
-        ],
-        feedback: '임시 피드백: 프롬프트와 관련된 피드백입니다.',
-        detailedPlaces: [
-          {
-            imageUrl: '/path/to/temporary-image1.jpg',
-            location: '임시 위치 1',
-            address: '임시 주소 1',
-            price: '임시 가격 1',
-            simpleDescription: '간단한 설명 1',
-            precautions: '주의사항 1',
-          },
-          {
-            imageUrl: '/path/to/temporary-image2.jpg',
-            location: '임시 위치 2',
-            address: '임시 주소 2',
-            price: '임시 가격 2',
-            simpleDescription: '간단한 설명 2',
-            precautions: '주의사항 2',
-          },
-        ],
-      });
+      setResponse((prevResponse) => [
+        ...(prevResponse || []),
+        {
+          places: [
+            { title: '임시 장소 1', features: '특징 1', considerations: '주의사항 1', recommendedUsage: '추천 용도 1' },
+            { title: '임시 장소 2', features: '특징 2', considerations: '주의사항 2', recommendedUsage: '추천 용도 2' },
+            { title: '임시 장소 3', features: '특징 3', considerations: '주의사항 3', recommendedUsage: '추천 용도 3' },
+          ],
+          feedback: '임시 피드백: 프롬프트와 관련된 피드백입니다.',
+          detailedPlaces: [
+            {
+              imageUrl: 'https://via.placeholder.com/50',
+              location: '임시 위치 1',
+              address: '임시 주소 1',
+              price: '임시 가격 1',
+              simpleDescription: '간단한 설명 1',
+              precautions: '주의사항 1',
+            },
+            {
+              imageUrl: 'https://via.placeholder.com/50',
+              location: '임시 위치 2',
+              address: '임시 주소 2',
+              price: '임시 가격 2',
+              simpleDescription: '간단한 설명 2',
+              precautions: '주의사항 2',
+            },
+            {
+              imageUrl: 'https://via.placeholder.com/50',
+              location: '임시 위치 3',
+              address: '임시 주소 3',
+              price: '임시 가격 3',
+              simpleDescription: '간단한 설명 3',
+              precautions: '주의사항 3',
+            },
+          ],
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
-  };
+  };  
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100vh', overflowY: 'auto' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
       {/* AI 응답 출력 부분 */}
-      <Box sx={{ width: '90%', maxWidth: 800, flex: 1, mb: '100px', overflowY: 'auto', paddingTop: 4 }}>
+      <Box sx={{ width: '90%', maxWidth: 800, flexGrow: 1, paddingTop: -1, mb: 3 }}>
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
             <CircularProgress />
           </Box>
         )}
 
-        {response && (
-          <Box sx={{ width: '100%', mt: 4 }}>
-            {/* 1. 추천 장소 리스트 */}
+        {error && (
+          <Box sx={{ color: 'red', mt: 2 }}>
+            <Typography>에러가 발생했습니다. 다시 시도해 주세요.</Typography>
+          </Box>
+        )}
+
+        {response && response.map((res, index) => (
+          <Box key={index} sx={{ width: '100%', mt: 4 }}>
+            {/* 추천 장소 리스트 */}
             <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
               <Typography variant="h6">추천 장소</Typography>
-              {response.places?.map((place, index) => (
+              {res.places?.map((place, index) => (
                 <Box key={index} sx={{ mb: 2 }}>
                   <Typography><strong>제목:</strong> {place.title}</Typography>
                   <Typography><strong>특징:</strong> {place.features}</Typography>
@@ -90,16 +114,16 @@ function Prompt() {
               ))}
             </Box>
 
-            {/* 2. 프롬프트에 따른 피드백 */}
+            {/* 피드백 */}
             <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
               <Typography variant="h6">피드백</Typography>
-              <Typography>{response.feedback}</Typography>
+              <Typography>{res.feedback}</Typography>
             </Box>
 
-            {/* 3. 세부 장소 소개 */}
+            {/* 세부 장소 소개 */}
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
               <Typography variant="h6">장소 세부 정보</Typography>
-              {response.detailedPlaces?.map((place, index) => (
+              {res.detailedPlaces?.map((place, index) => (
                 <Box key={index} sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}>
                   <img src={place.imageUrl} alt={place.title} style={{ width: '150px', height: '100px', marginRight: '20px' }} />
                   <Box>
@@ -113,11 +137,11 @@ function Prompt() {
               ))}
             </Box>
           </Box>
-        )}
+        ))}
       </Box>
 
       {/* 프롬프트 입력 부분 */}
-      <Box sx={{ position: 'fixed', bottom: 0, width: '100%', maxWidth: 800, backgroundColor: 'white', zIndex: 1, boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.1)', padding: 2 }}>
+      <Box sx={{ position: 'sticky', bottom: 0, width: '100%', maxWidth: 800, backgroundColor: 'white', zIndex: 1, boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.1)', padding: 2 }}>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <TextField
             label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
