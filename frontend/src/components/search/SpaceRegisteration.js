@@ -175,6 +175,8 @@ const SpaceRegistration = () => {
     e.preventDefault();
 
     try {
+      const sanitizedTags = spaceTags.map(tag => tag.replace(/^#/, ''));
+      console.log('Sanitized tags:', sanitizedTags);
       const data = {
         // 추가할 사항들
         "ownerId":                ownerId,                // 사용자 id
@@ -208,10 +210,10 @@ const SpaceRegistration = () => {
       const venueId = response.data.venueId;
 
       // spaceTags를 별도의 API로 전송
-      if (spaceTags.length > 0) {
+      if (sanitizedTags.length > 0) {
         const tagsResponse = await axios.post('/tag/create', {
           "venueId": venueId,
-          "tags": spaceTags,
+          "tags": sanitizedTags,
         });
         console.log('Tags Response:', tagsResponse.data);
       }
