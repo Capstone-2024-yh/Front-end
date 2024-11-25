@@ -14,6 +14,7 @@ import LocationList from './components/main/LocationList';
 import RentalSpacePage from './components/search/RentalSpacePage';
 import SpaceRegistration from './components/search/SpaceRegisteration';
 import ComparePage from './components/search/ComparePage';
+import ComparePagePrompt from './components/search/ComparePagePrompt';
 import SearchResultsPage from './components/search/SearchResultsPage';
 import store from './store'; // Redux store
 
@@ -39,6 +40,7 @@ function App() {
             <Route path="rental-space/:venueId" element={<RentalSpacePage />} />
             <Route path="space-registeration" element={<SpaceRegistration />} />
             <Route path="compare-page" element={<ComparePage />} />
+            <Route path="compare-page-prompt" element={<ComparePagePrompt />} />
             <Route path="search-results" element={<SearchResultsPage />} />
           </Route>
         </Routes>

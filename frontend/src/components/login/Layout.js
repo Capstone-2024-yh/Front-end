@@ -49,6 +49,15 @@ function Layout() {
           </Typography>
           <Button
             component={Link}
+            to="/compare-page"
+            variant="outlined"
+            color="inherit"
+            style={{ margin: '0 10px' }}
+          >
+            비교하세요!
+          </Button>
+          <Button
+            component={Link}
             to="/space-registeration"
             variant="outlined"
             color="inherit"

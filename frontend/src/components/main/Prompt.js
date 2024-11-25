@@ -215,6 +215,22 @@ function Prompt() {
                     </Box>
                   ))}
                 </Box>
+
+                {/* 2개를 비교하는 버튼: compare-page-prompt로 리다이렉트 */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      // 선택된 장소 ID를 쿼리 파라미터로 전달
+                      const leftFacilityId = response[0]?.detailedPlaces[0]?.id || 'temp1';
+                      const rightFacilityId = response[0]?.detailedPlaces[1]?.id || 'temp2';
+                      window.location.href = `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}`;
+                    }}
+                  >
+                    두 장소 비교하기
+                  </Button>
+                </Box>
               </Box>
             ))}
           </Box>
