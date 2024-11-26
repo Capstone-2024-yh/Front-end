@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // equipmentMap 정의
 const equipmentMap = {
@@ -16,6 +16,10 @@ const equipmentMap = {
 
 // ComparePagePrompt 컴포넌트
 function ComparePagePrompt() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const previousState = location.state || {};
+
   return (
     <div
       className="compare-page"
@@ -24,9 +28,25 @@ function ComparePagePrompt() {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
+        flexDirection: 'column',
       }}
     >
       <ComparisonArea />
+      <button
+        style={{
+          marginTop: '20px',
+          padding: '10px 20px',
+          fontSize: '16px',
+          backgroundColor: '#4CAF50',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+        }}
+        onClick={() => navigate('/prompt', { state: previousState })}
+      >
+        돌아가기
+      </button>
     </div>
   );
 }
@@ -36,7 +56,6 @@ function ComparisonArea() {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
   const [facilities, setFacilities] = useState([]);
-
   const location = useLocation();
 
   useEffect(() => {
@@ -73,15 +92,12 @@ function ComparisonArea() {
 
         setFacilities(facilitiesData);
 
-        // URL에서 쿼리 파라미터로부터 시설 ID를 가져옵니다.
         const params = new URLSearchParams(location.search);
         const leftId = params.get('left');
         const rightId = params.get('right');
 
-        // 시설 ID를 설정합니다.
         setLeftFacility(leftId || facilitiesData[0]?.id);
         setRightFacility(rightId || facilitiesData[1]?.id);
-
       } catch (error) {
         console.error('Error fetching facilities:', error);
       }
@@ -89,14 +105,6 @@ function ComparisonArea() {
 
     fetchFacilities();
   }, [location.search]);
-
-  const handleLeftFacilityChange = (event) => {
-    setLeftFacility(event.target.value);
-  };
-
-  const handleRightFacilityChange = (event) => {
-    setRightFacility(event.target.value);
-  };
 
   const leftFacilityData = facilities.find((facility) => facility.id.toString() === leftFacility);
   const rightFacilityData = facilities.find((facility) => facility.id.toString() === rightFacility);
@@ -122,17 +130,6 @@ function ComparisonArea() {
         }}
       >
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <select
-            value={leftFacility || ''}
-            onChange={handleLeftFacilityChange}
-            style={selectStyle}
-          >
-            {facilities.map((facility) => (
-              <option key={facility.id} value={facility.id}>
-                {facility.name}
-              </option>
-            ))}
-          </select>
           <FacilitySimpleDetail facility={leftFacilityData} />
         </div>
 
@@ -156,17 +153,6 @@ function ComparisonArea() {
         </div>
 
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <select
-            value={rightFacility || ''}
-            onChange={handleRightFacilityChange}
-            style={selectStyle}
-          >
-            {facilities.map((facility) => (
-              <option key={facility.id} value={facility.id}>
-                {facility.name}
-              </option>
-            ))}
-          </select>
           <FacilitySimpleDetail facility={rightFacilityData} />
         </div>
       </div>
@@ -241,23 +227,6 @@ function FacilityDetail({ facility }) {
     </div>
   ) : null;
 }
-
-// 스타일 정의
-const selectStyle = {
-  width: '70%',
-  padding: '6px',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  color: '#333',
-  backgroundColor: '#f0f0f0',
-  border: '1px solid #ccc',
-  borderRadius: '5px',
-  appearance: 'none',
-  cursor: 'pointer',
-  margin: '0 auto',
-  display: 'block',
-  marginBottom: '10px',
-};
 
 const labelStyle = {
   fontSize: '16px',

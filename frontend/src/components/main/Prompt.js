@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 function Prompt() {
-  const [prompt, setPrompt] = useState('');
-  const [response, setResponse] = useState([]);
+  const location = useLocation();
+
+  const [prompt, setPrompt] = useState(location.state?.prompt || '');
+  const [response, setResponse] = useState(location.state?.response || []);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(location.state?.file || null);
   const bottomRef = useRef(null);
 
   const handleSubmit = async (e) => {
@@ -222,10 +225,16 @@ function Prompt() {
                     variant="contained"
                     color="primary"
                     onClick={() => {
-                      // 선택된 장소 ID를 쿼리 파라미터로 전달
                       const leftFacilityId = response[0]?.detailedPlaces[0]?.id || 'temp1';
                       const rightFacilityId = response[0]?.detailedPlaces[1]?.id || 'temp2';
-                      window.location.href = `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}`;
+                      const stateData = JSON.stringify({ prompt, response, file });
+
+                      const encodedState = encodeURIComponent(stateData);
+
+                      window.open(
+                        `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}&state=${encodedState}`,
+                        '_blank' // 새 탭이나 새 창에서 열기
+                      );
                     }}
                   >
                     두 장소 비교하기
