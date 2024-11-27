@@ -172,12 +172,8 @@ function ComparisonArea({ selectedType }) {
         setRightFacility('temp2');
       }
     }
-  
-    if (selectedType) {
-      fetchFacilities();
-    }
+    fetchFacilities();
   }, [selectedType]);
-  
 
   const handleLeftFacilityChange = (event) => {
     setLeftFacility(parseInt(event.target.value));
@@ -190,6 +186,17 @@ function ComparisonArea({ selectedType }) {
   const leftFacilityData = facilities.find((facility) => facility.id === leftFacility);
   const rightFacilityData = facilities.find((facility) => facility.id === rightFacility);
 
+  // 비교할 항목들 정의
+  const comparisonItems = [
+    { label: '가격', field: 'price' },
+    { label: '면적', field: 'area' },
+    { label: '수용인원', field: 'capacity' },
+    { label: '기자재', field: 'equipment' },
+    { label: '이용 안내', field: 'facilityInfo' },
+    { label: '주의사항', field: 'precautions' },
+    { label: '환불정책', field: 'refundPolicy' },
+  ];
+
   return (
     <div
       className="comparison-area"
@@ -200,7 +207,7 @@ function ComparisonArea({ selectedType }) {
         width: '80%',
         maxWidth: '1200px',
         marginLeft: '200px',
-        marginTop: '0px',
+        marginTop: '20px',
       }}
     >
       {/* 상단 비교 영역 */}
@@ -210,6 +217,7 @@ function ComparisonArea({ selectedType }) {
           justifyContent: 'center',
           alignItems: 'flex-start',
           width: '100%',
+          marginBottom: '40px',
         }}
       >
         {/* 좌측 시설 선택 및 간단 정보 */}
@@ -281,37 +289,48 @@ function ComparisonArea({ selectedType }) {
       />
 
       {/* 상세 비교 영역 */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          width: '100%',
-          marginTop: '20px',
-        }}
-      >
-        <FacilityDetail facility={leftFacilityData} />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80px',
-            minWidth: '40px',
-          }}
-        >
-          {['가격', '면적', '수용인원', '기자재', '이용 안내', '주의사항', '환불정책'].map(
-            (label) => (
-              <div
-                key={label}
-                style={{ height: '40px', display: 'flex', alignItems: 'center' }}
-              >
-                <p style={labelStyle}>{label}</p>
+      <div className="detail-comparison" style={{ width: '100%' }}>
+        {comparisonItems.map((item, index) => (
+          <React.Fragment key={index}>
+            {/* 단락 */}
+            <div
+              className="detail-row"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '20px',
+              }}
+            >
+              {/* 좌측 시설 정보 */}
+              <div style={{ width: '45%', margin: '0 10px' }}>
+                <FacilityDetailItem facility={leftFacilityData} field={item.field} />
               </div>
-            )
-          )}
-        </div>
-        <FacilityDetail facility={rightFacilityData} />
+              {/* 중앙 목차 */}
+              <div
+                style={{
+                  width: '80px',
+                  minWidth: '40px',
+                  textAlign: 'center',
+                }}
+              >
+                <p style={labelStyle}>{item.label}</p>
+              </div>
+              {/* 우측 시설 정보 */}
+              <div style={{ width: '45%', margin: '0 10px' }}>
+                <FacilityDetailItem facility={rightFacilityData} field={item.field} />
+              </div>
+            </div>
+            {/* 분리선 */}
+            <hr
+              style={{
+                width: '80%', // 분리선 길이
+                border: 'none',
+                borderTop: '1px solid #C8A2C8', // 분리선 색상
+                margin: '10px auto', // 분리선 간격
+              }}
+            />
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
@@ -341,29 +360,33 @@ function FacilitySimpleDetail({ facility }) {
 }
 
 // FacilityDetail 컴포넌트
-function FacilityDetail({ facility }) {
-  return facility ? (
-    <div
-      className="facility-detail"
-      style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}
-    >
-      <h3>₩{facility.price}</h3>
-      <p>{facility.area}㎡</p>
-      <p>최대 {facility.capacity}명</p>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.equipment?.map((id) => equipmentMap[id]).join(', ')}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.facilityInfo}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.precautions}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.refundPolicy}</p>
-      </div>
+function FacilityDetailItem({ facility, field }) {
+  if (!facility) return null;
+
+  let content = '';
+
+  switch (field) {
+    case 'price':
+      content = `₩${facility.price}`;
+      break;
+    case 'area':
+      content = `${facility.area}㎡`;
+      break;
+    case 'capacity':
+      content = `최대 ${facility.capacity}명`;
+      break;
+    case 'equipment':
+      content = facility.equipment?.map((id) => equipmentMap[id]).join(', ');
+      break;
+    default:
+      content = facility[field];
+  }
+
+  return (
+    <div style={{ textAlign: 'center', padding: '10px' }}>
+      <p>{content}</p>
     </div>
-  ) : null;
+  );
 }
 
 // 스타일 정의

@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-// equipmentMap 정의
-const equipmentMap = {
-  1: '빔 프로젝터', 2: '마이크', 3: '냉난방기', 4: '책상',
-  5: '의자', 6: '화이트보드', 7: '음향 시스템', 8: '조명 장비',
-  9: '컴퓨터', 10: '프린터', 11: '모니터', 12: 'WiFi',
-  13: 'TV', 14: '키보드', 15: '냉장고', 16: '전자레인지',
-  17: '커피머신', 18: '세탁기', 19: '건조기', 20: '청소기',
-  21: '카메라', 22: '삼각대', 23: '녹음 장비', 24: 'DVD 플레이어',
-  25: '스피커', 26: '헤드셋', 27: 'HDMI 케이블', 28: '전동 스크린',
-  29: '화장실', 30: '주차장', 31: '기타 1', 32: '기타 2'
-};
+import { useLocation } from 'react-router-dom';
 
 // ComparePagePrompt 컴포넌트
 function ComparePagePrompt() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const previousState = location.state || {};
+
+  const tempData = {
+    facilities: [
+      {
+        id: 0,
+        name: '임시 장소 1',
+        location: '임시 위치 1',
+        amount: 10000,
+        simpleDesc: '간단한 설명 1',
+        caution: ['주의사항 1', '주의사항 2'],
+        recommand: ['추천 용도 1', '추천 용도 2'],
+      },
+      {
+        id: 1,
+        name: '임시 장소 2',
+        location: '임시 위치 2',
+        amount: 15000,
+        simpleDesc: '간단한 설명 2',
+        caution: ['주의사항 3', '주의사항 4'],
+        recommand: ['추천 용도 3', '추천 용도 4'],
+      },
+    ],
+    leftFacilityId: 0,
+    rightFacilityId: 1,
+  };
+
+  const { facilities, leftFacilityId, rightFacilityId } = location.state || tempData;
 
   return (
     <div
@@ -31,83 +43,43 @@ function ComparePagePrompt() {
         flexDirection: 'column',
       }}
     >
-      <ComparisonArea />
-      <button
-        style={{
-          marginTop: '20px',
-          padding: '10px 20px',
-          fontSize: '16px',
-          backgroundColor: '#4CAF50',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-        onClick={() => navigate('/prompt', { state: previousState })}
-      >
-        돌아가기
-      </button>
+      <ComparisonArea
+        facilities={facilities}
+        leftFacilityId={leftFacilityId}
+        rightFacilityId={rightFacilityId}
+      />
     </div>
   );
 }
 
 // ComparisonArea 컴포넌트
-function ComparisonArea() {
+function ComparisonArea({ facilities = [], leftFacilityId = null, rightFacilityId = null }) {
   const [leftFacility, setLeftFacility] = useState(null);
   const [rightFacility, setRightFacility] = useState(null);
-  const [facilities, setFacilities] = useState([]);
-  const location = useLocation();
 
   useEffect(() => {
-    async function fetchFacilities() {
-      try {
-        const response = await axios.get('/venues/AllSearch', { responseType: 'text' });
-        let responseData = response.data;
-        responseData = responseData.replace(/"location":\{[^{}]*\},?/g, '');
-        const venues = JSON.parse(responseData);
+    // 데이터가 유효한 경우에만 상태 설정
+    if (facilities && facilities.length > 0 && leftFacilityId != null && rightFacilityId != null) {
+      const leftFacilityData = facilities.find((facility) => facility.id === leftFacilityId);
+      const rightFacilityData = facilities.find((facility) => facility.id === rightFacilityId);
 
-        const facilitiesData = await Promise.all(
-          venues.map(async (venue) => {
-            const photoResponse = await axios.get(`/venuePhoto/${venue.venueId}`);
-            const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
-
-            const equipmentResponse = await axios.get(`/equipment/${venue.venueId}`);
-            const equipmentIds = equipmentResponse.data.map((eq) => eq.equipmentTypeId);
-
-            return {
-              id: venue.venueId,
-              name: venue.name,
-              image: `data:image/jpeg;base64,${imageBase64}`,
-              shortDescription: venue.simpleDescription,
-              price: venue.rentalFee,
-              area: venue.area,
-              capacity: venue.capacity,
-              equipment: equipmentIds,
-              facilityInfo: venue.facilityInfo,
-              precautions: venue.precautions,
-              refundPolicy: venue.refundPolicy,
-            };
-          })
-        );
-
-        setFacilities(facilitiesData);
-
-        const params = new URLSearchParams(location.search);
-        const leftId = params.get('left');
-        const rightId = params.get('right');
-
-        setLeftFacility(leftId || facilitiesData[0]?.id);
-        setRightFacility(rightId || facilitiesData[1]?.id);
-      } catch (error) {
-        console.error('Error fetching facilities:', error);
-      }
+      setLeftFacility(leftFacilityData || null);
+      setRightFacility(rightFacilityData || null);
     }
+  }, [facilities, leftFacilityId, rightFacilityId]);
 
-    fetchFacilities();
-  }, [location.search]);
+  // 비교할 항목들 정의
+  const comparisonItems = [
+    { label: '공간한줄', field: 'simpleDesc' },
+    { label: '가격', field: 'amount' },
+    { label: '위치', field: 'location' },
+    { label: '주의사항', field: 'caution' },
+    { label: '추천 활동', field: 'recommand' },
+  ];
 
-  const leftFacilityData = facilities.find((facility) => facility.id.toString() === leftFacility);
-  const rightFacilityData = facilities.find((facility) => facility.id.toString() === rightFacility);
+  if (!facilities || facilities.length === 0) {
+    return <div>시설 데이터를 불러오는 중입니다...</div>;
+  }
 
   return (
     <div
@@ -121,6 +93,7 @@ function ComparisonArea() {
         marginTop: '0px',
       }}
     >
+      {/* 상단 시설 이미지 및 이름 */}
       <div
         style={{
           display: 'flex',
@@ -130,54 +103,62 @@ function ComparisonArea() {
         }}
       >
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <FacilitySimpleDetail facility={leftFacilityData} />
+          <FacilitySimpleDetail facility={leftFacility} />
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80px',
-            minWidth: '80px',
-            marginTop: '70px',
-          }}
-        >
-          <div style={{ height: '103px', display: 'flex', alignItems: 'center', marginTop: '180px' }}>
-            <p style={labelStyle}>공간한줄</p>
-          </div>
-          <div style={{ height: '0px', display: 'flex', alignItems: 'center' }}>
-            <p style={labelStyle}>가격</p>
-          </div>
-        </div>
+        {/* 중앙 공간 */}
+        <div style={{ width: '80px', minWidth: '80px' }}></div>
 
         <div style={{ width: '45%', margin: '0 10px' }}>
-          <FacilitySimpleDetail facility={rightFacilityData} />
+          <FacilitySimpleDetail facility={rightFacility} />
         </div>
       </div>
+
       <hr style={{ width: '100%', borderTop: '1px solid #ccc', margin: '20px 0' }} />
-      <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', marginTop: '20px' }}>
-        <FacilityDetail facility={leftFacilityData} />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '80px',
-            minWidth: '40px',
-          }}
-        >
-          {['가격', '면적', '수용인원', '기자재', '이용 안내', '주의사항', '환불정책'].map(
-            (label) => (
-              <div key={label} style={{ height: '40px', display: 'flex', alignItems: 'center' }}>
-                <p style={labelStyle}>{label}</p>
+
+      {/* 상세 비교 영역 */}
+      <div className="detail-comparison" style={{ width: '100%' }}>
+        {comparisonItems.map((item, index) => (
+          <React.Fragment key={index}>
+            {/* 단락 */}
+            <div
+              className="detail-row"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '20px',
+              }}
+            >
+              {/* 좌측 시설 정보 */}
+              <div style={{ width: '45%', margin: '0 10px' }}>
+                <FacilityDetailItem facility={leftFacility} field={item.field} />
               </div>
-            )
-          )}
-        </div>
-        <FacilityDetail facility={rightFacilityData} />
+              {/* 중앙 목차 */}
+              <div
+                style={{
+                  width: '80px',
+                  minWidth: '40px',
+                  textAlign: 'center',
+                }}
+              >
+                <p style={labelStyle}>{item.label}</p>
+              </div>
+              {/* 우측 시설 정보 */}
+              <div style={{ width: '45%', margin: '0 10px' }}>
+                <FacilityDetailItem facility={rightFacility} field={item.field} />
+              </div>
+            </div>
+            {/* 분리선 */}
+            <hr
+              style={{
+                width: '95%',
+                border: 'none',
+                borderTop: '1px solid #C8A2C8',
+                margin: '10px auto',
+              }}
+            />
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
@@ -190,42 +171,42 @@ function FacilitySimpleDetail({ facility }) {
       className="facility-simple-detail"
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
-      <img
-        src={facility.image}
-        alt={facility.name}
-        style={{ width: '100%', maxWidth: '150px', marginBottom: '10px' }}
-      />
       <h2>{facility.name}</h2>
-      <p>{facility.shortDescription}</p>
-      <p>₩{facility.price}</p>
     </div>
   ) : null;
 }
 
-// FacilityDetail 컴포넌트
-function FacilityDetail({ facility }) {
-  return facility ? (
-    <div
-      className="facility-detail"
-      style={{ textAlign: 'center', width: '45%', margin: '0 10px' }}
-    >
-      <h3>₩{facility.price}</h3>
-      <p>{facility.area}㎡</p>
-      <p>최대 {facility.capacity}명</p>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.equipment?.map((id) => equipmentMap[id]).join(', ')}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.facilityInfo}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.precautions}</p>
-      </div>
-      <div style={{ maxHeight: '80px', overflowY: 'auto' }}>
-        <p>{facility.refundPolicy}</p>
-      </div>
+// FacilityDetailItem 컴포넌트
+function FacilityDetailItem({ facility, field }) {
+  if (!facility) return null;
+
+  let content = '';
+
+  switch (field) {
+    case 'simpleDesc':
+      content = facility.simpleDesc;
+      break;
+    case 'amount':
+      content = `₩${facility.amount}`;
+      break;
+    case 'location':
+      content = facility.location;
+      break;
+    case 'caution':
+      content = facility.caution.join(', ');
+      break;
+    case 'recommand':
+      content = facility.recommand.join(', ');
+      break;
+    default:
+      content = facility[field] || '정보 없음';
+  }
+
+  return (
+    <div style={{ textAlign: 'center', padding: '10px' }}>
+      <p>{content}</p>
     </div>
-  ) : null;
+  );
 }
 
 const labelStyle = {

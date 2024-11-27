@@ -16,13 +16,13 @@ function Prompt() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+  
     if (prompt.trim() === '/kill') {
       setResponse([]);
       setPrompt('');
       return;
     }
-
+  
     setIsLoading(true);
   
     const formData = new FormData();
@@ -38,52 +38,53 @@ function Prompt() {
         },
       });
   
+      // 백엔드로부터 받은 데이터 저장
       setResponse((prevResponse) => [
         ...(prevResponse || []),
-        {
-          feedback: res.data.feedback,
-          detailedPlaces: res.data.detailedPlaces,
-        },
+        res.data,
       ]);
     } catch (error) {
       setError(true);
+  
+      // 임시 데이터 사용
+      const tempData = {
+        id: 0,
+        feedback: ['임시 피드백: 프롬프트와 관련된 피드백입니다.'],
+        venueIdList: [0, 1, 2],
+        venueInfo: [
+          {
+            id: 0,
+            name: '임시 장소 1',
+            location: '임시 위치 1',
+            amount: 10000,
+            simpleDesc: '간단한 설명 1',
+            caution: ['주의사항 1', '주의사항 2'],
+            recommand: ['추천 용도 1', '추천 용도 2'],
+          },
+          {
+            id: 1,
+            name: '임시 장소 2',
+            location: '임시 위치 2',
+            amount: 15000,
+            simpleDesc: '간단한 설명 2',
+            caution: ['주의사항 3', '주의사항 4'],
+            recommand: ['추천 용도 3', '추천 용도 4'],
+          },
+          {
+            id: 2,
+            name: '임시 장소 3',
+            location: '임시 위치 3',
+            amount: 20000,
+            simpleDesc: '간단한 설명 3',
+            caution: ['주의사항 5', '주의사항 6'],
+            recommand: ['추천 용도 5', '추천 용도 6'],
+          },
+        ],
+      };
+  
       setResponse((prevResponse) => [
         ...(prevResponse || []),
-        {
-          feedback: '임시 피드백: 프롬프트와 관련된 피드백입니다.',
-          detailedPlaces: [
-            {
-              imageUrl: 'https://via.placeholder.com/150',
-              title: '임시 장소 1', 
-              location: '임시 위치 1',
-              address: '임시 주소 1',
-              price: '임시 가격 1',
-              simpleDescription: '간단한 설명 1',
-              precautions: '주의사항 1',
-              recommendedUsage: '추천 용도 1',
-            },
-            {
-              imageUrl: 'https://via.placeholder.com/150',
-              title: '임시 장소 2', 
-              location: '임시 위치 2',
-              address: '임시 주소 2',
-              price: '임시 가격 2',
-              simpleDescription: '간단한 설명 2',
-              precautions: '주의사항 2',
-              recommendedUsage: '추천 용도 2',
-            },
-            {
-              imageUrl: 'https://via.placeholder.com/150',
-              title: '임시 장소 3', 
-              location: '임시 위치 3',
-              address: '임시 주소 3',
-              price: '임시 가격 3',
-              simpleDescription: '간단한 설명 3',
-              precautions: '주의사항 3',
-              recommendedUsage: '추천 용도 3',
-            },
-          ],
-        },
+        tempData,
       ]);
     } finally {
       setIsLoading(false);
@@ -203,17 +204,35 @@ function Prompt() {
                 {/* 세부 장소 소개 */}
                 <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
                   <Typography variant="h6">장소 세부 정보</Typography>
-                  {res.detailedPlaces?.map((place, index) => (
-                    <Box key={index} sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}>
-                      <img src={place.imageUrl} alt={place.title} style={{ width: '150px', height: '150px', marginRight: '20px' }} />
+                  {res.venueInfo?.map((place, index) => (
+                    <Box
+                      key={index}
+                      sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}
+                    >
+                      <img
+                        src={'https://via.placeholder.com/150'}
+                        alt={place.name}
+                        style={{ width: '150px', height: '150px', marginRight: '20px' }}
+                      />
                       <Box>
-                        <Typography><strong>제목:</strong> {place.title}</Typography>
-                        <Typography><strong>위치:</strong> {place.location}</Typography>
-                        <Typography><strong>주소:</strong> {place.address}</Typography>
-                        <Typography><strong>가격:</strong> {place.price}</Typography>
-                        <Typography><strong>간단한 설명:</strong> {place.simpleDescription}</Typography>
-                        <Typography><strong>주의사항:</strong> {place.precautions}</Typography>
-                        <Typography><strong>추천 용도:</strong> {place.recommendedUsage}</Typography>
+                        <Typography>
+                          <strong>이름:</strong> {place.name}
+                        </Typography>
+                        <Typography>
+                          <strong>위치:</strong> {place.location}
+                        </Typography>
+                        <Typography>
+                          <strong>가격:</strong> ₩{place.amount}
+                        </Typography>
+                        <Typography>
+                          <strong>간단한 설명:</strong> {place.simpleDesc}
+                        </Typography>
+                        <Typography>
+                          <strong>주의사항:</strong> {place.caution.join(', ')}
+                        </Typography>
+                        <Typography>
+                          <strong>추천 활동:</strong> {place.recommand.join(', ')}
+                        </Typography>
                       </Box>
                     </Box>
                   ))}
@@ -225,15 +244,14 @@ function Prompt() {
                     variant="contained"
                     color="primary"
                     onClick={() => {
-                      const leftFacilityId = response[0]?.detailedPlaces[0]?.id || 'temp1';
-                      const rightFacilityId = response[0]?.detailedPlaces[1]?.id || 'temp2';
-                      const stateData = JSON.stringify({ prompt, response, file });
+                      const leftFacilityId = response[0]?.venueInfo[0]?.id.toString() || 'temp1';
+                      const rightFacilityId = response[0]?.venueInfo[1]?.id.toString() || 'temp2';
 
-                      const encodedState = encodeURIComponent(stateData);
-
+                      // ComparePagePrompt로 이동
                       window.open(
-                        `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}&state=${encodedState}`,
-                        '_blank' // 새 탭이나 새 창에서 열기
+                        `/compare-page-prompt`,
+                        '_blank', // 새 탭이나 새 창에서 열기
+                        `left=${leftFacilityId}&right=${rightFacilityId}`
                       );
                     }}
                   >
