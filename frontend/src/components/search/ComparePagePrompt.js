@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 // ComparePagePrompt 컴포넌트
 function ComparePagePrompt() {
-  const location = useLocation();
 
   const tempData = {
     facilities: [
@@ -30,7 +28,13 @@ function ComparePagePrompt() {
     rightFacilityId: 1,
   };
 
-  const { facilities, leftFacilityId, rightFacilityId } = location.state || tempData;
+  const sessionData = JSON.parse(sessionStorage.getItem('compareFacilities')) || tempData;
+
+  const { facilities, leftFacilityId, rightFacilityId } = sessionData;
+
+  console.log('facilities:', facilities);
+  console.log('leftFacilityId:', leftFacilityId);
+  console.log('rightFacilityId:', rightFacilityId);
 
   return (
     <div
@@ -58,15 +62,17 @@ function ComparisonArea({ facilities = [], leftFacilityId = null, rightFacilityI
   const [rightFacility, setRightFacility] = useState(null);
 
   useEffect(() => {
-    // 데이터가 유효한 경우에만 상태 설정
-    if (facilities && facilities.length > 0 && leftFacilityId != null && rightFacilityId != null) {
-      const leftFacilityData = facilities.find((facility) => facility.id === leftFacilityId);
-      const rightFacilityData = facilities.find((facility) => facility.id === rightFacilityId);
-
+    if (facilities && facilities.length > 0) {
+      const leftFacilityData = facilities.find((facility) => facility.id === Number(leftFacilityId));
+      const rightFacilityData = facilities.find((facility) => facility.id === Number(rightFacilityId));
+  
       setLeftFacility(leftFacilityData || null);
       setRightFacility(rightFacilityData || null);
+  
+      console.log('Left Facility:', leftFacilityData);
+      console.log('Right Facility:', rightFacilityData);
     }
-  }, [facilities, leftFacilityId, rightFacilityId]);
+  }, [facilities, leftFacilityId, rightFacilityId]);  
 
   // 비교할 항목들 정의
   const comparisonItems = [
@@ -166,37 +172,39 @@ function ComparisonArea({ facilities = [], leftFacilityId = null, rightFacilityI
 
 // FacilitySimpleDetail 컴포넌트
 function FacilitySimpleDetail({ facility }) {
-  return facility ? (
+  if (!facility) return <div>시설 정보를 불러올 수 없습니다.</div>;
+
+  return (
     <div
       className="facility-simple-detail"
       style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
       <h2>{facility.name}</h2>
     </div>
-  ) : null;
+  );
 }
 
 // FacilityDetailItem 컴포넌트
 function FacilityDetailItem({ facility, field }) {
-  if (!facility) return null;
+  if (!facility || !field) return <div>정보를 불러올 수 없습니다.</div>;
 
   let content = '';
 
   switch (field) {
     case 'simpleDesc':
-      content = facility.simpleDesc;
+      content = facility.simpleDesc || '설명 없음';
       break;
     case 'amount':
-      content = `₩${facility.amount}`;
+      content = facility.amount ? `₩${facility.amount}` : '가격 정보 없음';
       break;
     case 'location':
-      content = facility.location;
+      content = facility.location || '위치 정보 없음';
       break;
     case 'caution':
-      content = facility.caution.join(', ');
+      content = facility.caution?.join(' ') || '주의사항 없음';
       break;
     case 'recommand':
-      content = facility.recommand.join(', ');
+      content = facility.recommand?.join(' ') || '추천 활동 없음';
       break;
     default:
       content = facility[field] || '정보 없음';

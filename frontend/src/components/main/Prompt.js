@@ -115,7 +115,7 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
                   sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}
                 >
                   <img
-                    src={place.photoBase64 || 'https://via.placeholder.com/150'}
+                    src={place.photoBase64}
                     alt={place.name}
                     style={{ width: '150px', height: '150px', marginRight: '20px' }}
                   />
@@ -136,7 +136,7 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
                       <strong>주의사항:</strong> {place.caution.join(' ')}
                     </Typography>
                     <Typography>
-                      <strong>추천 활동:</strong> {place.recommand.join(' ')}
+                      <strong>추천 이유:</strong> {place.recommand.join(' ')}
                     </Typography>
                   </Box>
                 </Box>
@@ -152,11 +152,18 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
                   const leftFacilityId = res.venueInfo[0]?.id.toString() || 'temp1';
                   const rightFacilityId = res.venueInfo[1]?.id.toString() || 'temp2';
 
-                  // ComparePagePrompt로 이동
-                  window.open(
-                    `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}`,
-                    '_blank' // 새 탭이나 새 창에서 열기
+                  // 데이터 저장
+                  sessionStorage.setItem(
+                    'compareFacilities',
+                    JSON.stringify({
+                      facilities: res.venueInfo,
+                      leftFacilityId,
+                      rightFacilityId,
+                    })
                   );
+
+                  // 새로운 페이지 열기
+                  window.open('/compare-page-prompt', '_blank'); // 새 탭에서 열기
                 }}
               >
                 두 장소 비교하기
@@ -313,10 +320,12 @@ function Prompt() {
             const photoResponse = await axios.get(`/venuePhoto/${venue.id}`);
             const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
             
-            // Base64 데이터가 있다면, data:image/jpeg;base64, 또는 기본 이미지로 설정
-            const imageData = imageBase64 
-              ? `data:image/jpeg;base64,${imageBase64}` 
-              : 'https://via.placeholder.com/150';
+            // Base64 문자열에 이미 'data:image/...' 형식이 포함되어 있는지 확인
+            const imageData = /^data:image\/[a-zA-Z]+;base64,/.test(imageBase64)
+              ? imageBase64 // 이미 올바른 형식인 경우 그대로 사용
+              : imageBase64
+              ? `data:image/jpeg;base64,${imageBase64}` // 없는 경우 추가
+              : 'https://via.placeholder.com/150'; // 기본 이미지
       
             return {
               ...venue,
@@ -330,7 +339,7 @@ function Prompt() {
             };
           }
         })
-      );      
+      );          
 
       // 이미지가 포함된 venueInfo로 업데이트합니다.
       res.data.venueInfo = venueInfoWithImages;
