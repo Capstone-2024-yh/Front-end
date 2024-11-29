@@ -19,6 +19,12 @@ function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt
       <Typography variant="h4" gutterBottom>
         무엇을 도와드릴까요?
       </Typography>
+      <Typography variant="h6" gutterBottom>
+        - 조건만 입력하신다면 최적의 장소를 추천해 드립니다.
+      </Typography>
+      <Typography variant="h6" gutterBottom>
+        - 제안서나 사진을 첨부하면 피드백도 제공해 드립니다.
+      </Typography>
       {/* 입력 폼 */}
       <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
@@ -45,7 +51,7 @@ function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt
               variant="outlined"
               maxRows={10}
               sx={{
-                width: '400px',
+                width: '500px',
                 pr: '70px', // 버튼 크기만큼 여백
               }}
             />
@@ -101,10 +107,12 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
         {response.map((res, index) => (
           <Box key={index} sx={{ width: '100%', mt: 4 }}>
             {/* 피드백 */}
-            <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-              <Typography variant="h6">피드백</Typography>
-              <Typography>{res.feedback}</Typography>
-            </Box>
+            {res.feedback && res.feedback.length > 0 && (
+              <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+                <Typography variant="h6">피드백</Typography>
+                <Typography>{res.feedback}</Typography>
+              </Box>
+            )}
 
             {/* 세부 장소 소개 */}
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>

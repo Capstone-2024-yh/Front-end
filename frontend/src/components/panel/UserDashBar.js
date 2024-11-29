@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Box, Button, Typography, List, ListItem, ListItemText, Paper, Drawer } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -27,8 +27,10 @@ const UserDashBar = () => {
   const [user, setUser] = useState(dummyUser);
   const [reservations, setReservations] = useState(user.reservations);
   */
-  const [user] = useState(dummyUser);
-  const [reservations] = useState(user.reservations);
+  const authState = useSelector((state) => state.auth);
+
+  const user = authState.isAuthenticated ? authState.user || dummyUser : dummyUser;
+  const reservations = user.reservations || dummyUser.reservations;
 
   useEffect(() => {
     // 백엔드에서 데이터를 받아오는 함수
@@ -97,7 +99,7 @@ const UserDashBar = () => {
     >
         <Box sx={{ padding: '20px', maxWidth: '900px', margin: 'auto', marginTop: '10px' }}>
             {/* 1. 사용자 정보 섹션 */}
-            {isAuthenticated ? (
+            {authState.isAuthenticated ? (
               <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <Avatar src={user.profileImage} alt={user.name} sx={{ width: 100, height: 100, marginRight: '20px' }} />
@@ -140,39 +142,39 @@ const UserDashBar = () => {
             {/* 3. 로그아웃 및 기타 설정 */}
             {/* 로그인/로그아웃 및 마이페이지 */}
             <Paper elevation={3} sx={{ padding: '20px', marginBottom: '20px' }}>
-              {isAuthenticated ? (
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<AccessibilityNewIcon />}
-                    onClick={() => handleUser(user)}
-                    sx={{ flexGrow: 1, marginRight: 'auto', minWidth: '110px' }} // 왼쪽 끝으로 배치
-                  >
-                    마이페이지
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<LogoutIcon />}
-                    onClick={handleLogout}
-                    sx={{ flexGrow: 1, marginLeft: 'auto', minWidth: '110px' }} // 오른쪽 끝으로 배치
-                  >
-                    로그아웃
-                  </Button>
-                </Box>
-              ) : (
-                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleLogin} // 로그인 페이지로 이동
-                    sx={{ flexGrow: 0, minWidth: '150px' }} // 가운데 정렬
-                  >
-                    로그인
-                  </Button>
-                </Box>
-              )}
+            {authState.isAuthenticated ? (
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<AccessibilityNewIcon />}
+                  onClick={handleUser}
+                  sx={{ flexGrow: 1, marginRight: 'auto', minWidth: '110px' }}
+                >
+                  마이페이지
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<LogoutIcon />}
+                  onClick={handleLogout}
+                  sx={{ flexGrow: 1, marginLeft: 'auto', minWidth: '110px' }}
+                >
+                  로그아웃
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleLogin}
+                  sx={{ flexGrow: 0, minWidth: '150px' }}
+                >
+                  로그인
+                </Button>
+              </Box>
+            )}
             </Paper>
         </Box>
     </Drawer>
