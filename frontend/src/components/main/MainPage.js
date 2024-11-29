@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
-import { logoutSuccess } from '../../store/authSlice';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
 import SearchBar from '../panel/SearchBar';
-// import axios from '../../axiosConfig';
+import axios from '../../axiosConfig';
 
 const MainPage = () => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const user = useSelector((state) => state.auth.user);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [popularTags, setPopularTags] = useState([]);
 
@@ -19,27 +16,23 @@ const MainPage = () => {
   
   useEffect(() => {
     const fetchPopularTags = async () => {
-      /*
       try {
         // 백엔드에서 인기 태그 데이터를 받아오는 부분
-        const response = await axios.get('/api/popular-tags'); // API 엔드포인트 수정
-        setPopularTags(response.data.tags); // 받아온 태그 데이터를 상태에 저장
+        const response = await axios.get('/search-summary/latest'); // API 엔드포인트 수정
+        const tags = response.data
+          .slice(0, 7) // 상위 7개의 태그만 사용
+          .map((tag) => tag.tokenText.replace('O/', '')); // "O/" 제거
+        setPopularTags(tags);
+        console.log('Popular tags:', tags);
       } catch (error) {
         console.error('Failed to fetch popular tags:', error);
-        // 백엔드 요청 실패 시 임시 태그 사용
-        setPopularTags(['#조은거', '#더조은거', '#더더조은거', '#매우조은거', '#좋지안은거', '#더좋지안은거', '#평범한거']);
+        // 요청 실패 시 임시 태그 사용
+        setPopularTags(['스터디룸tmp', '야외 공연tmp', '회의실tmp', '야외tmp', '녹음실tmp', '주차장tmp', '파티룸tmp']);
       }
-      */
-      setPopularTags(['#조은거', '#더조은거', '#더더조은거', '#매우조은거', '#좋지안은거', '#더좋지안은거', '#평범한거']);
     };
 
     fetchPopularTags();
   }, []);
-
-  const handleLogout = () => {
-    dispatch(logoutSuccess());
-    navigate('/');
-  };
 
   const handleTagClick = (tag) => {
     navigate(`/location-list?tag=${tag}`);
@@ -56,23 +49,6 @@ const MainPage = () => {
   return (
     <div>
       <SearchBar onSearch={handleSearch} />
-
-      {isAuthenticated ? (
-        <>
-          <h1>어서오세요, {user && user.username}!</h1>
-          <StyledButton onClick={handleLogout}>Logout</StyledButton>
-        </>
-      ) : (
-        <>
-          <h1>어서오세요, 게스트님!</h1>
-          <p>
-            모든 기능을 사용하기 위해 로그인이 필요합니다.
-            {/*
-            <StyledButton onClick={() => navigate('/login')}>Go to Login</StyledButton>
-            */}
-          </p>
-        </>
-      )}
       
       <h2 style={{ textAlign: 'center' }}>어떻게 할지 감이 안오시나요?</h2>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>

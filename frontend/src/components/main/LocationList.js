@@ -28,11 +28,9 @@ const LocationList = () => {
         let apiCall;
         if(type){
           apiCall = '/venues/typeSearch?type='.concat(type)
-          console.log('ONO')
         }
         else{
           apiCall = '/venues/AllSearch'
-          console.log('NONONO')
         }
         const response = await axios.get(apiCall);
         const data = response.data;

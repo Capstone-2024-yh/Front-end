@@ -32,7 +32,7 @@ function Prompt() {
     }
   
     try {
-      const res = await axios.post('/gptCall/Call', formData, {
+      const res = await axios.post('/searchAssist', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
