@@ -4,6 +4,236 @@ import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
+// 초기 상태 컴포넌트
+function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt, isLoading }) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexGrow: 1,
+      }}
+    >
+      <Typography variant="h4" gutterBottom>
+        무엇을 도와드릴까요?
+      </Typography>
+      {/* 입력 폼 */}
+      <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
+              disabled
+            />
+            <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+              파일 선택
+              <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
+            </Button>
+          </Box>
+          <Box sx={{ position: 'relative', mt: 2 }}>
+            <TextField
+              label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
+              multiline
+              margin="normal"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              variant="outlined"
+              maxRows={10}
+              sx={{
+                width: '400px',
+                pr: '70px', // 버튼 크기만큼 여백
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                bottom: 8,
+                minWidth: '48px',
+                minHeight: '57px',
+                padding: '8px',
+              }}
+              disabled={isLoading}
+            >
+              ↥
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Box>
+  );
+}
+
+// 입력 이후 컴포넌트
+function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileChange, file, prompt, setPrompt }) {
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    if (response.length > 0) {
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [response]);
+
+  return (
+    <>
+      {/* AI 응답 출력 부분 */}
+      <Box sx={{ width: '90%', maxWidth: 800, flexGrow: 1, mb: 3, mt: 2 }}>
+        {isLoading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {error && (
+          <Box sx={{ color: 'red', mt: 2 }}>
+            <Typography>에러가 발생했습니다. 다시 시도해 주세요.</Typography>
+          </Box>
+        )}
+
+        {response.map((res, index) => (
+          <Box key={index} sx={{ width: '100%', mt: 4 }}>
+            {/* 피드백 */}
+            <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
+              <Typography variant="h6">피드백</Typography>
+              <Typography>{res.feedback}</Typography>
+            </Box>
+
+            {/* 세부 장소 소개 */}
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+              <Typography variant="h6">장소 세부 정보</Typography>
+              {res.venueInfo?.slice(0, 3).map((place, index) => (
+                <Box
+                  key={index}
+                  sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}
+                >
+                  <img
+                    src={place.photoBase64 || 'https://via.placeholder.com/150'}
+                    alt={place.name}
+                    style={{ width: '150px', height: '150px', marginRight: '20px' }}
+                  />
+                  <Box>
+                    <Typography>
+                      <strong>이름:</strong> {place.name}
+                    </Typography>
+                    <Typography>
+                      <strong>위치:</strong> {place.location}
+                    </Typography>
+                    <Typography>
+                      <strong>가격:</strong> ₩{place.amount}
+                    </Typography>
+                    <Typography>
+                      <strong>간단한 설명:</strong> {place.simpleDesc}
+                    </Typography>
+                    <Typography>
+                      <strong>주의사항:</strong> {place.caution.join(' ')}
+                    </Typography>
+                    <Typography>
+                      <strong>추천 활동:</strong> {place.recommand.join(' ')}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+
+            {/* 두 장소 비교하기 버튼 */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  const leftFacilityId = res.venueInfo[0]?.id.toString() || 'temp1';
+                  const rightFacilityId = res.venueInfo[1]?.id.toString() || 'temp2';
+
+                  // ComparePagePrompt로 이동
+                  window.open(
+                    `/compare-page-prompt?left=${leftFacilityId}&right=${rightFacilityId}`,
+                    '_blank' // 새 탭이나 새 창에서 열기
+                  );
+                }}
+              >
+                두 장소 비교하기
+              </Button>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* 프롬프트 입력 부분 */}
+      <Box
+        sx={{
+          position: 'sticky',
+          bottom: 0,
+          width: '100%',
+          maxWidth: 800,
+          backgroundColor: 'white',
+          zIndex: 1,
+          boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.1)',
+          padding: 2,
+        }}
+      >
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
+              disabled
+            />
+            <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
+              파일 선택
+              <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
+            </Button>
+          </Box>
+
+          <Box sx={{ position: 'relative', mt: 2 }}>
+            <TextField
+              label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
+              multiline
+              margin="normal"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              variant="outlined"
+              maxRows={6}
+              sx={{
+                width: 'calc(100% - 70px)',
+                pr: '0px', // 오른쪽 패딩 제거
+              }}
+            />
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                bottom: 8, // 버튼을 입력 칸의 하단에 고정
+                minWidth: '48px',
+                minHeight: '57px',
+                padding: '8px',
+              }}
+              disabled={isLoading}
+            >
+              ↥
+            </Button>
+          </Box>
+        </form>
+      </Box>
+      <div ref={bottomRef} />
+    </>
+  );
+}
+
+// 메인 Prompt 컴포넌트
 function Prompt() {
   const location = useLocation();
   const auth = useSelector((state) => state.auth);
@@ -13,12 +243,11 @@ function Prompt() {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(location.state?.file || null);
-  const bottomRef = useRef(null);
 
   const handleFileUpload = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-  
+
     try {
       const res = await axios.post('/fileAssist', formData, {
         headers: {
@@ -35,13 +264,13 @@ function Prompt() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-  
+
     if (prompt.trim() === '/kill') {
       setResponse([]);
       setPrompt('');
       return;
     }
-  
+
     setIsLoading(true);
 
     let fileData = null;
@@ -56,29 +285,56 @@ function Prompt() {
         return;
       }
     }
-  
-    const formData = new FormData();
-    formData.append('keyword', prompt);
 
     const uid = auth?.user?.id || 0;
 
-    if (fileData) {
-      formData.append('fileId', fileData.fileId); // fileAssist 응답에서 파일 ID를 추가
-    }
-  
     try {
       console.log('Prompt:', prompt);
       console.log('User ID:', uid);
 
-      const res = await axios.post('/search/searchAssist', {
-        keyword: prompt,
-        uid, // 로그인되지 않은 경우 0으로 설정
-      }, {
-        headers: {
-          'Content-Type': 'application/json', // JSON 요청으로 설정
+      const res = await axios.post(
+        '/search/searchAssist',
+        {
+          keyword: prompt,
+          uid, // 로그인되지 않은 경우 0으로 설정
+          fileId: fileData?.fileId, // 파일 ID 추가
         },
-      });
-  
+        {
+          headers: {
+            'Content-Type': 'application/json', // JSON 요청으로 설정
+          }
+        }
+      );
+
+      // 각 장소의 이미지를 가져옵니다.
+      const venueInfoWithImages = await Promise.all(
+        res.data.venueInfo.map(async (venue) => {
+          try {
+            const photoResponse = await axios.get(`/venuePhoto/${venue.id}`);
+            const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
+            
+            // Base64 데이터가 있다면, data:image/jpeg;base64, 또는 기본 이미지로 설정
+            const imageData = imageBase64 
+              ? `data:image/jpeg;base64,${imageBase64}` 
+              : 'https://via.placeholder.com/150';
+      
+            return {
+              ...venue,
+              photoBase64: imageData,
+            };
+          } catch (error) {
+            console.error(`Error fetching photo for venue ID ${venue.id}:`, error);
+            return {
+              ...venue,
+              photoBase64: 'https://via.placeholder.com/150', // 기본 이미지
+            };
+          }
+        })
+      );      
+
+      // 이미지가 포함된 venueInfo로 업데이트합니다.
+      res.data.venueInfo = venueInfoWithImages;
+
       // 백엔드로부터 받은 데이터 저장
       setResponse((prevResponse) => [
         ...(prevResponse || []),
@@ -88,7 +344,7 @@ function Prompt() {
       console.log('Prompt response:', res.data);
     } catch (error) {
       setError(true);
-  
+
       // 임시 데이터 사용
       const tempData = {
         id: 0,
@@ -124,7 +380,7 @@ function Prompt() {
           },
         ],
       };
-  
+
       setResponse((prevResponse) => [
         ...(prevResponse || []),
         tempData,
@@ -132,233 +388,35 @@ function Prompt() {
     } finally {
       setIsLoading(false);
     }
-  };  
+  };
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  useEffect(() => {
-    // response가 변경될 때마다 하단으로 스크롤
-    if (response.length > 0) {
-      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [response]);
-
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        minHeight: '100vh',
-      }}
-    >
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh' }}>
       {response.length === 0 && !isLoading && !error ? (
-        // 초기 상태: 메시지와 입력 박스를 화면 중앙에 배치
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexGrow: 1,
-          }}
-        >
-          <Typography variant="h4" gutterBottom>
-            무엇을 도와드릴까요?
-          </Typography>
-          {/* 입력 폼 */}
-          <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
-            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
-                  disabled
-                />
-                <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-                  파일 선택
-                  <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
-                </Button>
-              </Box>
-
-              <Box sx={{ position: 'relative', mt: 2 }}>
-                <TextField
-                  label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
-                  multiline
-                  margin="normal"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  variant="outlined"
-                  maxRows={10}
-                  sx={{
-                    width: response.length === 0 ? '400px' : 'calc(100% - 70px)',
-                    pr: response.length === 0 ? '70px' : '0px', // 초기 상태에서 버튼 크기만큼 여백 추가
-                  }}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    position: 'absolute',
-                    right: 8,
-                    bottom: 8,
-                    minWidth: '48px',
-                    minHeight: '57px',
-                    padding: '8px',
-                  }}
-                  disabled={isLoading}
-                >
-                  ↥
-                </Button>
-              </Box>
-            </form>
-          </Box>
-        </Box>
+        <InitialPrompt
+          handleSubmit={handleSubmit}
+          handleFileChange={handleFileChange}
+          file={file}
+          prompt={prompt}
+          setPrompt={setPrompt}
+          isLoading={isLoading}
+        />
       ) : (
-        // 입력 이후: 기존 레이아웃으로 변경
-        <>
-          {/* AI 응답 출력 부분 */}
-          <Box sx={{ width: '90%', maxWidth: 800, flexGrow: 1, mb: 3, mt: 2 }}>
-            {isLoading && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <CircularProgress />
-              </Box>
-            )}
-
-            {error && (
-              <Box sx={{ color: 'red', mt: 2 }}>
-                <Typography>에러가 발생했습니다. 다시 시도해 주세요.</Typography>
-              </Box>
-            )}
-
-            {response.map((res, index) => (
-              <Box key={index} sx={{ width: '100%', mt: 4 }}>
-                {/* 피드백 */}
-                <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
-                  <Typography variant="h6">피드백</Typography>
-                  <Typography>{res.feedback}</Typography>
-                </Box>
-
-                {/* 세부 장소 소개 */}
-                <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-                  <Typography variant="h6">장소 세부 정보</Typography>
-                  {res.venueInfo?.map((place, index) => (
-                    <Box
-                      key={index}
-                      sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}
-                    >
-                      <img
-                        src={'https://via.placeholder.com/150'}
-                        alt={place.name}
-                        style={{ width: '150px', height: '150px', marginRight: '20px' }}
-                      />
-                      <Box>
-                        <Typography>
-                          <strong>이름:</strong> {place.name}
-                        </Typography>
-                        <Typography>
-                          <strong>위치:</strong> {place.location}
-                        </Typography>
-                        <Typography>
-                          <strong>가격:</strong> ₩{place.amount}
-                        </Typography>
-                        <Typography>
-                          <strong>간단한 설명:</strong> {place.simpleDesc}
-                        </Typography>
-                        <Typography>
-                          <strong>주의사항:</strong> {place.caution.join(', ')}
-                        </Typography>
-                        <Typography>
-                          <strong>추천 활동:</strong> {place.recommand.join(', ')}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  ))}
-                </Box>
-
-                {/* 2개를 비교하는 버튼: compare-page-prompt로 리다이렉트 */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      const leftFacilityId = response[0]?.venueInfo[0]?.id.toString() || 'temp1';
-                      const rightFacilityId = response[0]?.venueInfo[1]?.id.toString() || 'temp2';
-
-                      // ComparePagePrompt로 이동
-                      window.open(
-                        `/compare-page-prompt`,
-                        '_blank', // 새 탭이나 새 창에서 열기
-                        `left=${leftFacilityId}&right=${rightFacilityId}`
-                      );
-                    }}
-                  >
-                    두 장소 비교하기
-                  </Button>
-                </Box>
-              </Box>
-            ))}
-          </Box>
-
-          {/* 프롬프트 입력 부분 */}
-          <Box sx={{ position: 'sticky', bottom: 0, width: '100%', maxWidth: 800, backgroundColor: 'white', zIndex: 1, boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.1)', padding: 2 }}>
-            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
-                  disabled
-                />
-                <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-                  파일 선택
-                  <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
-                </Button>
-              </Box>
-
-              <Box sx={{ position: 'relative', mt: 2 }}>
-                <TextField
-                  label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
-                  multiline
-                  margin="normal"
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  variant="outlined"
-                  maxRows={6}
-                  sx={{
-                    width: response.length === 0 ? '400px' : 'calc(100% - 70px)',
-                    pr: '70px', // 오른쪽 패딩 추가
-                  }}
-                />
-
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    position: 'absolute',
-                    right: 8,
-                    bottom: 8, // 버튼을 입력 칸의 하단에 고정
-                    minWidth: '48px',
-                    minHeight: '57px',
-                    padding: '8px',
-                  }}
-                  disabled={isLoading}
-                >
-                  ↥
-                </Button>
-              </Box>
-            </form>
-          </Box>
-        </>
+        <ResponseDisplay
+          response={response}
+          isLoading={isLoading}
+          error={error}
+          handleSubmit={handleSubmit}
+          handleFileChange={handleFileChange}
+          file={file}
+          prompt={prompt}
+          setPrompt={setPrompt}
+        />
       )}
-      <div ref={bottomRef} />
     </Box>
   );
 }

@@ -1,5 +1,3 @@
-// ComparePage.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -113,6 +111,11 @@ function ComparisonArea({ selectedType }) {
           filteredVenues.map(async (venue) => {
             const photoResponse = await axios.get(`/venuePhoto/${venue.venueId}`);
             const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
+            const imageData = imageBase64 && /^data:image\/[a-zA-Z]+;base64,/.test(imageBase64)
+            ? imageBase64
+            : 'https://via.placeholder.com/150';
+
+            console.log("imageData: ", imageData);
   
             const equipmentResponse = await axios.get(`/equipment/${venue.venueId}`);
             const equipmentIds = equipmentResponse.data.map((eq) => eq.equipmentTypeId);
@@ -120,7 +123,7 @@ function ComparisonArea({ selectedType }) {
             return {
               id: venue.venueId,
               name: venue.name,
-              image: `data:image/jpeg;base64,${imageBase64}`,
+              image: imageData,
               shortDescription: venue.simpleDescription,
               price: venue.rentalFee,
               area: venue.area,

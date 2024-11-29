@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@mui/material';
 import StyledButton from '../../styles/StyledButton';
 import KakaoMap from '../map/KakaoMap';
-import SearchBar from '../panel/SearchBar';
 import axios from '../../axiosConfig';
 
 const MainPage = () => {
@@ -42,14 +41,8 @@ const MainPage = () => {
     navigate(`/location-list?type=${type}`);
   };
 
-  const handleSearch = (query) => {
-    navigate(`/search-results?query=${query}`);
-  };
-
   return (
     <div>
-      <SearchBar onSearch={handleSearch} />
-      
       <h2 style={{ textAlign: 'center' }}>어떻게 할지 감이 안오시나요?</h2>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button
