@@ -37,6 +37,8 @@ const SpaceRegistration = () => {
   const [selectedEquipment, setSelectedEquipment] = useState([]);
   // const [additionalImagesBase64, setAdditionalImagesBase64] = useState([]);
 
+  const [popularTags, setPopularTags] = useState([]);
+
   // 내부 데이터들
   const [inputTag, setInputTag] = useState('');
   const [mainImageName, setMainImageName] = useState('');
@@ -46,6 +48,21 @@ const SpaceRegistration = () => {
 
   // Daum Postcode 스크립트 로드
   useEffect(() => {
+    // 인기 태그 데이터 가져오기
+    const fetchPopularTags = async () => {
+      try {
+        const response = await axios.get('/search-summary/latest'); // API 호출
+        const tags = response.data
+          .slice(0, 5) // 상위 5개 태그만 사용
+          .map(tag => `#${tag.tokenText.replace('O/', '')}`);
+        setPopularTags(tags);
+      } catch (error) {
+        console.error('Failed to fetch popular tags:', error);
+        setPopularTags(['#예시태그1', '#예시태그2', '#예시태그3', '#예시태그4', '#예시태그5']); // 기본 태그
+      }
+    };
+    fetchPopularTags();
+
     loadDaumPostcodeScript();
   }, []);
 
@@ -66,8 +83,8 @@ const SpaceRegistration = () => {
           }
       );
       if (response.data.documents.length > 0) {
-        const { x, y } = response.data.documents[0].road_address;
-        setCoordinates({ x, y });
+        const { x: longitude, y: latitude } = response.data.documents[0].road_address;
+        setCoordinates({ latitude, longitude });
       } else {
         console.error('Coordinates not found');
       }
@@ -194,8 +211,8 @@ const SpaceRegistration = () => {
         "postalCode":             postalCode,             // 우편번호 - X int - 제외 예정
         "address":                roadAddress,            // 도로명 주소 - O
         "detailAddress":          detailAddress,          // 상세 주소 - X string
-        "latitude":               coordinates ? coordinates.x : null, // 위도 - O
-        "longitude":              coordinates ? coordinates.y : null, // 경도 - O
+        "latitude":               coordinates ? coordinates.latitude : null, // 위도 - O
+        "longitude":              coordinates ? coordinates.longitude : null, // 경도 - O
         // "additionalImagesBase64": additionalImagesBase64, // 추가 이미지 - X string 배열 - 제외
       };
 
@@ -416,6 +433,9 @@ const SpaceRegistration = () => {
         {/* 5. 공간 태그 */}
         <Typography variant="h6" gutterBottom sx={{ marginBottom: '0px' }}>
           공간 태그
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#757575', mb: 2 }}>
+          현재 인기 태그: {popularTags.join(' ')}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 2 }}>
           {spaceTags.map((tag, index) => (

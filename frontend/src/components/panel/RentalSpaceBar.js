@@ -189,8 +189,10 @@ const RentalSpaceBar = () => {
             </label>
           ))}
         </Box>
-        <Typography variant="h6" sx={{ marginLeft: '10px' }}>{spaceData?.spaceName}</Typography>
-        <Typography variant="h6" sx={{ marginLeft: 'auto' }}>
+        <Typography variant="h6" sx={{ marginLeft: '10px', fontSize: '16px' }}>
+          {spaceData?.spaceName}
+        </Typography>
+        <Typography variant="h6" sx={{ marginLeft: 'auto', fontSize: '16px' }}>
           ₩ {spaceData?.spaceFee} / 시간
         </Typography>
       </Box>

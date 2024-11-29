@@ -9,8 +9,8 @@ const KakaoMapOnly = ({ coordinates }) => {
   const defaultLongitude = 126.570667;
 
   // 전달된 좌표가 없을 경우 기본 좌표 사용
-  const mapLatitude = coordinates?.lng ?? defaultLongitude;
-  const mapLongitude = coordinates?.lat ?? defaultLatitude;
+  const mapLatitude = coordinates?.lat ?? defaultLatitude;
+  const mapLongitude = coordinates?.lng ?? defaultLongitude;
 
   console.log('mapLatitude:', mapLatitude);
   console.log('mapLongitude:', mapLongitude);
