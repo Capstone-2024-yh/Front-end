@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 
 function Prompt() {
   const location = useLocation();
+  const auth = useSelector((state) => state.auth);
 
   const [prompt, setPrompt] = useState(location.state?.prompt || '');
   const [response, setResponse] = useState(location.state?.response || []);
@@ -12,6 +14,23 @@ function Prompt() {
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(location.state?.file || null);
   const bottomRef = useRef(null);
+
+  const handleFileUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+  
+    try {
+      const res = await axios.post('/fileAssist', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data; // 서버로부터 받은 파일 정보 반환
+    } catch (error) {
+      console.error('파일 업로드 실패:', error);
+      throw new Error('파일 업로드에 실패했습니다.');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,17 +43,39 @@ function Prompt() {
     }
   
     setIsLoading(true);
+
+    let fileData = null;
+
+    // 파일 전송 로직
+    if (file) {
+      try {
+        fileData = await handleFileUpload(file);
+      } catch (error) {
+        setError('파일 업로드 중 문제가 발생했습니다.');
+        setIsLoading(false);
+        return;
+      }
+    }
   
     const formData = new FormData();
-    formData.append('question', prompt);
-    if (file) {
-      formData.append('file', file);
+    formData.append('keyword', prompt);
+
+    const uid = auth?.user?.id || 0;
+
+    if (fileData) {
+      formData.append('fileId', fileData.fileId); // fileAssist 응답에서 파일 ID를 추가
     }
   
     try {
-      const res = await axios.post('/searchAssist', formData, {
+      console.log('Prompt:', prompt);
+      console.log('User ID:', uid);
+
+      const res = await axios.post('/search/searchAssist', {
+        keyword: prompt,
+        uid, // 로그인되지 않은 경우 0으로 설정
+      }, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json', // JSON 요청으로 설정
         },
       });
   
@@ -43,6 +84,8 @@ function Prompt() {
         ...(prevResponse || []),
         res.data,
       ]);
+
+      console.log('Prompt response:', res.data);
     } catch (error) {
       setError(true);
   
@@ -143,19 +186,19 @@ function Prompt() {
               </Box>
 
               <Box sx={{ position: 'relative', mt: 2 }}>
-              <TextField
-                label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
-                multiline
-                margin="normal"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                variant="outlined"
-                maxRows={10}
-                sx={{
-                  width: response.length === 0 ? '400px' : 'calc(100% - 70px)',
-                  pr: response.length === 0 ? '70px' : '0px', // 초기 상태에서 버튼 크기만큼 여백 추가
-                }}
-              />
+                <TextField
+                  label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
+                  multiline
+                  margin="normal"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  variant="outlined"
+                  maxRows={10}
+                  sx={{
+                    width: response.length === 0 ? '400px' : 'calc(100% - 70px)',
+                    pr: response.length === 0 ? '70px' : '0px', // 초기 상태에서 버튼 크기만큼 여백 추가
+                  }}
+                />
                 <Button
                   type="submit"
                   variant="contained"

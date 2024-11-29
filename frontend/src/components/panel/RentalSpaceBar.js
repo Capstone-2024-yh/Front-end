@@ -20,6 +20,8 @@ const equipmentMap = {
 
 const RentalSpaceBar = () => {
   const ownerId = useSelector((state) => state.auth.user?.id);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const { venueId } = useParams();
   const [spaceData, setSpaceData] = useState(null);
   const [loading, setLoading] = useState(true); // 로딩 상태 추가
@@ -328,20 +330,29 @@ const RentalSpaceBar = () => {
         <Button variant="outlined" sx={{ width: '30%' }}>
           채팅
         </Button>
-        {/*
-        <Button variant="contained" color="primary" sx={{ width: '35%' }}>
-          예약 신청
-        </Button>
-        */}
-        {selectedTime && (
-          <Box>
-            <Typography variant="body2" sx={{ marginBottom: '10px', fontWeight: 'bold' }}>
-              선택한 시간: {selectedTime}
-            </Typography>
-            <Button variant="contained" color="primary" fullWidth onClick={handleReservationSubmit}>
-              예약 신청
-            </Button>
-          </Box>
+        {isAuthenticated ? (
+          selectedTime ? (
+            <Box>
+              <Typography variant="body2" sx={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                선택한 시간: {selectedTime}
+              </Typography>
+              <Button variant="contained" color="primary" fullWidth onClick={handleReservationSubmit}>
+                예약 신청
+              </Button>
+            </Box>
+          ) : null
+        ) : (
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'red',
+              fontWeight: 'bold',
+              textAlign: 'center', // 가운데 정렬
+              width: '30%', // 버튼 크기와 동일하게 설정
+            }}
+          >
+            로그인!
+          </Typography>
         )}
       </Box>
     </Box>
