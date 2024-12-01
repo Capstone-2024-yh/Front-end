@@ -110,23 +110,52 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
             {res.feedback && res.feedback.length > 0 && (
               <Box sx={{ p: 2, mb: 3, border: '1px solid #ccc', borderRadius: 2 }}>
                 <Typography variant="h6">피드백</Typography>
-                <Typography>{res.feedback}</Typography>
+                {res.feedback.map((item, idx) => (
+                  <Typography key={idx}>{item}</Typography> // 각 피드백 항목 출력
+                ))}
               </Box>
             )}
 
             {/* 세부 장소 소개 */}
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
               <Typography variant="h6">장소 세부 정보</Typography>
-              {res.venueInfo?.slice(0, 3).map((place, index) => (
+              {res.venueInfo.slice(0, 5).map((place, index) => (
                 <Box
                   key={index}
-                  sx={{ display: 'flex', mb: 3, border: '1px solid #eee', borderRadius: 2, p: 2 }}
+                  sx={{
+                    display: 'flex',
+                    mb: 3,
+                    border: '1px solid #eee',
+                    borderRadius: 2,
+                    p: 2,
+                    cursor: 'pointer', // 마우스 커서를 손가락 모양으로 변경
+                  }}
+                  onClick={() => window.open(`/rental-space/${place.id}`, '_blank')} // 새 창에서 열기
                 >
-                  <img
-                    src={place.photoBase64}
-                    alt={place.name}
-                    style={{ width: '150px', height: '150px', marginRight: '20px' }}
-                  />
+                  {/* 이미지 표시 */}
+                  {place.photoBase64 ? (
+                    <img
+                      src={place.photoBase64}
+                      alt={place.name}
+                      style={{ width: '150px', height: '150px', marginRight: '20px' }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        width: '150px',
+                        height: '150px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#f0f0f0',
+                        marginRight: '20px',
+                      }}
+                    >
+                      <CircularProgress size={24} />
+                    </Box>
+                  )}
+                
+                  {/* 장소 정보 */}
                   <Box>
                     <Typography>
                       <strong>이름:</strong> {place.name}
@@ -140,14 +169,18 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
                     <Typography>
                       <strong>간단한 설명:</strong> {place.simpleDesc}
                     </Typography>
-                    <Typography>
-                      <strong>주의사항:</strong> {place.caution.join(' ')}
-                    </Typography>
-                    <Typography>
-                      <strong>추천 이유:</strong> {place.recommand.join(' ')}
-                    </Typography>
+                    {place.caution && (
+                      <Typography>
+                        <strong>주의사항:</strong> {place.caution.join(' ')}
+                      </Typography>
+                    )}
+                    {place.recommand && (
+                      <Typography>
+                        <strong>추천 이유:</strong> {place.recommand.join(' ')}
+                      </Typography>
+                    )}
                   </Box>
-                </Box>
+                </Box>              
               ))}
             </Box>
 
@@ -279,131 +312,130 @@ function Prompt() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
-    if (prompt.trim() === '/kill') {
-      setResponse([]);
-      setPrompt('');
-      return;
-    }
-
     setIsLoading(true);
 
-    let fileData = null;
-
-    // 파일 전송 로직
-    if (file) {
-      try {
-        fileData = await handleFileUpload(file);
-      } catch (error) {
-        setError('파일 업로드 중 문제가 발생했습니다.');
-        setIsLoading(false);
+    if (prompt.trim() === '/kill') {
+        setResponse([]);
+        setPrompt('');
         return;
-      }
     }
 
     const uid = auth?.user?.id || 0;
+    let fileData = null;
+
+    if (file) {
+        try {
+            fileData = await handleFileUpload(file);
+        } catch (error) {
+            setError('파일 업로드 중 문제가 발생했습니다.');
+            setIsLoading(false);
+            return;
+        }
+    }
 
     try {
-      console.log('Prompt:', prompt);
-      console.log('User ID:', uid);
+        // 1. `searchKeyword` 호출하여 venueId 가져오기
+        const searchRes = await axios.post(
+            '/search/searchKeyword',
+            {
+                keyword: prompt,
+                uid,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-      const res = await axios.post(
-        '/search/searchAssist',
-        {
-          keyword: prompt,
-          uid, // 로그인되지 않은 경우 0으로 설정
-          fileId: fileData?.fileId, // 파일 ID 추가
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json', // JSON 요청으로 설정
-          }
+        console.log('Feedback:', searchRes.data.feedback);
+
+        const venueIds = searchRes.data.searchResults.map((result) => result.venueId); // venueId 리스트
+        if (venueIds.length === 0) {
+            throw new Error('검색 결과가 없습니다.');
         }
-      );
 
-      // 각 장소의 이미지를 가져옵니다.
-      const venueInfoWithImages = await Promise.all(
-        res.data.venueInfo.map(async (venue) => {
-          try {
-            const photoResponse = await axios.get(`/venuePhoto/${venue.id}`);
-            const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
-            
-            // Base64 문자열에 이미 'data:image/...' 형식이 포함되어 있는지 확인
-            const imageData = /^data:image\/[a-zA-Z]+;base64,/.test(imageBase64)
-              ? imageBase64 // 이미 올바른 형식인 경우 그대로 사용
-              : imageBase64
-              ? `data:image/jpeg;base64,${imageBase64}` // 없는 경우 추가
-              : 'https://via.placeholder.com/150'; // 기본 이미지
-      
-            return {
-              ...venue,
-              photoBase64: imageData,
-            };
-          } catch (error) {
-            console.error(`Error fetching photo for venue ID ${venue.id}:`, error);
-            return {
-              ...venue,
-              photoBase64: 'https://via.placeholder.com/150', // 기본 이미지
-            };
-          }
-        })
-      );          
+        // 2. `getResponse/{id}` 호출하여 세부 정보 가져오기
+        const venueDetails = [];
+        for (const id of venueIds) {
+            try {
+                const response = await axios.post(
+                    `/search/getResponse/${id}`,
+                    {
+                        Tokens: [
+                            {
+                                Require: prompt,
+                                Subject: '',
+                                Summary: '',
+                                Token: fileData?.fileId || '',
+                            },
+                        ],
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+                venueDetails.push(response.data);
+            } catch (error) {
+                console.error(`Error fetching details for venue ID ${id}:`, error);
+            }
+        }
 
-      // 이미지가 포함된 venueInfo로 업데이트합니다.
-      res.data.venueInfo = venueInfoWithImages;
+        // 3. 응답 데이터 업데이트
+        setResponse((prevResponse) => [
+            ...(prevResponse || []),
+            {
+                feedback: searchRes.data.feedback,
+                venueInfo: venueDetails.map((venue) => ({
+                    ...venue,
+                    photoBase64: null, // 이미지 초기화
+                })),
+            },
+        ]);
 
-      // 백엔드로부터 받은 데이터 저장
-      setResponse((prevResponse) => [
-        ...(prevResponse || []),
-        res.data,
-      ]);
+        // 4. 이미지 로드 시작
+        for (const venue of venueDetails) {
+            try {
+                const photoResponse = await axios.get(`/venuePhoto/${venue.id}`);
+                const imageBase64 = photoResponse.data[0]?.photoBase64 || '';
+                const imageData = /^data:image\/[a-zA-Z]+;base64,/.test(imageBase64)
+                    ? imageBase64
+                    : imageBase64
+                    ? `data:image/jpeg;base64,${imageBase64}`
+                    : 'https://via.placeholder.com/150';
 
-      console.log('Prompt response:', res.data);
+                setResponse((prevResponse) =>
+                    prevResponse.map((res) => ({
+                        ...res,
+                        venueInfo: res.venueInfo.map((v) =>
+                            v.id === venue.id ? { ...v, photoBase64: imageData } : v
+                        ),
+                    }))
+                );
+            } catch (error) {
+                console.error(`Error fetching photo for venue ID ${venue.id}:`, error);
+            }
+        }
     } catch (error) {
-      setError(true);
+        setError('데이터 로드 중 문제가 발생했습니다.');
+        console.error(error);
 
-      // 임시 데이터 사용
-      const tempData = {
-        id: 0,
-        feedback: ['임시 피드백: 프롬프트와 관련된 피드백입니다.'],
-        venueIdList: [0, 1, 2],
-        venueInfo: [
-          {
-            id: 0,
-            name: '임시 장소 1',
-            location: '임시 위치 1',
-            amount: 10000,
-            simpleDesc: '간단한 설명 1',
-            caution: ['주의사항 1', '주의사항 2'],
-            recommand: ['추천 용도 1', '추천 용도 2'],
-          },
-          {
-            id: 1,
-            name: '임시 장소 2',
-            location: '임시 위치 2',
-            amount: 15000,
-            simpleDesc: '간단한 설명 2',
-            caution: ['주의사항 3', '주의사항 4'],
-            recommand: ['추천 용도 3', '추천 용도 4'],
-          },
-          {
-            id: 2,
-            name: '임시 장소 3',
-            location: '임시 위치 3',
-            amount: 20000,
-            simpleDesc: '간단한 설명 3',
-            caution: ['주의사항 5', '주의사항 6'],
-            recommand: ['추천 용도 5', '추천 용도 6'],
-          },
-        ],
-      };
-
-      setResponse((prevResponse) => [
-        ...(prevResponse || []),
-        tempData,
-      ]);
+        // 임시 데이터 처리
+        const tempData = {
+            feedback: [],
+            venueInfo: [
+                { id: 0, name: '임시 장소 1', location: '임시 위치 1', amount: 10000, simpleDesc: '설명 1', photoBase64: null },
+                { id: 1, name: '임시 장소 2', location: '임시 위치 2', amount: 15000, simpleDesc: '설명 2', photoBase64: null },
+            ],
+        };
+        setResponse((prevResponse) => [
+            ...(prevResponse || []),
+            tempData,
+        ]);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
 
