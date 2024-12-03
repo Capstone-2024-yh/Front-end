@@ -92,12 +92,6 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
     <>
       {/* AI 응답 출력 부분 */}
       <Box sx={{ width: '90%', maxWidth: 800, flexGrow: 1, mb: 3, mt: 2 }}>
-        {isLoading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <CircularProgress />
-          </Box>
-        )}
-
         {error && (
           <Box sx={{ color: 'red', mt: 2 }}>
             <Typography>에러가 발생했습니다. 다시 시도해 주세요.</Typography>
@@ -244,6 +238,22 @@ function ResponseDisplay({ response, isLoading, error, handleSubmit, handleFileC
           padding: 2,
         }}
       >
+        {isLoading && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              position: 'absolute', // 입력 칸 상단에 고정
+              top: '-50px', // 입력 칸 위로 이동
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 2,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
             <TextField
@@ -351,12 +361,14 @@ function Prompt() {
         uid,
       });
 
-      const venueIds = searchRes.data.searchResults.map((result) => result.venueId);
+      let venueIds = searchRes.data.searchResults.map((result) => result.venueId);
       const feedback = searchRes.data.feedback;
 
       if (venueIds.length === 0) {
         throw new Error('검색 결과가 없습니다.');
       }
+
+      venueIds = venueIds.slice(0, 5);
 
       // 피드백 데이터 추가
       setResponse((prevResponse) => [

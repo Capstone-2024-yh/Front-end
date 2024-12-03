@@ -348,16 +348,42 @@ function FacilitySimpleDetail({ facility }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '300px', // 전체 높이를 고정
+        padding: '10px',
+        boxSizing: 'border-box',
       }}
     >
-      <img
-        src={facility.image}
-        alt={facility.name}
-        style={{ width: '100%', maxWidth: '150px', marginBottom: '10px' }}
-      />
-      <h2>{facility.name}</h2>
-      <p>{facility.shortDescription}</p>
-      <p>₩{facility.price}</p>
+      <div
+        style={{
+          width: '100%',
+          height: '150px', // 이미지 영역 고정
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '10px',
+          overflow: 'hidden',
+        }}
+      >
+        <img
+          src={facility.image}
+          alt={facility.name}
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            objectFit: 'contain', // 이미지를 비율에 맞게 축소
+          }}
+        />
+      </div>
+      <h2 style={{ margin: '10px 0', fontSize: '18px', textAlign: 'center' }}>
+        {facility.name}
+      </h2>
+      <p style={{ margin: '5px 0', textAlign: 'center', fontSize: '14px', color: '#555' }}>
+        {facility.shortDescription}
+      </p>
+      <p style={{ margin: '5px 0', fontWeight: 'bold', fontSize: '16px', color: '#333' }}>
+        ₩{facility.price}
+      </p>
     </div>
   ) : null;
 }
