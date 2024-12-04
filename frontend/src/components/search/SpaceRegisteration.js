@@ -255,7 +255,7 @@ const SpaceRegistration = () => {
       }
 
       console.log('Response data:', response.data);
-      alert('공간이 성공적으로 등록되었습니다!');
+      alert('공간 등록을 성공적으로 신청하였습니다!');
       navigate('/');
     } catch (error) {
       console.error('Error saving space information:', error);
