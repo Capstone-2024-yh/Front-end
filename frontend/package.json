@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "proxy": "http://localhost:8080",
+  "proxy": "http://34.47.118.215:8080/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -36,7 +36,7 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set HTTPS=false&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

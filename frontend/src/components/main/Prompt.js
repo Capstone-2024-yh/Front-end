@@ -163,19 +163,6 @@ function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt
       {/* 입력 폼 */}
       <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-            <TextField
-              variant="outlined"
-              size="small"
-              fullWidth
-              value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
-              disabled
-            />
-            <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-              파일 선택
-              <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
-            </Button>
-          </Box>
           <Box sx={{ position: 'relative', mt: 2 }}>
             <TextField
               label="원하시는 조건이나 계획서를 입력해보세요!"
@@ -323,20 +310,6 @@ function ResponseDisplay({
         )}
 
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-            <TextField
-              variant="outlined"
-              size="small"
-              fullWidth
-              value={file ? file.name : '이미지나 PDF 파일을 선택하세요.'}
-              disabled
-            />
-            <Button variant="outlined" component="label" sx={{ ml: 1, whiteSpace: 'nowrap' }}>
-              파일 선택
-              <input type="file" accept="image/*,application/pdf" hidden onChange={handleFileChange} />
-            </Button>
-          </Box>
-
           <Box sx={{ position: 'relative', mt: 2 }}>
             <TextField
               label="원하시는 조건을 입력하거나 파일을 첨부해 보세요!"
