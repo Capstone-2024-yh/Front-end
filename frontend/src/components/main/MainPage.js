@@ -26,7 +26,7 @@ const MainPage = () => {
       } catch (error) {
         console.error('Failed to fetch popular tags:', error);
         // 요청 실패 시 임시 태그 사용
-        setPopularTags(['스터디룸tmp', '야외 공연tmp', '회의실tmp', '야외tmp', '녹음실tmp', '주차장tmp', '파티룸tmp']);
+        setPopularTags(['스터디룸', '야외 공연', '회의실', '야외', '녹음실', '주차장', '파티룸']);
       }
     };
 
