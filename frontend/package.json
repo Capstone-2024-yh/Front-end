@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "proxy": "http://34.47.118.215:8080/",
+  "proxy": "https://capstone.newdongjun.com",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",

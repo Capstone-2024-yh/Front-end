@@ -1,4 +1,3 @@
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"></meta>
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
