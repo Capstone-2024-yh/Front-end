@@ -38,7 +38,10 @@ function VenuePhoto({ venueId }) {
   const { data: photoData } = useQuery(
     ['venuePhoto', venueId],
     () => fetchVenuePhoto(venueId),
-    { suspense: true }
+    { 
+      staleTime: Infinity, 
+      suspense: true 
+    }
   );
 
   return (
@@ -55,7 +58,10 @@ function VenueInfo({ venueId, prompt, fileData }) {
   const { data: venueData } = useQuery(
     ['venueInfo', venueId],
     () => fetchVenueInfo(venueId, prompt, fileData),
-    { suspense: true }
+    { 
+      staleTime: Infinity, 
+      suspense: true 
+    }
   );
 
   return (
