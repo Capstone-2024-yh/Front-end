@@ -257,6 +257,7 @@ function ResponseDisplay({
             </Box>
 
             {/* 두 장소 비교하기 버튼 */}
+            {/*
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
               <Button
                 variant="contained"
@@ -282,6 +283,7 @@ function ResponseDisplay({
                 두 장소 비교하기
               </Button>
             </Box>
+            */}
           </Box>
         ))}
       </Box>
