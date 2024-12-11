@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { Box, Button, TextField, Typography, CircularProgress } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 import { useQuery, QueryClient, QueryClientProvider } from 'react-query';
 
 // React Query 클라이언트 생성

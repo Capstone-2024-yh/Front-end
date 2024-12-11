@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');

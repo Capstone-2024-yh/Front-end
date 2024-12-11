@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import InfoPanel from '../panel/InfoPanel';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 const KakaoMap = () => {
   const mapContainer = useRef(null);

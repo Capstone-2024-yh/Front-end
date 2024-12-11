@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, CircularProgress } from '@mui/material';
-import axios from 'axios';
+import axios from '../../axiosConfig';
 
 function CommonPrompt() {
   const [commonPrompt, setCommonPrompt] = useState(''); // 사용자가 입력한 프롬프트 저장

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, CircularProgress, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import axios from '../../axiosConfig';
 
 const SearchResults = ({ searchQuery }) => {
   const [locationData, setLocationData] = useState([]);

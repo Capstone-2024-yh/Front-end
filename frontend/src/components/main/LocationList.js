@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Select, MenuItem, Button, Grid, CircularProgress } from '@mui/material';
 // import axios from '../../axiosConfig';
 import {useNavigate, useLocation} from 'react-router-dom';
-import axios from "axios";
+import axios from '../../axiosConfig';
 
 const LocationList = () => {
   const [locationData, setLocationData] = useState([]);
