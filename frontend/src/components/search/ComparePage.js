@@ -15,6 +15,7 @@ const equipmentMap = {
 
 // facilityTypes 정의
 const facilityTypes = [
+  { id: '연습실', name: '연습실' },
   { id: '파티룸', name: '파티룸' },
   { id: '스터디룸', name: '스터디룸' },
   { id: '강의실', name: '강의실' },
@@ -22,7 +23,6 @@ const facilityTypes = [
   { id: '공유주방', name: '공유주방' },
   { id: '회의실', name: '회의실' },
   { id: '세미나실', name: '세미나실' },
-  { id: '연습실', name: '연습실' },
   { id: '보컬연습실', name: '보컬연습실' },
   { id: '악기연습실', name: '악기연습실' },
   { id: '녹음실', name: '녹음실' },
