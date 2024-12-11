@@ -164,7 +164,7 @@ function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt
         - 조건만 입력하신다면 최적의 장소를 추천해 드립니다.
       </Typography>
       <Typography variant="h6" gutterBottom>
-        - 제안서나 사진을 첨부하면 피드백도 제공해 드립니다.
+        - 자세한 제안서를 입력하신다면 피드백도 제공해 드립니다.
       </Typography>
       {/* 입력 폼 */}
       <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
