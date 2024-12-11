@@ -158,7 +158,7 @@ function InitialPrompt({ handleSubmit, handleFileChange, file, prompt, setPrompt
         - 조건만 입력하신다면 최적의 장소를 추천해 드립니다.
       </Typography>
       <Typography variant="h6" gutterBottom>
-        - 제안서나 사진을 첨부하면 피드백도 제공해 드립니다.
+        - 자세한 제안서를 입력하시면 피드백도 제공해 드립니다.
       </Typography>
       {/* 입력 폼 */}
       <Box sx={{ width: '100%', maxWidth: 800, mt: 2 }}>
@@ -251,6 +251,7 @@ function ResponseDisplay({
             </Box>
 
             {/* 두 장소 비교하기 버튼 */}
+            {/*
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
               <Button
                 variant="contained"
@@ -276,6 +277,7 @@ function ResponseDisplay({
                 두 장소 비교하기
               </Button>
             </Box>
+            */}
           </Box>
         ))}
       </Box>

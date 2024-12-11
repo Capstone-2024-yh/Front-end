@@ -44,7 +44,7 @@ function Layout() {
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
-              Capstone
+              대관비서
             </Link>
           </Typography>
           <Button
@@ -56,15 +56,19 @@ function Layout() {
           >
             비교하세요!
           </Button>
-          <Button
-            component={Link}
-            to="/space-registeration"
-            variant="outlined"
-            color="inherit"
-            style={{ margin: '0 10px' }}
-          >
-            공간 등록
-          </Button>
+          {isAuthenticated && (
+            <div>
+              <Button
+                component={Link}
+                to="/space-registeration"
+                variant="outlined"
+                color="inherit"
+                style={{ margin: '0 10px' }}
+              >
+                공간 등록
+              </Button>
+            </div>
+          )}
           {!isAuthenticated && (
             <div>
               <Button

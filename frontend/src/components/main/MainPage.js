@@ -86,27 +86,52 @@ const MainPage = () => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('파티룸')} style={{ padding: '10px 20px' }}>
-              파티룸
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎉
+              </div>
+              <div>
+                파티룸
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('스터디룸')} style={{ padding: '10px 20px' }}>
-              스터디룸
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                ✏️
+              </div>
+              <div>
+                스터디룸
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('강의실')} style={{ padding: '10px 20px' }}>
-              강의실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🏫
+              </div>
+              <div>
+                강의실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('카페')} style={{ padding: '10px 20px' }}>
-              카페
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                ☕
+              </div>
+              <div>
+                카페
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('공유주방')} style={{ padding: '10px 20px' }}>
-              공유주방
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🍳
+              </div>
+              <div>
+                공유주방
+              </div>
             </StyledButton>
           </td>
         </div>
@@ -115,27 +140,52 @@ const MainPage = () => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('회의실')} style={{ padding: '10px 20px' }}>
-              회의실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🖋️
+              </div>
+              <div>
+                회의실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('세미나실')} style={{ padding: '10px 20px' }}>
-              세미나실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎤
+              </div>
+              <div>
+                세미나실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('연습실')} style={{ padding: '10px 20px' }}>
-              연습실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🩰
+              </div>
+              <div>
+                연습실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('보컬연습실')} style={{ padding: '10px 20px' }}>
-              보컬연습실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎶
+              </div>
+              <div>
+                보컬연습실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('악기연습실')} style={{ padding: '10px 20px' }}>
-              악기연습실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎸
+              </div>
+              <div>
+                악기연습실
+              </div>
             </StyledButton>
           </td>
         </div>
@@ -144,27 +194,52 @@ const MainPage = () => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('녹음실')} style={{ padding: '10px 20px' }}>
-              녹음실
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎧
+              </div>
+              <div>
+                녹음실
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('운동시설')} style={{ padding: '10px 20px' }}>
-              운동시설
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🏋️‍♀️
+              </div>
+              <div>
+                운동시설
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('촬영스튜디오')} style={{ padding: '10px 20px' }}>
-              촬영스튜디오
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎥
+              </div>
+              <div>
+                촬영스튜디오
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('호리존')} style={{ padding: '10px 20px' }}>
-              호리존
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🖼️
+              </div>
+              <div>
+                호리존
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('라이브방송')} style={{ padding: '10px 20px' }}>
-              라이브방송
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎙️
+              </div>
+              <div>
+                라이브방송
+              </div>
             </StyledButton>
           </td>
         </div>
@@ -173,27 +248,52 @@ const MainPage = () => {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('실외촬영')} style={{ padding: '10px 20px' }}>
-              실외촬영
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                📷
+              </div>
+              <div>
+                실외촬영
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('공연장')} style={{ padding: '10px 20px' }}>
-              공연장
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎭
+              </div>
+              <div>
+                공연장
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('갤러리')} style={{ padding: '10px 20px' }}>
-              갤러리
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🎨
+              </div>
+              <div>
+                갤러리
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('스몰웨딩')} style={{ padding: '10px 20px' }}>
-              스몰웨딩
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                💍
+              </div>
+              <div>
+                스몰웨딩
+              </div>
             </StyledButton>
           </td>
           <td style={{ padding: '10px' }}>
             <StyledButton onClick={() => handleTypeClick('컨퍼런스')} style={{ padding: '10px 20px' }}>
-              컨퍼런스
+              <div style={{ fontSize: '20px', lineHeight: '1.2' }}>
+                🏢
+              </div>
+              <div>
+                컨퍼런스
+              </div>
             </StyledButton>
           </td>
         </div>
