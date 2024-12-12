@@ -232,7 +232,7 @@ function ResponseDisplay({
       <Box sx={{ width: '90%', maxWidth: 800, flexGrow: 1, mb: 3, mt: 2 }}>
         {error && (
           <Box sx={{ color: 'red', mt: 2 }}>
-            <Typography>에러가 발생했습니다. 다시 시도해 주세요.</Typography>
+            <Typography>조건에 맞는 검색 결과가 없습니다. 다시 시도해 주세요.</Typography>
           </Box>
         )}
 
@@ -411,8 +411,14 @@ function Prompt() {
         uid,
       });
 
-      let venueIds = searchRes.data.searchResults.map((result) => result.venueId);
+      let venueIds = searchRes.data.searchResults
+        .filter((result) => result.totalScore > 0) // totalScore > 0 조건 필터링
+        .sort((a, b) => b.totalScore - a.totalScore) // totalScore 내림차순 정렬
+        .map((result) => result.venueId);
       const feedback = searchRes.data.feedback;
+
+      console.log('검색 결과:', venueIds);
+      console.log('점수:', searchRes.data.searchResults.map((result) => result.totalScore));
 
       if (venueIds.length === 0) {
         throw new Error('검색 결과가 없습니다.');
