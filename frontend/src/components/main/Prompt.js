@@ -417,7 +417,7 @@ function Prompt() {
       });
 
       let venueIds = searchRes.data.searchResults
-        .filter((result) => result.totalScore > -1) // totalScore > -1 조건 필터링
+        .filter((result) => result.totalScore > -0.5) // totalScore > -1 조건 필터링
         .sort((a, b) => b.totalScore - a.totalScore) // totalScore 내림차순 정렬
         .map((result) => result.venueId);
       const feedback = searchRes.data.feedback;
