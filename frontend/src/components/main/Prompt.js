@@ -26,7 +26,7 @@ const fetchVenueInfo = async (venueId, prompt, fileData) => {
 
 const fetchVenuePhoto = async (venueId) => {
   const response = await axios.get(`/venuePhoto/${venueId}`);
-  const imageBase64 = response.data[0]?.photoBase64 || '';
+  const imageBase64 = response.data[0]?.photoBase64 || 'https://via.placeholder.com/150';
 
   if (!imageBase64) {
     return 'https://via.placeholder.com/150'; // 기본 이미지 경로
